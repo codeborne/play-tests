@@ -1,4 +1,4 @@
-# Application dependencies
+self: play -> selenide 0.1
 
 require:
     - play
