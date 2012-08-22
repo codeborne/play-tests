@@ -1,2 +1,7 @@
-*.iml
+/out
 /tmp
+/modules
+*.iml
+*.ipr
+*.iws
+/test-result
