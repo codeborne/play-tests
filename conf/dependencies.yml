@@ -1,0 +1,12 @@
+# Application dependencies
+
+require:
+    - play
+    - com.codeborne -> selenide 1.5-SNAPSHOT
+
+repositories:
+    - snapshots:
+        type:       iBiblio
+        root:       "https://oss.sonatype.org/content/repositories/snapshots/"
+        contains:
+            - com.codeborne -> selenide
