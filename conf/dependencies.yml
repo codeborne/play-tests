@@ -2,11 +2,11 @@ self: play -> selenide 0.1
 
 require:
     - play
-    - com.codeborne -> selenide 1.5-SNAPSHOT
+    - com.codeborne -> selenide 1.5
 
-repositories:
-    - snapshots:
-        type:       iBiblio
-        root:       "https://oss.sonatype.org/content/repositories/snapshots/"
-        contains:
-            - com.codeborne -> selenide
+#repositories:
+#    - snapshots:
+#        type:       iBiblio
+#        root:       "https://oss.sonatype.org/content/repositories/snapshots/"
+#        contains:
+#            - com.codeborne -> selenide
