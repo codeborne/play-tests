@@ -10,7 +10,7 @@ import static com.codeborne.selenide.Condition.*;
 
 import static org.openqa.selenium.Keys.ESCAPE;
 
-public class TwitterBootstrapUITest extends UITest {
+public abstract class TwitterBootstrapUITest extends UITest {
   protected void closeModal(By by) {
     getElement(By.tagName("body")).sendKeys(ESCAPE);
     waitUntil(by, hidden);
