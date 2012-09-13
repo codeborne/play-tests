@@ -2,10 +2,10 @@ package play.test;
 
 import com.codeborne.selenide.Navigation;
 import com.codeborne.selenide.WebDriverRunner;
+import org.junit.After;
 import org.junit.BeforeClass;
 import play.Play;
 import play.i18n.Messages;
-import play.mvc.After;
 import play.mvc.Router;
 import play.server.Server;
 
@@ -26,7 +26,8 @@ public abstract class UITest extends BaseTest {
 
   @After
   public void tearDown() throws Exception {
-    if (Boolean.getBoolean("screenshots"))  WebDriverRunner.takeScreenShot("" + System.currentTimeMillis());
+    if (Boolean.getBoolean("screenshots"))
+      System.out.println("Saved screenshot to: " + WebDriverRunner.takeScreenShot("" + System.currentTimeMillis()));
   }
 
   protected String label(String key) {
