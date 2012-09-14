@@ -2,7 +2,7 @@ self: play -> selenide 0.1
 
 require:
     - play
-    - com.codeborne -> selenide 1.5
+    - com.codeborne -> selenide 1.6
 
 #repositories:
 #    - snapshots:
