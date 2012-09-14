@@ -2,8 +2,10 @@ package play.test;
 
 import com.codeborne.selenide.Navigation;
 import com.codeborne.selenide.WebDriverRunner;
-import org.junit.After;
 import org.junit.BeforeClass;
+import org.junit.Rule;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 import play.Play;
 import play.i18n.Messages;
 import play.mvc.Router;
@@ -24,11 +26,11 @@ public abstract class UITest extends BaseTest {
     Navigation.baseUrl = "http://localhost:" + Play.configuration.get("http.port");
   }
 
-  @After
-  public void tearDown() throws Exception {
-    if (Boolean.getBoolean("screenshots"))
-      System.out.println("Saved screenshot to: " + WebDriverRunner.takeScreenShot("" + System.currentTimeMillis()));
-  }
+  @Rule public TestWatcher makeScreenshotOnFailure = new TestWatcher() {
+    @Override protected void failed(Throwable e, Description description) {
+      System.err.println("Saved failing screenshot to: " + WebDriverRunner.takeScreenShot(description.getClassName() + "." + description.getMethodName()));
+    }
+  };
 
   protected String label(String key) {
     return Messages.get(key);
