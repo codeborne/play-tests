@@ -3,16 +3,14 @@ package play.test;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
-import static com.codeborne.selenide.DOM.assertElement;
-import static com.codeborne.selenide.DOM.getElement;
-import static com.codeborne.selenide.DOM.waitUntil;
-import static com.codeborne.selenide.Condition.*;
-
+import static com.codeborne.selenide.Condition.hasText;
+import static com.codeborne.selenide.Condition.hidden;
+import static com.codeborne.selenide.DOM.*;
 import static org.openqa.selenium.Keys.ESCAPE;
 
 public abstract class TwitterBootstrapUITest extends UITest {
   protected void closeModal(By by) {
-    getElement(By.tagName("body")).sendKeys(ESCAPE);
+    getElement(by).sendKeys(ESCAPE);
     waitUntil(by, hidden);
   }
 
