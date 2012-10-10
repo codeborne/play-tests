@@ -32,23 +32,23 @@ public abstract class UITest extends BaseTest {
     }
   };
 
-  protected String label(String key) {
+  protected static String label(String key) {
     return Messages.get(key);
   }
 
-  protected String label(String key, Object... args) {
+  protected static String label(String key, Object... args) {
     return Messages.get(key, args);
   }
 
-  protected void assertAction(String action) {
+  protected static void assertAction(String action) {
     assertEquals(Router.getFullUrl(action), getWebDriver().getCurrentUrl().replaceFirst("\\?.*$", ""));
   }
 
-  protected void mockConfirm() {
+  protected static void mockConfirm() {
     executeJavaScript("window.confirm = function() {return true;};");
   }
 
-  protected void mockAlert() {
+  protected static void mockAlert() {
     executeJavaScript("window.confirm = function() {};");
   }
 }
