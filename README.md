@@ -13,7 +13,7 @@ Add it to your dependencies.yml
     repositories:
         - play-selenide:
           type: http
-          artifact: http://cloud.github.com/downloads/codeborne/play-selenide/[module]-[revision].zip
+          artifact: http://repo.codeborne.com/play-selenide/[module]-[revision].zip
           contains:
             - play-selenide -> *
 
