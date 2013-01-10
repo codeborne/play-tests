@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play
-        - play-selenide -> selenide 0.1.2
+        - play-selenide -> selenide 0.1.7
     
     repositories:
         - play-selenide:
