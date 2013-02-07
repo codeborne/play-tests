@@ -30,11 +30,19 @@ public abstract class TwitterBootstrapUITest extends UITest {
     assertElement(By.className("alert-error"), hasText(message));
   }
 
-  @SuppressWarnings("StatementWithEmptyBody")
   protected void assertFieldHasError(String name, String message) {
+    assertFieldHasErrorText(name, label(message));
+  }
+
+  protected void assertFieldHasError(String name, String message, Object... args) {
+    assertFieldHasErrorText(name, label(message, args));
+  }
+
+  @SuppressWarnings("StatementWithEmptyBody")
+  private void assertFieldHasErrorText(String name, String text) {
     WebElement element = getElement(By.name(name));
     while (!(element = element.findElement(By.xpath(".."))).getAttribute("class").contains("control-group"));
     if (!element.getAttribute("class").contains("error") && !element.findElement(By.className("error")).isDisplayed()) fail("No error class on " + element.getText());
-    assertElement(element, hasText(label(message)));
+    assertElement(element, hasText(text));
   }
 }
