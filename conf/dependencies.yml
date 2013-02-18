@@ -1,8 +1,8 @@
-self: play -> selenide 0.1.8
+self: play -> selenide 1.10
 
 require:
     - play 1.2.5
-    - com.codeborne -> selenide 1.9:
+    - com.codeborne -> selenide 1.10:
         exclude:
             - xerces -> xercesImpl
             - net.sourceforge.htmlunit -> *
