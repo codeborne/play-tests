@@ -11,14 +11,14 @@ import play.i18n.Messages;
 import play.mvc.Router;
 import play.server.Server;
 
-import static com.codeborne.selenide.DOM.executeJavaScript;
+import static com.codeborne.selenide.Selenide.executeJavaScript;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 
 public abstract class UITest extends BaseTest {
   private static boolean serverStarted = false;
 
   @BeforeClass
-  public static synchronized void startServer() throws Exception {
+  public static synchronized void startServer() {
     if (!serverStarted) {
       new Server(new String[]{});
       serverStarted = true;
