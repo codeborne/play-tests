@@ -1,8 +1,8 @@
-self: play -> selenide 1.10
+self: play -> selenide 1.11
 
 require:
     - play 1.2.5
-    - com.codeborne -> selenide 1.10:
+    - com.codeborne -> selenide 1.11:
         exclude:
             - io.netty -> *
             - org.webbitserver -> *

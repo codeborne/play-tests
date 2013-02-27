@@ -1,7 +1,6 @@
 package play.test;
 
-import com.codeborne.selenide.Navigation;
-import com.codeborne.selenide.WebDriverRunner;
+import com.codeborne.selenide.Configuration;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.rules.TestWatcher;
@@ -13,6 +12,7 @@ import play.server.Server;
 
 import static com.codeborne.selenide.Selenide.executeJavaScript;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
+import static com.codeborne.selenide.WebDriverRunner.takeScreenShot;
 
 public abstract class UITest extends BaseTest {
   private static boolean serverStarted = false;
@@ -23,12 +23,12 @@ public abstract class UITest extends BaseTest {
       new Server(new String[]{});
       serverStarted = true;
     }
-    Navigation.baseUrl = "http://localhost:" + Play.configuration.get("http.port");
+    Configuration.baseUrl = "http://localhost:" + Play.configuration.get("http.port");
   }
 
   @Rule public TestWatcher makeScreenshotOnFailure = new TestWatcher() {
     @Override protected void failed(Throwable e, Description description) {
-      System.err.println("Saved failing screenshot to: " + WebDriverRunner.takeScreenShot(description.getClassName() + "." + description.getMethodName()));
+      System.err.println("Saved failing screenshot to: " + takeScreenShot(description.getClassName() + "." + description.getMethodName()));
     }
   };
 

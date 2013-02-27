@@ -24,15 +24,17 @@ Make sure you have a test directory in your Play app.
 
 Create a JUnit class there, eg:
 
+  import static com.codeborne.Selenide.*;
+
 	public class RegistrationSpec extends play.test.UITest {  
 		@Before 
-		public void setUp() throws Exception {    
+		public void setUp() {
 			open("/"); // will start the play app in %test config as well as the browser, firefox by default
 		}
 	
 		@Test
-		public void canRegister() throws Exception {
-			click(By.id("register-button"));
+		public void canRegister() {
+			$("#register-button").click();
 			// write your regular Selenide code here
 		}
 	}
