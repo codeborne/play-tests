@@ -49,6 +49,6 @@ public abstract class UITest extends BaseTest {
   }
 
   protected void mockAlert() {
-    executeJavaScript("window.confirm = function() {};");
+    getWebDriver().switchTo().alert().accept();
   }
 }
