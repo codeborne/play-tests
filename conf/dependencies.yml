@@ -1,15 +1,15 @@
-self: play -> selenide 2.1.b2
+self: play -> selenide 2.1
 
 require:
-    - play 1.2.5
-    - com.codeborne -> selenide 2.1-SNAPSHOT:
+    - play
+    - com.codeborne -> selenide 2.1:
         exclude:
             - io.netty -> *
             - org.webbitserver -> *
 
-repositories:
-    - snapshots:
-        type:       iBiblio
-        root:       "https://oss.sonatype.org/content/repositories/snapshots/"
-        contains:
-            - com.codeborne -> selenide
+#repositories:
+#    - snapshots:
+#        type:       iBiblio
+#        root:       "https://oss.sonatype.org/content/repositories/snapshots/"
+#        contains:
+#            - com.codeborne -> selenide
