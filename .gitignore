@@ -1,6 +1,7 @@
 /out
 /tmp
 /modules
+/lib
 *.iml
 *.ipr
 *.iws
