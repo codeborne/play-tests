@@ -20,6 +20,9 @@ public abstract class UITest extends BaseTest {
   @BeforeClass
   public static synchronized void startServer() {
     if (!serverStarted) {
+      if (System.getProperty("precompiled", "false").equals("true")) {
+        Play.usePrecompiled = true;
+      }
       new Server(new String[]{});
       serverStarted = true;
     }
