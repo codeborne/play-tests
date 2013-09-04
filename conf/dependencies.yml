@@ -7,6 +7,11 @@ require:
             - io.netty -> *
             - org.webbitserver -> *
 
+    - org.seleniumhq.selenium -> selenium-java:jar:2.35.0:
+        exclude:
+            - io.netty -> *
+            - org.webbitserver -> *
+
 #repositories:
 #    - snapshots:
 #        type:       iBiblio
