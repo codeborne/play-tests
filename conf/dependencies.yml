@@ -2,17 +2,20 @@ self: play -> selenide 2.3.2
 
 require:
     - play 1.2.5+
+    - org.seleniumhq.selenium -> selenium-java 2.35.0:
+        exclude:
+            - io.netty -> *
+            - org.webbitserver -> *
+            - org.seleniumhq.selenium -> selenium-htmlunit-driver
+            - org.seleniumhq.selenium -> selenium-android-driver
+            - org.seleniumhq.selenium -> selenium-iphone-driver
+            - org.seleniumhq.selenium -> selenium-safari-driver
+
     - com.codeborne -> selenide 2.3:
         exclude:
             - io.netty -> *
             - org.webbitserver -> *
             - org.seleniumhq.selenium -> *
-
-    - org.seleniumhq.selenium -> selenium-java 2.35.0:
-        force: true
-        exclude:
-            - io.netty -> *
-            - org.webbitserver -> *
 
 #repositories:
 #    - snapshots:
