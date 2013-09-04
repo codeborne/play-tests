@@ -1,39 +1,36 @@
 package play.test;
 
 import com.codeborne.selenide.Configuration;
+import com.codeborne.selenide.junit.ScreenShooter;
 import org.junit.BeforeClass;
 import org.junit.Rule;
-import org.junit.rules.TestWatcher;
-import org.junit.runner.Description;
 import play.Play;
 import play.i18n.Messages;
 import play.mvc.Router;
 import play.server.Server;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import static com.codeborne.selenide.Selenide.executeJavaScript;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
-import static com.codeborne.selenide.WebDriverRunner.takeScreenShot;
+import static com.codeborne.selenide.junit.ScreenShooter.failedTests;
 
 public abstract class UITest extends BaseTest {
-  private static boolean serverStarted = false;
+  private static final AtomicBoolean serverStarted = new AtomicBoolean(false);
 
   @BeforeClass
   public static synchronized void startServer() {
-    if (!serverStarted) {
-      if (System.getProperty("precompiled", "false").equals("true")) {
+    if (!serverStarted.get()) {
+      if ("true".equals(System.getProperty("precompiled", "false"))) {
         Play.usePrecompiled = true;
       }
       new Server(new String[]{});
-      serverStarted = true;
+      serverStarted.set(true);
     }
-    Configuration.baseUrl = "http://localhost:" + Play.configuration.get("http.port");
+    Configuration.baseUrl = "http://localhost:" + Play.configuration.getProperty("http.port");
   }
 
-  @Rule public TestWatcher makeScreenshotOnFailure = new TestWatcher() {
-    @Override protected void failed(Throwable e, Description description) {
-      System.err.println("Saved failing screenshot to: " + takeScreenShot(description.getClassName() + "." + description.getMethodName()));
-    }
-  };
+  @Rule public ScreenShooter makeScreenshotOnFailure = failedTests();
 
   protected String label(String key) {
     return Messages.get(key);
