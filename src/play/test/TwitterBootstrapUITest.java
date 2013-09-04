@@ -5,7 +5,9 @@ import org.openqa.selenium.WebElement;
 
 import static com.codeborne.selenide.Condition.disappear;
 import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$$;
 import static org.openqa.selenium.Keys.ESCAPE;
 
 public abstract class TwitterBootstrapUITest extends UITest {
@@ -15,7 +17,7 @@ public abstract class TwitterBootstrapUITest extends UITest {
   }
 
   protected void assertSuccessMessage(String message) {
-    $(".alert-success").shouldHave(text(message));
+    $$(".alert-success").find(visible).shouldHave(text(message));
   }
 
   protected void assertWarningMessage(String message) {
