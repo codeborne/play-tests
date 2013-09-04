@@ -4,10 +4,10 @@ require:
     - play 1.2.5+
     - com.codeborne -> selenide 2.3:
         exclude:
-            - io.netty -> *
-            - org.webbitserver -> *
+            - org.seleniumhq.selenium -> *
 
-    - org.seleniumhq.selenium -> selenium-java:jar:2.35.0:
+    - org.seleniumhq.selenium -> selenium-java 2.35.0:
+        force: true
         exclude:
             - io.netty -> *
             - org.webbitserver -> *
