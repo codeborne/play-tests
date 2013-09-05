@@ -5,17 +5,17 @@ require:
 
     - org.seleniumhq.selenium -> selenium-java 2.35.0:
         exclude:
+            - cglib -> *
             - io.netty -> *
             - org.webbitserver -> *
             - org.seleniumhq.selenium -> selenium-htmlunit-driver
             - org.seleniumhq.selenium -> selenium-android-driver
             - org.seleniumhq.selenium -> selenium-iphone-driver
             - org.seleniumhq.selenium -> selenium-safari-driver
+            - org.testng -> *
 
     - com.codeborne -> selenide 2.3:
         exclude:
-            - io.netty -> *
-            - org.webbitserver -> *
             - org.seleniumhq.selenium -> *
 
     - org.apache.ant -> ant-junit 1.8.4
