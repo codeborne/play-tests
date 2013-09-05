@@ -1,4 +1,4 @@
-self: play -> selenide 2.3.5
+self: play -> selenide 2.3.6
 
 require:
     - play 1.2+

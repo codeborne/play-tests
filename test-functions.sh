@@ -53,7 +53,7 @@ function run_unit_tests() {
 function run_ui_tests() {
   echo "Running UI tests... "
   prepare_test_env
-  TESTS_FILE=`pwd`/test-result/unit-tests.txt
+  TESTS_FILE=`pwd`/test-result/ui-tests.txt
   if [ ! -e $TESTS_FILE ]; then
     find test-classes -name '*Spec.class' | LC_ALL=C sort | sed 's@test-classes/@@; s@\.class$@@; s@/@.@g' \
       | sed 's/\(.*\)/\1,test-result,\1/' > $TESTS_FILE
