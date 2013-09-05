@@ -1,7 +1,7 @@
 self: play -> selenide 2.3.2
 
 require:
-    - play 1.2.5+
+    - play 1.2+
     - org.seleniumhq.selenium -> selenium-java 2.35.0:
         exclude:
             - io.netty -> *
