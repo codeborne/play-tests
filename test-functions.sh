@@ -1,9 +1,9 @@
 #!/bin/bash
 # Functions for compiling and running of tests in your app
 
-function is_not_ibank() {
-  [ $IBANK != . ]
-  return $?
+function modify_test_env() {
+  # this can be overridden
+  echo
 }
 
 function prepare_test_env() {
@@ -22,12 +22,10 @@ function prepare_test_env() {
   done
   CLASSES="$CLASSES `find test -name '*.java'`"
 
-  if is_not_ibank; then
-    CLASSES="$CLASSES `find $IBANK/test -name '*.java'`"
-  fi
-
   export CLASSPATH
   export CLASSES
+
+  modify_test_env
 }
 
 function compile_tests() {
@@ -47,10 +45,7 @@ function run_unit_tests() {
     | sed "s@\(.*\)@\1,$(pwd)/test-result,\1@" > $TESTS_FILE
   TEST_CLASSPATH=$APPDIR/test-classes:$APPDIR/test:test:$CLASSPATH
 
-  cd $IBANK
   java -Xmx512m -XX:-UseSplitVerifier -cp $TEST_CLASSPATH helpers.JenkinsTestRunner $TESTS_FILE || exit 666
-  cd -
-
   echo "Finished unit tests."
 }
 
