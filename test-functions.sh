@@ -46,7 +46,7 @@ function run_unit_tests() {
       | sed "s@\(.*\)@\1,$(pwd)/test-result,\1@" > $TESTS_FILE
   fi
 
-  java -Xmx512m -XX:-UseSplitVerifier -cp test-classes:$TEST_CLASSPATH helpers.JenkinsTestRunner $TESTS_FILE || exit 666
+  java -Xmx512m -XX:-UseSplitVerifier -cp test-classes:$TEST_CLASSPATH helpers.JenkinsTestRunner $TESTS_FILE || exit $?
   echo "Finished unit tests."
 }
 
