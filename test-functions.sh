@@ -46,7 +46,7 @@ function run_unit_tests() {
       | sed "s@\(.*\)@\1,$(pwd)/test-result,\1@" > $TESTS_FILE
   fi
 
-  java -Xmx512m -XX:-UseSplitVerifier -cp test-classes:$TEST_CLASSPATH helpers.JenkinsTestRunner $TESTS_FILE || exit $?
+  java $TEST_JAVA_OPTS -XX:-UseSplitVerifier -cp test-classes:$TEST_CLASSPATH play.test.JUnitRunnerWithXMLOutput $TESTS_FILE || exit $?
   echo "Finished unit tests."
 }
 
@@ -58,6 +58,6 @@ function run_ui_tests() {
     find test-classes -name '*Spec.class' | LC_ALL=C sort | sed 's@test-classes/@@; s@\.class$@@; s@/@.@g' \
       | sed 's/\(.*\)/\1,test-result,\1/' > $TESTS_FILE
   fi
-  java -Xmx512m -XX:MaxPermSize=128m -XX:-UseSplitVerifier -Dprecompiled=true -Dbrowser=chrome -Dselenide.reports=test-result -cp test-classes:$TEST_CLASSPATH helpers.JenkinsTestRunner $TESTS_FILE || exit $?
+  java $TEST_JAVA_OPTS -XX:-UseSplitVerifier -Dprecompiled=true -Dbrowser=chrome -Dselenide.reports=test-result -cp test-classes:$TEST_CLASSPATH play.test.JUnitRunnerWithXMLOutput $TESTS_FILE || exit $?
   echo "Finished UI tests."
 }

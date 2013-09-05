@@ -1,7 +1,8 @@
-self: play -> selenide 2.3.6
+self: play -> selenide 2.3.7
 
 require:
     - play 1.2+
+
     - org.seleniumhq.selenium -> selenium-java 2.35.0:
         exclude:
             - io.netty -> *
@@ -16,6 +17,8 @@ require:
             - io.netty -> *
             - org.webbitserver -> *
             - org.seleniumhq.selenium -> *
+
+    - org.apache.ant -> ant-junit 1.8.4
 
 #repositories:
 #    - snapshots:
