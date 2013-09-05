@@ -25,6 +25,7 @@ function prepare_test_env() {
   export TEST_CLASSPATH=$TEST_CLASSPATH:test:"$PLAY_HOME/framework/*:$PLAY_HOME/framework/lib/*"
   export TEST_CLASSES=$TEST_CLASSES
 
+  mkdir -p test-result
   modify_test_env
 }
 
@@ -39,8 +40,7 @@ function compile_tests() {
 function run_unit_tests() {
   echo "Running unit tests... "
   prepare_test_env
-  mkdir -p test-result
-  TESTS_FILE=`pwd`/test-result/unit-tests.txt
+  TESTS_FILE=test-result/unit-tests.txt
   if [ ! -e $TESTS_FILE ]; then
     find test-classes -name '*Test.class' | LC_ALL=C sort | sed 's@test-classes/@@; s@\.class$@@; s@/@.@g' | egrep -v '^(ui\.|play.test\.|realworld\.|controllers\.ControllerTest)' \
       | sed "s@\(.*\)@\1,$(pwd)/test-result,\1@" > $TESTS_FILE
@@ -53,7 +53,7 @@ function run_unit_tests() {
 function run_ui_tests() {
   echo "Running UI tests... "
   prepare_test_env
-  TESTS_FILE=`pwd`/test-result/ui-tests.txt
+  TESTS_FILE=test-result/ui-tests.txt
   if [ ! -e $TESTS_FILE ]; then
     find test-classes -name '*Spec.class' | LC_ALL=C sort | sed 's@test-classes/@@; s@\.class$@@; s@/@.@g' \
       | sed 's/\(.*\)/\1,test-result,\1/' > $TESTS_FILE
