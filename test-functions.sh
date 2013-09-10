@@ -5,6 +5,20 @@ PLAY=`which play`
 PLAY=`readlink -f $PLAY`
 PLAY_HOME=`dirname $PLAY`
 
+which chromedriver
+if [ $? != 0 ]; then
+    echo "Downloading chromedriver binary into ~/bin"
+    mkdir -p ~/bin
+    wget https://chromedriver.googlecode.com/files/chromedriver_linux64_2.3.zip -O ~/bin/chromedriver.zip &&
+    cd ~/bin && unzip chromedriver.zip && rm chromedriver.zip && cd -
+    which chromedriver
+    if [ $? != 0 ]; then
+	echo "Cannot start downloaded chromedriver, probably you need to restart your terminal"
+	exit 1
+    fi
+fi
+
+
 function modify_test_env() {
   # this can be overridden
   echo
