@@ -1,6 +1,10 @@
 #!/bin/bash
 # Functions for compiling and running of tests in your app
 
+PLAY=`which play`
+PLAY=`readlink -f $PLAY`
+PLAY_HOME=`dirname $PLAY`
+
 function modify_test_env() {
   # this can be overridden
   echo
