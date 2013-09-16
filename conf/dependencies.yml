@@ -3,8 +3,12 @@ self: play -> selenide 2.4.b2
 require:
     - play 1.2+
 
-    - com.codeborne -> selenide 2.4-SNAPSHOT
-    - org.apache.ant -> ant-junit 1.8.4
+    - com.codeborne -> selenide 2.4-SNAPSHOT:
+        exclude:
+            - cglib -> cglib-nodep
+    - org.apache.ant -> ant-junit 1.8.4:
+        exclude:
+            - junit -> *
 
 repositories:
     - snapshots:
