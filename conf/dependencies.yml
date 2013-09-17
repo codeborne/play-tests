@@ -1,18 +1,16 @@
-self: play -> selenide 2.4.b3
+self: play -> selenide 2.4
 
 require:
     - play 1.2+
 
-    - com.codeborne -> selenide 2.4-SNAPSHOT:
-        exclude:
-            - cglib -> cglib-nodep
+    - com.codeborne -> selenide 2.4
     - org.apache.ant -> ant-junit 1.8.4:
         exclude:
             - junit -> *
 
-repositories:
-    - snapshots:
-        type:       iBiblio
-        root:       "https://oss.sonatype.org/content/repositories/snapshots/"
-        contains:
-            - com.codeborne -> selenide
+#repositories:
+#    - snapshots:
+#        type:       iBiblio
+#        root:       "https://oss.sonatype.org/content/repositories/snapshots/"
+#        contains:
+#            - com.codeborne -> selenide
