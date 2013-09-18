@@ -18,16 +18,19 @@ import static com.codeborne.selenide.junit.ScreenShooter.failedTests;
 public abstract class UITest extends BaseTest {
   private static final AtomicBoolean serverStarted = new AtomicBoolean(false);
 
+  public static boolean isPrecompileNeeded = Boolean.getBoolean("precompiled");
+  public static boolean isPlayStartNeeded = !"false".equals(System.getProperty("selenide.play.start", "true"));
+
   @BeforeClass
   public static synchronized void startServer() {
-    if (!serverStarted.get()) {
-      if ("true".equals(System.getProperty("precompiled", "false"))) {
+    if (isPlayStartNeeded && !serverStarted.get()) {
+      if (isPrecompileNeeded) {
         Play.usePrecompiled = true;
       }
       new Server(new String[]{});
       serverStarted.set(true);
+      Configuration.baseUrl = "http://localhost:" + Play.configuration.getProperty("http.port");
     }
-    Configuration.baseUrl = "http://localhost:" + Play.configuration.getProperty("http.port");
   }
 
   @Rule public ScreenShooter makeScreenshotOnFailure = failedTests();
