@@ -40,3 +40,9 @@ Create a JUnit class there, eg:
 	}
 
 From there you can run these tests from your favorite IDE or other test runner.
+
+Configuration
+-------------
+By default, play-selenide starts Play server in "test" mode before running tests.
+If you need to disable it (for example, for running tests against remote server), you can do it by the following 
+system property: `-Dselenide.play.start=false`
