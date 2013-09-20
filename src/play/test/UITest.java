@@ -54,4 +54,13 @@ public abstract class UITest extends BaseTest {
   protected void mockAlert() {
     getWebDriver().switchTo().alert().accept();
   }
+
+  /**
+   * Clears Play flash before opening some page
+   */
+  public void clearFlash() {
+    String flashCookiePrefix = Play.configuration.getProperty("application.session.cookie", "PLAY");
+    String flashCookie = flashCookiePrefix + "_FLASH";
+    getWebDriver().manage().deleteCookieNamed(flashCookie);
+  }
 }
