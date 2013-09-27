@@ -52,7 +52,7 @@ function compile_tests() {
   prepare_test_env
 
   rm -fr test-classes && mkdir test-classes
-  javac -g -source 1.7 -target 1.7 -cp $TEST_CLASSPATH $TEST_CLASSES -d test-classes || exit 1
+  javac -g -source 1.7 -target 1.7 -nowarn -cp $TEST_CLASSPATH $TEST_CLASSES -d test-classes || exit 1
 }
 
 function run_unit_tests() {
@@ -64,7 +64,11 @@ function run_unit_tests() {
       | sed "s@\(.*\)@\1,$(pwd)/test-result,\1@" > $TESTS_FILE
   fi
 
-  java $TEST_JAVA_OPTS -XX:-UseSplitVerifier -cp test-classes:$TEST_CLASSPATH play.test.JUnitRunnerWithXMLOutput $TESTS_FILE || exit $?
+  java $TEST_JAVA_OPTS -XX:-UseSplitVerifier -cp test-classes:$TEST_CLASSPATH play.test.JUnitRunnerWithXMLOutput \
+    $TESTS_FILE | tee test-result/unit-tests.log || exit $?
+
+  echo ""
+  egrep test-result/unit-tests.log -e "TEST.*FAILED"
   echo "Finished unit tests."
 }
 
@@ -76,6 +80,10 @@ function run_ui_tests() {
     find test-classes -name '*Spec.class' | LC_ALL=C sort | sed 's@test-classes/@@; s@\.class$@@; s@/@.@g' \
       | sed 's/\(.*\)/\1,test-result,\1/' > $TESTS_FILE
   fi
-  java $TEST_JAVA_OPTS -XX:-UseSplitVerifier -Dprecompiled=true -Dbrowser=chrome -Dselenide.reports=test-result -cp test-classes:$TEST_CLASSPATH play.test.JUnitRunnerWithXMLOutput $TESTS_FILE || exit $?
+  java $TEST_JAVA_OPTS -XX:-UseSplitVerifier -Dprecompiled=true -Dbrowser=chrome -Dselenide.reports=test-result \
+    -cp test-classes:$TEST_CLASSPATH play.test.JUnitRunnerWithXMLOutput $TESTS_FILE | tee test-result/ui-tests.log || exit $?
+
+  echo ""
+  egrep test-result/ui-tests.log -e "TEST.*FAILED"
   echo "Finished UI tests."
 }
