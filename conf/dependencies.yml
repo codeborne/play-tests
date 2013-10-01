@@ -4,9 +4,9 @@ require:
     - play 1.2+
 
     - com.codeborne -> selenide 2.4
-    - org.apache.ant -> ant-junit 1.8.4:
-        exclude:
-            - junit -> *
+    - junit -> junit 4.11
+    - org.apache.ant -> ant-junit 1.9.2
+    - org.apache.ant -> ant-junit4 1.9.2
 
 #repositories:
 #    - snapshots:
