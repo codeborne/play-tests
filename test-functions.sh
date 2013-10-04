@@ -5,20 +5,6 @@ PLAY=`which play`
 PLAY=`readlink -f $PLAY`
 PLAY_HOME=`dirname $PLAY`
 
-which chromedriver
-if [ $? != 0 ]; then
-    echo "Downloading chromedriver binary into ~/bin"
-    mkdir -p ~/bin
-    wget https://chromedriver.googlecode.com/files/chromedriver_linux64_2.3.zip -O ~/bin/chromedriver.zip &&
-    cd ~/bin && unzip chromedriver.zip && rm chromedriver.zip && cd -
-    which chromedriver
-    if [ $? != 0 ]; then
-	echo "Cannot start downloaded chromedriver, probably you need to restart your terminal"
-	exit 1
-    fi
-fi
-
-
 function modify_test_env() {
   # this can be overridden
   echo
@@ -58,14 +44,9 @@ function compile_tests() {
 function run_unit_tests() {
   echo "Running unit tests... "
   prepare_test_env
-  TESTS_FILE=test-result/unit-tests.txt
-  if [ ! -e $TESTS_FILE ]; then
-    find test-classes -name '*Test.class' | LC_ALL=C sort | sed 's@test-classes/@@; s@\.class$@@; s@/@.@g' | egrep -v '^(ui\.|play.test\.|realworld\.|controllers\.ControllerTest)' \
-      | sed "s@\(.*\)@\1,$(pwd)/test-result,\1@" > $TESTS_FILE
-  fi
 
-  java $TEST_JAVA_OPTS -XX:-UseSplitVerifier -cp test-classes:$TEST_CLASSPATH play.test.JUnitRunnerWithXMLOutput \
-    $TESTS_FILE 2>&1 | tee test-result/unit-tests.log
+  java $TEST_JAVA_OPTS -XX:-UseSplitVerifier -cp test-classes:$TEST_CLASSPATH \
+    play.test.JUnitRunnerWithXMLOutput UNIT 2>&1 | tee test-result/unit-tests.log
 
   echo ""
   egrep test-result/unit-tests.log -e "TEST.*FAILED"
@@ -79,15 +60,13 @@ function run_unit_tests() {
 }
 
 function run_ui_tests() {
+  install_chromedriver
+
   echo "Running UI tests... "
   prepare_test_env
-  TESTS_FILE=test-result/ui-tests.txt
-  if [ ! -e $TESTS_FILE ]; then
-    find test-classes -name '*Spec.class' | LC_ALL=C sort | sed 's@test-classes/@@; s@\.class$@@; s@/@.@g' \
-      | sed 's/\(.*\)/\1,test-result,\1/' > $TESTS_FILE
-  fi
   java $TEST_JAVA_OPTS -XX:-UseSplitVerifier -Dprecompiled=true -Dbrowser=chrome -Dselenide.reports=test-result \
-    -cp test-classes:$TEST_CLASSPATH play.test.JUnitRunnerWithXMLOutput $TESTS_FILE 2>&1 | tee test-result/ui-tests.log
+    -cp test-classes:$TEST_CLASSPATH \
+    play.test.JUnitRunnerWithXMLOutput UI $TESTS_FILE 2>&1 | tee test-result/ui-tests.log
 
   echo ""
   egrep test-result/ui-tests.log -e "TEST.*FAILED"
@@ -98,6 +77,19 @@ function run_ui_tests() {
   fi
 
   echo "Finished UI tests."
+}
 
-
+function install_chromedriver() {
+  which chromedriver
+  if [ $? != 0 ]; then
+      echo "Downloading chromedriver binary into ~/bin"
+      mkdir -p ~/bin
+      wget https://chromedriver.googlecode.com/files/chromedriver_linux64_2.3.zip -O ~/bin/chromedriver.zip &&
+      cd ~/bin && unzip chromedriver.zip && rm chromedriver.zip && cd -
+      which chromedriver
+      if [ $? != 0 ]; then
+    echo "Cannot start downloaded chromedriver, probably you need to restart your terminal"
+    exit 1
+      fi
+  fi
 }
