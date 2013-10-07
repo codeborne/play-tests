@@ -80,7 +80,7 @@ function run_ui_tests() {
 }
 
 function install_chromedriver() {
-  which chromedriver
+  which chromedriver >/dev/null
   if [ $? != 0 ]; then
       echo "Downloading chromedriver binary into ~/bin"
       mkdir -p ~/bin
