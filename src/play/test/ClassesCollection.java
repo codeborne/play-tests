@@ -6,9 +6,12 @@ import java.net.URLClassLoader;
 import java.util.*;
 
 import static java.io.File.separatorChar;
+import static java.util.Arrays.asList;
 import static org.apache.commons.io.FilenameUtils.removeExtension;
 
 class ClassesCollection {
+  private static final List<String> IGNORED = asList("tmp");
+
   Set<String> scannedFolders = new HashSet<>();
   List<Class> allClasses = new ArrayList<>(256);
 
@@ -54,6 +57,9 @@ class ClassesCollection {
 
   private void scanDirectory(File dir) throws ClassNotFoundException {
     if (scannedFolders.contains(dir.getAbsolutePath())) {
+      return;
+    }
+    if (IGNORED.contains(dir.getName())) {
       return;
     }
 

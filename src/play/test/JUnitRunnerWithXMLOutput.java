@@ -33,13 +33,14 @@ public class JUnitRunnerWithXMLOutput {
     testResults.mkdir();
   }
 
-  private static Collection<Class> getTestClasses(TestType testType) throws ClassNotFoundException {
-    List<Class> allClasses = new ClassesCollection().findTestClasses();
+  private static Collection<Class> getTestClasses(List<Class> classes, TestType testType) throws ClassNotFoundException {
+//    List<Class> allClasses = new ClassesCollection().findTestClasses();
+    List<Class> allClasses = classes;
     Collection<Class> allTests = filter(allClasses, new IsTestClass());
-    System.out.println("allTests: " + allTests);
+//    System.out.println("allTests: " + allTests);
     final Collection<Class> typeTests = filter(allTests, testType.getFilter());
-    System.out.println("filter: " + testType.getFilter());
-    System.out.println("typeTests: " + typeTests);
+//    System.out.println("filter: " + testType.getFilter());
+//    System.out.println("typeTests: " + typeTests);
     return typeTests;
   }
 
@@ -61,9 +62,13 @@ public class JUnitRunnerWithXMLOutput {
     return file;
   }
 
-  public static void main(String[] args) throws IOException, ClassNotFoundException {
+  public static void main(String[] args) throws Exception {
     TestType testType = TestType.valueOf(args[0]);
-    Collection<Class> classes = getTestClasses(testType);
+
+    JavaSourcesCollection sources = new JavaSourcesCollection().scan();
+//    Compiler.compile(sources.getSourceRoots(), sources.getSourceFiles(), "test-classes");
+
+    Collection<Class> classes = getTestClasses(sources.getClasses(), testType);
     List<Class> sorted = new ArrayList<>(classes);
     Collections.sort(sorted, classNameComparator);
 
