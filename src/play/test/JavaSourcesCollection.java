@@ -11,9 +11,9 @@ import static java.io.File.separatorChar;
 import static org.apache.commons.io.FilenameUtils.removeExtension;
 
 class JavaSourcesCollection {
-  private final List<String> sourceRoots = new ArrayList<>();
-  private final List<String> sourceFiles = new ArrayList<>(256);
-  private final List<String> classNames = new ArrayList<>(256);
+  private final List<String> sourceRoots = new ArrayList<String>();
+  private final List<String> sourceFiles = new ArrayList<String>(256);
+  private final List<String> classNames = new ArrayList<String>(256);
 
   private String currentSourceRoot;
 
@@ -100,7 +100,7 @@ class JavaSourcesCollection {
   }
 
   public List<Class> getClasses() throws ClassNotFoundException {
-    List<Class> classes = new ArrayList<>(classNames.size());
+    List<Class> classes = new ArrayList<Class>(classNames.size());
     for (String className : classNames) {
       classes.add(Class.forName(className));
     }

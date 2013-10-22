@@ -54,10 +54,14 @@ public class JUnitRunnerWithXMLOutput {
 
   private static File prepareTestsFile(TestType testType, List<Class> testClasses) throws IOException {
     File file = new File("test-result/" + testType + "-tests.txt");
-    try (PrintWriter out = new PrintWriter(new FileWriter(file))) {
+    PrintWriter out = new PrintWriter(new FileWriter(file));
+    try {
       for (Class testClass : testClasses) {
         out.println(testClass.getName() + ",test-result," + testClass.getName());
       }
+    }
+    finally {
+      out.close();
     }
     return file;
   }
@@ -69,7 +73,7 @@ public class JUnitRunnerWithXMLOutput {
 //    Compiler.compile(sources.getSourceRoots(), sources.getSourceFiles(), "test-classes");
 
     Collection<Class> classes = getTestClasses(sources.getClasses(), testType);
-    List<Class> sorted = new ArrayList<>(classes);
+    List<Class> sorted = new ArrayList<Class>(classes);
     Collections.sort(sorted, classNameComparator);
 
     File testsFile = prepareTestsFile(testType, sorted);

@@ -12,8 +12,8 @@ import static org.apache.commons.io.FilenameUtils.removeExtension;
 class ClassesCollection {
   private static final List<String> IGNORED = asList("tmp");
 
-  Set<String> scannedFolders = new HashSet<>();
-  List<Class> allClasses = new ArrayList<>(256);
+  Set<String> scannedFolders = new HashSet<String>();
+  List<Class> allClasses = new ArrayList<Class>(256);
 
   private String currentCpEntry;
 
