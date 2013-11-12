@@ -24,11 +24,22 @@ class JavaSourcesCollection {
     if (modules.exists() && modules.isDirectory() && modules.listFiles() != null) {
       for (File module : modules.listFiles()) {
         module = resolveModule(module);
-        File moduleSourceDir = new File(module, "app");
-        if (moduleSourceDir.exists()) {
-          sourceRoots.add(moduleSourceDir.getAbsolutePath());
-        }
+        addModuleDir(module, "app");
+        if (!isModuleWithBrokenTests(module))
+          addModuleDir(module, "test");
       }
+    }
+  }
+
+  private boolean isModuleWithBrokenTests(File module) {
+    return module.getName().matches("guice.*") ||
+        module.getName().matches("cms.*");
+  }
+
+  private void addModuleDir(File module, String dir) {
+    File moduleSourceDir = new File(module, dir);
+    if (moduleSourceDir.exists()) {
+      sourceRoots.add(moduleSourceDir.getAbsolutePath());
     }
   }
 
@@ -52,7 +63,7 @@ class JavaSourcesCollection {
   private void scanSourceRoot(String sourceRoot) {
     final File dir = new File(sourceRoot);
     currentSourceRoot = dir.getAbsolutePath();
-    System.out.println("SCAN " + currentSourceRoot);
+//    System.out.println("SCAN " + currentSourceRoot);
     scanFileOrDirectory(dir);
   }
 

@@ -10,19 +10,30 @@ function modify_test_env() {
   echo
 }
 
+function resolve_module() {
+  NAME=$1
+  MODULE=`ls -d modules/*$NAME*`
+  if [ -f $MODULE ]; then
+    MODULE=`cat $MODULE`
+  fi
+  echo $MODULE
+}
+
 function prepare_test_env() {
   TEST_CLASSPATH="lib/*:"
   TEST_CLASSES=`find app -name '*.java'`
   for m in `ls modules`; do
-    if [ -d modules/$m ]; then
-      TEST_CLASSPATH=$TEST_CLASSPATH:`pwd`/modules/$m/lib/*
-      TEST_CLASSES="$TEST_CLASSES `find modules/$m/app -name '*.java' 2>/dev/null`"
-    fi
-    if [ -f modules/$m ]; then
-      dir=`cat modules/$m`
-      TEST_CLASSPATH=$TEST_CLASSPATH:$dir/lib/*
-      TEST_CLASSES="$TEST_CLASSES `find $dir/app -name '*.java' 2>/dev/null`"
-    fi
+    module=`resolve_module $m`
+    TEST_CLASSPATH=$TEST_CLASSPATH:$module/lib/*
+    TEST_CLASSES="$TEST_CLASSES `find $module/app -name '*.java' 2>/dev/null`"
+    case "$m" in
+      guice*|cms*)
+        #echo "Ignore tests: $m"
+        ;;
+      *)
+        TEST_CLASSES="$TEST_CLASSES `find $module/test -name '*.java' 2>/dev/null`"
+        ;;
+    esac
   done
   TEST_CLASSES="$TEST_CLASSES `find test -name '*.java'`"
 
@@ -38,7 +49,8 @@ function compile_tests() {
   prepare_test_env
 
   rm -fr test-classes && mkdir test-classes
-  javac -g -source 1.7 -target 1.7 -nowarn -cp $TEST_CLASSPATH $TEST_CLASSES -d test-classes || exit 1
+  # javac -g -source 1.7 -target 1.7 -nowarn -cp $TEST_CLASSPATH $TEST_CLASSES -d test-classes || exit 1
+  java -cp $TEST_CLASSPATH play.test.Compiler || exit 1
 }
 
 function run_unit_tests() {

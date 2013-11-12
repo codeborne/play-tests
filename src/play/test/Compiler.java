@@ -18,12 +18,6 @@ public class Compiler {
     }
   };
 
-  public static void main(String[] args) {
-    JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-    args = new String[]{"test/controllers/BanklinkTest.java"};
-    compiler.run(null, null, null, args);
-  }
-
   public static void addToClasspath(URL url) throws Exception {
     URLClassLoader sysloader = (URLClassLoader) ClassLoader.getSystemClassLoader();
     Class<URLClassLoader> sysclass = URLClassLoader.class;
@@ -34,7 +28,7 @@ public class Compiler {
   }
 
   public static void compile(List<String> resourceRoots, List<String> javaSources, String output) throws Exception {
-    System.out.println("COMPILE: " + javaSources);
+    System.out.println("Compile " + javaSources.size() + " java files");
 
     String[] args = new String[javaSources.size() + 3];
     args[0] = "-g";
@@ -52,5 +46,14 @@ public class Compiler {
     }
 
     addToClasspath(target.toURI().toURL());
+  }
+
+  public static void main(String[] args) throws Exception {
+    JavaSourcesCollection sources = new JavaSourcesCollection().scan();
+    Compiler.compile(sources.getSourceRoots(), sources.getSourceFiles(), "test-classes");
+//
+//    JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+//    args = new String[]{"test/controllers/BanklinkTest.java"};
+//    compiler.run(null, null, null, args);
   }
 }

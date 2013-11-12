@@ -1,7 +1,6 @@
 package play.test;
 
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import org.apache.commons.io.FileUtils;
 import org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner;
 import org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter;
@@ -21,7 +20,7 @@ public class JUnitRunnerWithXMLOutput {
     UI;
 
     public Predicate<Class> getFilter() {
-      return this == UNIT ? new IsUnitTest() : Predicates.not(new IsUnitTest());
+      return this == UNIT ? new IsUnitTest() : new IsUITest();
     }
   }
 
@@ -75,6 +74,8 @@ public class JUnitRunnerWithXMLOutput {
     Collection<Class> classes = getTestClasses(sources.getClasses(), testType);
     List<Class> sorted = new ArrayList<Class>(classes);
     Collections.sort(sorted, classNameComparator);
+
+    System.out.println("Run " + classes.size() + " " + testType + " tests");
 
     File testsFile = prepareTestsFile(testType, sorted);
 
