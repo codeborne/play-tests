@@ -73,6 +73,7 @@ function run_unit_tests() {
 
 function run_ui_tests() {
   install_chromedriver
+  TESTS_FILE=$1
 
   echo "Running UI tests... "
   prepare_test_env

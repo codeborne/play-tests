@@ -51,7 +51,20 @@ public class JUnitRunnerWithXMLOutput {
 
   private final static ClassNameComparator classNameComparator = new ClassNameComparator();
 
-  private static File prepareTestsFile(TestType testType, List<Class> testClasses) throws IOException {
+  private static File prepareTestsFile(TestType testType) throws IOException, ClassNotFoundException {
+    JavaSourcesCollection sources = new JavaSourcesCollection().scan();
+//    Compiler.compile(sources.getSourceRoots(), sources.getSourceFiles(), "test-classes");
+
+    Collection<Class> classes = getTestClasses(sources.getClasses(), testType);
+    List<Class> sorted = new ArrayList<Class>(classes);
+    Collections.sort(sorted, classNameComparator);
+
+    System.out.println("Run " + classes.size() + " " + testType + " tests");
+
+    return createTestsFile(testType, sorted);
+  }
+
+  private static File createTestsFile(TestType testType, List<Class> testClasses) throws IOException {
     File file = new File("test-result/" + testType + "-tests.txt");
     PrintWriter out = new PrintWriter(new FileWriter(file));
     try {
@@ -67,17 +80,7 @@ public class JUnitRunnerWithXMLOutput {
 
   public static void main(String[] args) throws Exception {
     TestType testType = TestType.valueOf(args[0]);
-
-    JavaSourcesCollection sources = new JavaSourcesCollection().scan();
-//    Compiler.compile(sources.getSourceRoots(), sources.getSourceFiles(), "test-classes");
-
-    Collection<Class> classes = getTestClasses(sources.getClasses(), testType);
-    List<Class> sorted = new ArrayList<Class>(classes);
-    Collections.sort(sorted, classNameComparator);
-
-    System.out.println("Run " + classes.size() + " " + testType + " tests");
-
-    File testsFile = prepareTestsFile(testType, sorted);
+    File testsFile = args.length == 1 ? prepareTestsFile(testType) : new File(args[1]);
 
     // use ant's runner to output results into xml
     JUnitTestRunner.main(new String[]{"testsfile=" + testsFile, "formatter=" + XMLJUnitResultFormatter.class.getName() + ",xml", "showoutput=true"});
