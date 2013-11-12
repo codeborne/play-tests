@@ -27,7 +27,7 @@ public class Compiler {
     method.invoke(sysloader, new Object[] { url });
   }
 
-  public static void compile(List<String> resourceRoots, List<String> javaSources, String output) throws Exception {
+  public static int compile(List<String> resourceRoots, List<String> javaSources, String output) throws Exception {
     System.out.println("Compile " + javaSources.size() + " java files");
 
     String[] args = new String[javaSources.size() + 3];
@@ -38,20 +38,25 @@ public class Compiler {
       args[i+3] = javaSources.get(i);
     }
     JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-    compiler.run(null, System.out, System.err, args);
+    int exitCode = compiler.run(null, System.out, System.err, args);
 
-    File target = new File(output);
-    for (String resourceRoot : resourceRoots) {
-      FileUtils.copyDirectory(new File(resourceRoot), target, NON_JAVA_FILES);
+    if (exitCode == 0) {
+      File target = new File(output);
+      for (String resourceRoot : resourceRoots) {
+        FileUtils.copyDirectory(new File(resourceRoot), target, NON_JAVA_FILES);
+      }
+
+  //    addToClasspath(target.toURI().toURL());
     }
 
-    addToClasspath(target.toURI().toURL());
+    return exitCode;
   }
 
   public static void main(String[] args) throws Exception {
     JavaSourcesCollection sources = new JavaSourcesCollection().scan();
-    Compiler.compile(sources.getSourceRoots(), sources.getSourceFiles(), "test-classes");
-//
+    int exitCode = Compiler.compile(sources.getSourceRoots(), sources.getSourceFiles(), "test-classes");
+    System.exit(exitCode);
+
 //    JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 //    args = new String[]{"test/controllers/BanklinkTest.java"};
 //    compiler.run(null, null, null, args);
