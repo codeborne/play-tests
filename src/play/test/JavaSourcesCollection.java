@@ -17,7 +17,7 @@ class JavaSourcesCollection {
 
   private String currentSourceRoot;
 
-  public JavaSourcesCollection() throws IOException {
+  JavaSourcesCollection() throws IOException {
     sourceRoots.add("app");
     sourceRoots.add("test");
     File modules = new File("modules");

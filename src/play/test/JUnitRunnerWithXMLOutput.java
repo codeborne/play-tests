@@ -32,7 +32,7 @@ public class JUnitRunnerWithXMLOutput {
     testResults.mkdir();
   }
 
-  private static Collection<Class> getTestClasses(List<Class> classes, TestType testType) throws ClassNotFoundException {
+  private static Collection<Class> getTestClasses(List<Class> classes, TestType testType) {
 //    List<Class> allClasses = new ClassesCollection().findTestClasses();
     List<Class> allClasses = classes;
     Collection<Class> allTests = filter(allClasses, new IsTestClass());
@@ -43,13 +43,13 @@ public class JUnitRunnerWithXMLOutput {
     return typeTests;
   }
 
-  private final static class ClassNameComparator implements Comparator<Class> {
+  private static final class ClassNameComparator implements Comparator<Class> {
     @Override public int compare(Class aClass, Class bClass) {
       return aClass.getName().compareTo(bClass.getName());
     }
   }
 
-  private final static ClassNameComparator classNameComparator = new ClassNameComparator();
+  private static final ClassNameComparator classNameComparator = new ClassNameComparator();
 
   private static File prepareTestsFile(TestType testType) throws IOException, ClassNotFoundException {
     JavaSourcesCollection sources = new JavaSourcesCollection().scan();
