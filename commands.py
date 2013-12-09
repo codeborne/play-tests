@@ -1,34 +1,31 @@
 # Secure
-
+import string
 import re
 import getopt
-import sys, os, os.path
+import sys
+import os
+import os.path
 import shutil
 from shutil import copytree, ignore_patterns
 import subprocess
+
 
 MODULE = "selenide"
 
 COMMANDS = ["unit-test", "ui-test"]
 
 HELP = {
+    "compile": "Compile all the tests with Java code",
     "unit-test": "Run plain unit-tests",
     "ui-test": "Run UI tests"
 }
-
-
-def javac_path():
-    if os.environ.has_key('JAVA_HOME'):
-        return os.path.normpath("%s/bin/javac" % os.environ['JAVA_HOME'])
-    else:
-        return "javac"
 
 
 def prepare_output_dir(app):
     outdir = os.path.join(app.path, 'test-classes')
     if os.path.isdir(outdir):
         shutil.rmtree(outdir)
-    # os.mkdir(outdir)
+    os.mkdir(outdir)
     return outdir
 
 
@@ -40,34 +37,11 @@ def prepare_test_result_dir(app):
     return outdir
 
 
-def java_files(relative_path, source_folder, suffix='.java'):
-    path = os.path.normpath(os.path.join(relative_path, source_folder))
-
-    java_sources = []
-    for root, subFolders, files in os.walk(path):
-        for file in files:
-            if file.endswith(suffix):
-                java_sources.append(os.path.join(root, file))
-    return java_sources
-
-
-def compile(app, args, command):
-    java_sources = java_files(app.path, "app") + \
-                   java_files(app.path, "src") + \
-                   java_files(app.path, "test")
-    for module in app.modules():
-        java_sources += java_files(module, "app")
-        java_sources += java_files(module, "src")
-        if command == 'ui-test':
-            java_sources += java_files(module, "test", "Spec.java")
+def compile_sources(app, args):
     outdir = prepare_output_dir(app)
-    copytree(os.path.join(app.path, "test"), outdir, ignore=ignore_patterns('*.java'))
 
-    javac_args = ['-g', '-classpath', app.cp_args(), '-d', outdir] + args + java_sources
-    with open(os.path.join(outdir, 'javac.params'), 'w') as f:
-        f.write("\n".join(javac_args))
-    javac_cmd = [javac_path(), '@%s' % os.path.join(outdir, 'javac.params')]
-    print "Compiling %d Java sources to %s ..." % (len(java_sources), outdir)
+    javac_cmd = app.java_cmd(args, cp_args=app.cp_args(), className='play.test.Compiler')
+    print "Compiling Java sources to %s ..." % outdir
     return_code = subprocess.call(javac_cmd, env=os.environ)
     if 0 != return_code:
         print "Compilation FAILED"
@@ -76,61 +50,68 @@ def compile(app, args, command):
     print "Compilation successful"
 
 
-def run_tests(command, app, args, test_classes):
+def get_classpath(app):
+    classpath = [os.path.join(app.path, 'test-classes')]
+
+    # The default
+    # classpath.append(os.path.normpath(os.path.join(app.path, 'conf')))
+    classpath.append(app.agent_path())
+
+    # The application - recursively add jars to the classpath inside the lib folder to allow for subdirectories
+    if os.path.exists(os.path.join(app.path, 'lib')):
+        app.find_and_add_all_jars(classpath, os.path.join(app.path, 'lib'))
+
+    # The modules
+    for module in app.modules():
+        if os.path.exists(os.path.join(module, 'lib')):
+            libs = os.path.join(module, 'lib')
+            if os.path.exists(libs):
+                for jar in os.listdir(libs):
+                    if jar.endswith('.jar'):
+                        classpath.append(os.path.normpath(os.path.join(libs, '%s' % jar)))
+
+    # The framework
+    for jar in os.listdir(os.path.join(app.play_env["basedir"], 'framework/lib')):
+        if jar.endswith('.jar'):
+            classpath.append(os.path.normpath(os.path.join(app.play_env["basedir"], 'framework/lib/%s' % jar)))
+
+    return classpath
+
+def run_tests(app, args, test_type):
     app.check()
-    print "~ Running %d tests" % len(test_classes)
+    print "~ Running %s tests" % test_type
+    print "~ app = %s" % app
+    print "~ args = %s" % args
 
-    test_result = prepare_test_result_dir(app)
-    tests_file=os.path.join(test_result, '%s.txt' % command)
-    with open(tests_file, 'w') as f:
-        for test_class in test_classes:
-            f.write("%s,test-result,%s\n" % (test_class, test_class))
+    prepare_test_result_dir(app)
 
-    classpath = "%s:%s" % (app.cp_args(), os.path.join(app.path, 'test-classes'))
-    print "CLASSPATH: %s" % classpath
+    classpath = ':'.join(get_classpath(app))
+    # print "CLASSPATH: %s" % string.join(classpath.split(':'), ",\n")
 
-    java_cmd = app.java_cmd(args, cp_args=classpath, className='play.test.JUnitRunnerWithXMLOutput', args=[tests_file])
-    print 'RUNNING: %s' % java_cmd
+    java_cmd = app.java_cmd(args, cp_args=classpath, className='play.test.JUnitRunnerWithXMLOutput', args=[test_type])
+    # print 'RUNNING: %s' % java_cmd
+    # print ""
+    # print ""
+    # print ""
+    # print ""
     return_code = subprocess.call(java_cmd, env=os.environ)
 
     if 0 != return_code:
         print "Tests FAILED"
         sys.exit(return_code)
 
-    print "Executed %d tests successfully" % len(test_classes)
+    print "Executed %s tests successfully" % test_type
 
 
-def test_classes(relative_path, source_folder, include, exclude):
-    path = os.path.normpath(os.path.join(relative_path, source_folder))
-
-    tests = []
-    for root, subFolders, files in os.walk(path):
-        for file in files:
-            file_path = "%s/%s" % (os.path.relpath(root, path), file)
-            if re.search(include, file_path) and not re.search(exclude, file_path):
-                (class_name, ext) = os.path.splitext(file_path)
-                tests.append(class_name.replace('/', '.'))
-    return tests
-
-
-def run_unit_tests(command, app, args, include, exclude):
-    include = include or ".*Test\.java"
-    exclude = exclude or "Abstract.*\.java|ui\/.*"
-
-    tests = test_classes(app.path, "test", include, exclude)
+def run_unit_tests(app, args, include, exclude):
     print "UNIT TESTS"
-    run_tests(command, app, args, tests)
+    run_tests(app, args, 'UNIT')
 
 
-def run_ui_tests(command, app, args, include, exclude):
-    include = include or ".*Spec\.java"
-    exclude = exclude or "Abstract.*\.java"
-    tests = test_classes(app.path, "test", include, exclude)
-    for module in app.modules():
-        tests += test_classes(module, "test", include, exclude)
-
+def run_ui_tests(app, args, include, exclude):
     print "UI TESTS"
-    run_tests(command, app, args, tests)
+    ui_args = ['-Dprecompiled=true', '-Dbrowser=chrome', '-Dselenide.reports=test-result']
+    run_tests(app, args + ui_args, 'UI')
 
 
 def execute(**kargs):
@@ -151,8 +132,12 @@ def execute(**kargs):
             print "EXCLUDE %s" % exclude
             print "~ "
 
-    compile(app, args, command)
-    if command == 'ui-test':
-        run_ui_tests(command, app, args, include, exclude)
+    # compile_sources(app, args)
+    if command == 'compile':
+        compile_sources(app, args)
+    elif command == 'unit-test':
+        run_unit_tests(app, args, include, exclude)
+    elif command == 'ui-test':
+        run_ui_tests(app, args, include, exclude)
     else:
-        run_unit_tests(command, app, args, include, exclude)
+        raise ValueError("Unknown command: %s" % command)
