@@ -4,8 +4,6 @@ import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.junit.ScreenShooter;
 import org.junit.BeforeClass;
 import org.junit.Rule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import play.Play;
 import play.i18n.Messages;
 import play.mvc.Router;
@@ -18,8 +16,6 @@ import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static com.codeborne.selenide.junit.ScreenShooter.failedTests;
 
 public abstract class UITest extends BaseTest {
-  private static final Logger LOG = LoggerFactory.getLogger(UITest.class);
-
   private static final AtomicBoolean serverStarted = new AtomicBoolean(false);
 
   public static boolean isPrecompileNeeded = Boolean.getBoolean("precompiled");
@@ -28,14 +24,12 @@ public abstract class UITest extends BaseTest {
   @BeforeClass
   public static synchronized void startServer() {
     if (isPlayStartNeeded && !serverStarted.get()) {
-      LOG.info("+++ Need to start play");
       if (isPrecompileNeeded) {
         Play.usePrecompiled = true;
       }
-      new Server(new String[]{"--http.port=7777"});
+      new Server(new String[]{});
       serverStarted.set(true);
-      LOG.info("+++ Started play");
-      Configuration.baseUrl = "http://localhost:" + "7777"; // Play.configuration.getProperty("http.port");
+      Configuration.baseUrl = "http://localhost:" + Play.configuration.getProperty("http.port");
     }
   }
 
