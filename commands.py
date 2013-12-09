@@ -16,8 +16,8 @@ COMMANDS = ["unit-test", "ui-test"]
 
 HELP = {
     "compile": "Compile all the tests with Java code",
-    "unit-test": "Run plain unit-tests",
-    "ui-test": "Run UI tests"
+    "unit-tests": "Run plain unit-tests",
+    "ui-tests": "Run UI tests"
 }
 
 
@@ -135,9 +135,9 @@ def execute(**kargs):
     # compile_sources(app, args)
     if command == 'compile':
         compile_sources(app, args)
-    elif command == 'unit-test':
+    elif command == 'unit-tests':
         run_unit_tests(app, args, include, exclude)
-    elif command == 'ui-test':
+    elif command == 'ui-tests':
         run_ui_tests(app, args, include, exclude)
     else:
         raise ValueError("Unknown command: %s" % command)
