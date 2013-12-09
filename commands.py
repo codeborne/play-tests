@@ -12,7 +12,7 @@ import subprocess
 
 MODULE = "selenide"
 
-COMMANDS = ["unit-test", "ui-test"]
+COMMANDS = ["compile", "unit-tests", "ui-tests"]
 
 HELP = {
     "compile": "Compile all the tests with Java code",
