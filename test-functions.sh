@@ -102,7 +102,7 @@ function install_chromedriver() {
   if [ $? != 0 ]; then
       echo "Downloading chromedriver binary into ~/bin"
       mkdir -p ~/bin
-      wget https://chromedriver.googlecode.com/files/chromedriver_linux64_2.3.zip -O ~/bin/chromedriver.zip &&
+      wget http://chromedriver.storage.googleapis.com/2.7/chromedriver_linux64.zip -O ~/bin/chromedriver.zip &&
       cd ~/bin && unzip chromedriver.zip && rm chromedriver.zip && cd -
       which chromedriver
       if [ $? != 0 ]; then
