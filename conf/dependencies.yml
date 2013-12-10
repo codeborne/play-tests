@@ -3,7 +3,7 @@ self: play-selenide -> selenide 2.6.1
 require:
     - play 1.2+
 
-    - com.codeborne -> selenide 2.6.1
+    - com.codeborne -> selenide 2.6
     - junit -> junit 4.11
     - org.apache.ant -> ant-junit 1.9.2
     - org.apache.ant -> ant-junit4 1.9.2
