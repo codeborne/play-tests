@@ -77,18 +77,23 @@ def get_classpath(app):
 
     return classpath
 
-def run_tests(app, args, test_type):
+
+def run_tests(app, args, test_type, test_class_name=None):
     app.check()
     print "~ Running %s tests" % test_type
-    print "~ app = %s" % app
-    print "~ args = %s" % args
 
     prepare_test_result_dir(app)
 
     classpath = ':'.join(get_classpath(app))
     # print "CLASSPATH: %s" % string.join(classpath.split(':'), ",\n")
 
-    java_cmd = app.java_cmd(args, cp_args=classpath, className='play.test.JUnitRunnerWithXMLOutput', args=[test_type])
+    java_args=[test_type]
+    if test_class_name:
+        with open("test-result/ui-tests.txt", "w") as tests_file:
+            tests_file.write("%s,test-result,%s" % (test_class_name, test_class_name))
+        java_args = [test_type, "test-result/ui-tests.txt"]
+
+    java_cmd = app.java_cmd(args, cp_args=classpath, className='play.test.JUnitRunnerWithXMLOutput', args=java_args)
     # print 'RUNNING: %s' % java_cmd
     # print ""
     # print ""
@@ -103,15 +108,15 @@ def run_tests(app, args, test_type):
     print "Executed %s tests successfully" % test_type
 
 
-def run_unit_tests(app, args, include, exclude):
+def run_unit_tests(app, args, test_class_name, include, exclude):
     print "UNIT TESTS"
-    run_tests(app, args, 'UNIT')
+    run_tests(app, args, 'UNIT', test_class_name)
 
 
-def run_ui_tests(app, args, include, exclude):
+def run_ui_tests(app, args, test_class_name, include, exclude):
     print "UI TESTS"
     ui_args = ['-Dprecompiled=true', '-Dbrowser=chrome', '-Dselenide.reports=test-result']
-    run_tests(app, args + ui_args, 'UI')
+    run_tests(app, args + ui_args, 'UI', test_class_name)
 
 
 def execute(**kargs):
@@ -121,23 +126,28 @@ def execute(**kargs):
 
     include = None
     exclude = None
-    optlist, args = getopt.getopt(args, '', ['include=', 'exclude='])
+    test_class_name = None
+    optlist, args = getopt.getopt(args, '', ['include=', 'exclude=', 'test='])
     for o, a in optlist:
         if o == '--include':
             include = a
-            print "INCLUDE %s" % include
+            print "INCLUDE: %s" % include
             print "~ "
         if o == '--exclude':
             exclude = a
-            print "EXCLUDE %s" % exclude
+            print "EXCLUDE: %s" % exclude
+            print "~ "
+        if o == '--test':
+            test_class_name = a
+            print "TEST CLASS: %s" % exclude
             print "~ "
 
     # compile_sources(app, args)
     if command == 'compile':
         compile_sources(app, args)
     elif command == 'unit-tests':
-        run_unit_tests(app, args, include, exclude)
+        run_unit_tests(app, args, test_class_name, include, exclude)
     elif command == 'ui-tests':
-        run_ui_tests(app, args, include, exclude)
+        run_ui_tests(app, args, test_class_name, include, exclude)
     else:
         raise ValueError("Unknown command: %s" % command)
