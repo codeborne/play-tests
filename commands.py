@@ -1,47 +1,54 @@
 # Secure
-import string
-import re
 import getopt
 import sys
 import os
 import os.path
 import shutil
-from shutil import copytree, ignore_patterns
 import subprocess
 
 
 MODULE = "selenide"
 
-COMMANDS = ["compile", "unit-tests", "ui-tests"]
+COMMANDS = ["compile", "clean-tests", "unit-tests", "ui-tests"]
 
 HELP = {
     "compile": "Compile all the tests with Java code",
+    "clean-tests": "Clean compiled tests and test results",
     "unit-tests": "Run plain unit-tests",
     "ui-tests": "Run UI tests"
 }
 
 
-def prepare_output_dir(app):
-    outdir = os.path.join(app.path, 'test-classes')
-    if os.path.isdir(outdir):
-        shutil.rmtree(outdir)
-    os.mkdir(outdir)
-    return outdir
+def _create_dir(f):
+    if not os.path.isdir(f):
+        os.mkdir(f)
+    return f
 
 
-def prepare_test_result_dir(app):
-    outdir = os.path.join(app.path, 'test-result')
-    if os.path.isdir(outdir):
-        shutil.rmtree(outdir)
-    os.mkdir(outdir)
-    return outdir
+def _remove_dir(f):
+    print("Cleanup %s" % f)
+    if os.path.isdir(f):
+        shutil.rmtree(f)
+
+
+def _classes_dir(app):
+    return os.path.join(app.path, 'test-classes')
+
+
+def test_result_dir(app):
+    return os.path.join(app.path, 'test-result')
+
+
+def clean_tests(app):
+    _remove_dir(_classes_dir(app))
+    _remove_dir(test_result_dir(app))
 
 
 def compile_sources(app, args):
-    outdir = prepare_output_dir(app)
+    classes_dir = _create_dir(_classes_dir(app))
 
     javac_cmd = app.java_cmd(args, cp_args=app.cp_args(), className='play.test.Compiler')
-    print "Compiling Java sources to %s ..." % outdir
+    print "Compiling Java sources to %s ..." % classes_dir
     return_code = subprocess.call(javac_cmd, env=os.environ)
     if 0 != return_code:
         print "Compilation FAILED"
@@ -51,11 +58,7 @@ def compile_sources(app, args):
 
 
 def get_classpath(app):
-    classpath = [os.path.join(app.path, 'test-classes')]
-
-    # The default
-    # classpath.append(os.path.normpath(os.path.join(app.path, 'conf')))
-    classpath.append(app.agent_path())
+    classpath = [_classes_dir(app), app.agent_path()]
 
     # The application - recursively add jars to the classpath inside the lib folder to allow for subdirectories
     if os.path.exists(os.path.join(app.path, 'lib')):
@@ -82,7 +85,7 @@ def run_tests(app, args, test_type, test_class_name=None):
     app.check()
     print "~ Running %s tests" % test_type
 
-    prepare_test_result_dir(app)
+    _create_dir(test_result_dir(app))
 
     classpath = ':'.join(get_classpath(app))
     # print "CLASSPATH: %s" % string.join(classpath.split(':'), ",\n")
@@ -145,6 +148,8 @@ def execute(**kargs):
     # compile_sources(app, args)
     if command == 'compile':
         compile_sources(app, args)
+    elif command == 'clean-tests':
+        clean_tests(app)
     elif command == 'unit-tests':
         run_unit_tests(app, args, test_class_name, include, exclude)
     elif command == 'ui-tests':
