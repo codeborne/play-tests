@@ -9,9 +9,10 @@ import subprocess
 
 MODULE = "selenide"
 
-COMMANDS = ["compile", "clean-tests", "unit-tests", "ui-tests"]
+COMMANDS = ["tests", "compile", "clean-tests", "unit-tests", "ui-tests"]
 
 HELP = {
+    "tests": "Compile and run all tests",
     "compile": "Compile all the tests with Java code",
     "clean-tests": "Clean compiled tests and test results",
     "unit-tests": "Run plain unit-tests",
@@ -145,8 +146,12 @@ def execute(**kargs):
             print "TEST CLASS: %s" % exclude
             print "~ "
 
-    # compile_sources(app, args)
-    if command == 'compile':
+    if command == 'tests':
+        clean_tests(app)
+        compile_sources(app, args)
+        run_unit_tests(app, args, test_class_name, include, exclude)
+        run_ui_tests(app, args, test_class_name, include, exclude)
+    elif command == 'compile':
         compile_sources(app, args)
     elif command == 'clean-tests':
         clean_tests(app)
