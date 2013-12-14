@@ -5,7 +5,6 @@ import org.apache.tools.ant.taskdefs.optional.junit.JUnitTest;
 import org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner;
 import org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter;
 import org.apache.tools.ant.taskdefs.optional.junit.XMLJUnitResultFormatter;
-import play.Play;
 
 import java.io.*;
 import java.util.*;
@@ -23,7 +22,8 @@ public class JUnitRunnerWithXMLOutput {
     }
   }
 
-  private final File testResults;
+  private final File testResults = new File("test-result");
+  private final File buildsHistory = new File(".builds");
   private final TestType testType;
 
   private boolean stackfilter = true;
@@ -34,7 +34,6 @@ public class JUnitRunnerWithXMLOutput {
 
   public JUnitRunnerWithXMLOutput(TestType testType) {
     this.testType = testType;
-    testResults = Play.getFile("test-result");
   }
 
   private static Collection<Class> getTestClasses(List<Class> classes, TestType testType) {
@@ -61,12 +60,12 @@ public class JUnitRunnerWithXMLOutput {
     return getTestClasses(sources.getClasses(), testType);
   }
 
-  private static File createTestsFile(TestType testType, List<Class> testClasses) throws IOException {
-    File file = new File("test-result/" + testType + "-tests.txt");
+  private File saveTestsOrder(List<Class> testClasses) throws IOException {
+    File file = new File(testResults, testType + "-tests.txt");
     PrintWriter out = new PrintWriter(new FileWriter(file));
     try {
       for (Class testClass : testClasses) {
-        out.println(testClass.getName() + ",test-result," + testClass.getName());
+        out.println(testClass.getName());
       }
     }
     finally {
@@ -83,6 +82,8 @@ public class JUnitRunnerWithXMLOutput {
   private int runTests() throws Exception {
     List<Class> classes = sort(findTestClasses(testType));
 
+    saveTestsOrder(classes);
+
     System.out.println("Run " + classes.size() + " " + testType + " tests");
 
     List<JUnitTest> results = new ArrayList<JUnitTest>(classes.size());
@@ -91,7 +92,11 @@ public class JUnitRunnerWithXMLOutput {
     }
 
     printLongestTests(results);
-    return printSummary(results);
+    int errors = printSummary(results);
+    if (errors > 0) {
+      saveFailedTests(results);
+    }
+    return errors;
   }
 
   private List<Class> sort(Collection<Class> classes) {
@@ -137,6 +142,25 @@ public class JUnitRunnerWithXMLOutput {
 
     System.out.println();
     return errors;
+  }
+
+  private void saveFailedTests(List<JUnitTest> results) throws IOException {
+    if (!buildsHistory.exists()) {
+      buildsHistory.mkdirs();
+    }
+
+    File file = new File(buildsHistory, "" + System.currentTimeMillis() + '.' + testType);
+    PrintWriter out = new PrintWriter(new FileWriter(file));
+    try {
+      for (JUnitTest result : results) {
+        if (result.errorCount() != 0 || result.failureCount() != 0) {
+          out.println(result.getName());
+        }
+      }
+    }
+    finally {
+      out.close();
+    }
   }
 
   private JUnitTest executeTest(Class testClass) throws FileNotFoundException {
