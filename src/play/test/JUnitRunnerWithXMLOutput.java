@@ -1,6 +1,5 @@
 package play.test;
 
-import com.google.common.base.Predicate;
 import org.apache.tools.ant.taskdefs.optional.junit.JUnitTest;
 import org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner;
 import org.apache.tools.ant.taskdefs.optional.junit.SummaryJUnitResultFormatter;
@@ -10,21 +9,12 @@ import java.io.*;
 import java.util.*;
 
 import static com.google.common.collect.Collections2.filter;
-import static play.test.JUnitRunnerWithXMLOutput.TestType.UNIT;
+import static play.test.TestType.UNIT;
 
 public class JUnitRunnerWithXMLOutput {
-  enum TestType {
-    UNIT,
-    UI;
-
-    public Predicate<Class> getFilter() {
-      return this == UNIT ? new IsUnitTest() : new IsUITest();
-    }
-  }
-
   private final File testResults = new File("test-result");
-  private final File buildsHistory = new File(".builds");
   private final TestType testType;
+  private final List<BuildFailures> lastFailedTests;
 
   private boolean stackfilter = true;
   private boolean haltOnError = false;
@@ -32,28 +22,15 @@ public class JUnitRunnerWithXMLOutput {
   private boolean showOutput = true;
   private boolean logTestListenerEvents = false;
 
-  public JUnitRunnerWithXMLOutput(TestType testType) {
+  public JUnitRunnerWithXMLOutput(TestType testType) throws IOException {
     this.testType = testType;
+    lastFailedTests = IO.readLastFailedTests(testType);
   }
 
   private static Collection<Class> getTestClasses(List<Class> classes, TestType testType) {
-//    List<Class> allClasses = new ClassesCollection().findTestClasses();
-    List<Class> allClasses = classes;
-    Collection<Class> allTests = filter(allClasses, new IsTestClass());
-//    System.out.println("allTests: " + allTests);
-    final Collection<Class> typeTests = filter(allTests, testType.getFilter());
-//    System.out.println("filter: " + testType.getFilter());
-//    System.out.println("typeTests: " + typeTests);
-    return typeTests;
+    Collection<Class> allTests = filter(classes, new IsTestClass());
+    return filter(allTests, testType.getFilter());
   }
-
-  private static final class ClassNameComparator implements Comparator<Class> {
-    @Override public int compare(Class aClass, Class bClass) {
-      return aClass.getName().compareTo(bClass.getName());
-    }
-  }
-
-  private static final ClassNameComparator classNameComparator = new ClassNameComparator();
 
   private static Collection<Class> findTestClasses(TestType testType) throws IOException, ClassNotFoundException {
     JavaSourcesCollection sources = new JavaSourcesCollection().scan();
@@ -87,21 +64,35 @@ public class JUnitRunnerWithXMLOutput {
     System.out.println("Run " + classes.size() + " " + testType + " tests");
 
     List<JUnitTest> results = new ArrayList<JUnitTest>(classes.size());
+    int i = 0;
+    boolean haveFailures = false;
     for (Class testClass : classes) {
-      results.add(executeTest(testClass));
+      i++;
+
+      JUnitTest testResult = executeTest(testClass);
+      results.add(testResult);
+
+      haveFailures = haveFailures || testResult.errorCount() > 0 || testResult.failureCount() > 0;
+      boolean executedRecentlyFailedTests = !lastFailedTests.isEmpty() && i == lastFailedTests.get(0).failedTests.size();
+      if (haveFailures && executedRecentlyFailedTests) {
+        System.out.println();
+        System.out.println("NB! Stop execution of tests because some of recently failed tests failed again");
+        break;
+      }
     }
 
     printLongestTests(results);
-    int errors = printSummary(results);
-    if (errors > 0) {
-      saveFailedTests(results);
-    }
-    return errors;
+    printSummary(results);
+
+    BuildFailures build = new BuildFailures(testType, results);
+    IO.save(build);
+    return build.problems;
   }
 
   private List<Class> sort(Collection<Class> classes) {
     List<Class> sorted = new ArrayList<Class>(classes);
-    Collections.sort(sorted, classNameComparator);
+    Collections.shuffle(sorted);
+    Collections.sort(sorted, new TestComparatorByFailuresHistory(lastFailedTests));
     return sorted;
   }
 
@@ -133,34 +124,15 @@ public class JUnitRunnerWithXMLOutput {
         }
 
         System.out.println(result.getName() + " " +
+            result.runCount() + " runs, " +
             result.errorCount() + " errors, " +
-            result.failureCount() + " failures, " +
-            result.runCount() + " runs");
+            result.failureCount() + " failures");
         errors += result.errorCount() + result.failureCount();
       }
     }
 
     System.out.println();
     return errors;
-  }
-
-  private void saveFailedTests(List<JUnitTest> results) throws IOException {
-    if (!buildsHistory.exists()) {
-      buildsHistory.mkdirs();
-    }
-
-    File file = new File(buildsHistory, "" + System.currentTimeMillis() + '.' + testType);
-    PrintWriter out = new PrintWriter(new FileWriter(file));
-    try {
-      for (JUnitTest result : results) {
-        if (result.errorCount() != 0 || result.failureCount() != 0) {
-          out.println(result.getName());
-        }
-      }
-    }
-    finally {
-      out.close();
-    }
   }
 
   private JUnitTest executeTest(Class testClass) throws FileNotFoundException {
@@ -179,17 +151,8 @@ public class JUnitRunnerWithXMLOutput {
     summary.setOutput(System.out);
     runner.addFormatter(summary);
 
-//      final PlainJUnitResultFormatter plain = new PlainJUnitResultFormatter();
-//      plain.setOutput(System.out);
-//      runner.addFormatter(plain);
-
     runner.run();
     return t;
-  }
-
-  private static void useAntRunnerToOutputResultsIntoXml(TestType testType, String[] args) throws Exception {
-//    File testsFile = args.length == 1 ? prepareTestsFile(testType) : new File(args[1]);
-//    JUnitTestRunner.main(new String[]{"testsfile=" + testsFile, "formatter=" + XMLJUnitResultFormatter.class.getName() + ",xml", "showoutput=true"});
   }
 
   public static void main(String[] args) throws Exception {
