@@ -10,12 +10,12 @@ import static java.util.Collections.emptyList;
 public class BuildFailures {
   public final TestType testType;
   final Set<String> failedTests;
-  public final int problems;
+  public final int problemsCount;
 
   public BuildFailures(TestType testType, Set<String> failedTests) {
     this.testType = testType;
     this.failedTests = failedTests;
-    problems = failedTests.size();
+    problemsCount = failedTests.size();
   }
 
   public BuildFailures(TestType testType, List<JUnitTest> results) {
@@ -30,7 +30,7 @@ public class BuildFailures {
       }
     }
 
-    this.problems = problems;
+    this.problemsCount = problems;
   }
 
   public boolean contains(Class testClass) {

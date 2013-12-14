@@ -9,6 +9,7 @@ import java.io.*;
 import java.util.*;
 
 import static com.google.common.collect.Collections2.filter;
+import static java.util.Collections.emptyList;
 import static play.test.TestType.UNIT;
 
 public class JUnitRunnerWithXMLOutput {
@@ -52,7 +53,7 @@ public class JUnitRunnerWithXMLOutput {
   }
 
   private int runTest(String testClass) throws Exception {
-    JUnitTest jUnitTest = executeTest(Class.forName(testClass));
+    JUnitTest jUnitTest = executeTest(testClass);
     return (int) (jUnitTest.errorCount() + jUnitTest.failureCount());
   }
 
@@ -64,21 +65,25 @@ public class JUnitRunnerWithXMLOutput {
     System.out.println("Run " + classes.size() + " " + testType + " tests");
 
     List<JUnitTest> results = new ArrayList<JUnitTest>(classes.size());
-    int i = 0;
-    boolean haveFailures = false;
-    for (Class testClass : classes) {
-      i++;
 
-      JUnitTest testResult = executeTest(testClass);
-      results.add(testResult);
+    if (!lastFailedTests.isEmpty()) {
+      BuildFailures lastFailedBuild = lastFailedTests.get(0);
+      for (String test : lastFailedBuild.failedTests) {
+        results.add(executeTest(test));
+      }
 
-      haveFailures = haveFailures || testResult.errorCount() > 0 || testResult.failureCount() > 0;
-      boolean executedRecentlyFailedTests = !lastFailedTests.isEmpty() && i == lastFailedTests.get(0).failedTests.size();
-      if (haveFailures && executedRecentlyFailedTests) {
+      if (haveFailures(results)) {
         System.out.println();
         System.out.println("NB! Stop execution of tests because some of recently failed tests failed again");
-        break;
+        classes = emptyList();
       }
+      else {
+        removeAll(classes, lastFailedBuild.failedTests);
+      }
+    }
+
+    for (Class testClass : classes) {
+      results.add(executeTest(testClass));
     }
 
     printLongestTests(results);
@@ -86,7 +91,22 @@ public class JUnitRunnerWithXMLOutput {
 
     BuildFailures build = new BuildFailures(testType, results);
     IO.save(build);
-    return build.problems;
+    return build.problemsCount;
+  }
+
+  private void removeAll(Collection<Class> classes, Collection<String> failedTests) throws ClassNotFoundException {
+    for (String test : failedTests) {
+      classes.remove(Class.forName(test));
+    }
+  }
+
+  private boolean haveFailures(List<JUnitTest> results) {
+    for (JUnitTest testResult : results) {
+      if (testResult.errorCount() > 0 || testResult.failureCount() > 0) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private List<Class> sort(Collection<Class> classes) {
@@ -136,9 +156,13 @@ public class JUnitRunnerWithXMLOutput {
   }
 
   private JUnitTest executeTest(Class testClass) throws FileNotFoundException {
-    JUnitTest t = new JUnitTest(testClass.getName());
+    return executeTest(testClass.getName());
+  }
+
+  private JUnitTest executeTest(String testClass) throws FileNotFoundException {
+    JUnitTest t = new JUnitTest(testClass);
     t.setTodir(testResults);
-    t.setOutfile(new File(testResults, testClass.getName() + ".xml").getAbsolutePath());
+    t.setOutfile(new File(testResults, testClass + ".xml").getAbsolutePath());
     t.setProperties(System.getProperties());
     t.setFork(true);
 
@@ -147,7 +171,7 @@ public class JUnitRunnerWithXMLOutput {
     resultFormatter.setOutput(new BufferedOutputStream(new FileOutputStream(t.getOutfile())));
     runner.addFormatter(resultFormatter);
 
-    final SummaryJUnitResultFormatter summary = new SummaryJUnitResultFormatter();
+    SummaryJUnitResultFormatter summary = new SummaryJUnitResultFormatter();
     summary.setOutput(System.out);
     runner.addFormatter(summary);
 
