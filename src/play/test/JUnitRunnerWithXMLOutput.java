@@ -11,6 +11,7 @@ import java.io.*;
 import java.util.*;
 
 import static com.google.common.collect.Collections2.filter;
+import static play.test.JUnitRunnerWithXMLOutput.TestType.UNIT;
 
 public class JUnitRunnerWithXMLOutput {
   enum TestType {
@@ -72,6 +73,11 @@ public class JUnitRunnerWithXMLOutput {
       out.close();
     }
     return file;
+  }
+
+  private int runTest(String testClass) throws Exception {
+    JUnitTest jUnitTest = executeTest(Class.forName(testClass));
+    return (int) (jUnitTest.errorCount() + jUnitTest.failureCount());
   }
 
   private int runTests() throws Exception {
@@ -163,8 +169,9 @@ public class JUnitRunnerWithXMLOutput {
   }
 
   public static void main(String[] args) throws Exception {
-    TestType testType = TestType.valueOf(args[0]);
-    int exitCode = new JUnitRunnerWithXMLOutput(testType).runTests();
+    TestType testType = args.length > 0 ? TestType.valueOf(args[0]) : UNIT;
+    JUnitRunnerWithXMLOutput runner = new JUnitRunnerWithXMLOutput(testType);
+    int exitCode = args.length > 1 ? runner.runTest(args[1]) : runner.runTests();
     System.exit(exitCode);
   }
 }

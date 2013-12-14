@@ -93,9 +93,7 @@ def run_tests(app, args, test_type, test_class_name=None):
 
     java_args=[test_type]
     if test_class_name:
-        with open("test-result/ui-tests.txt", "w") as tests_file:
-            tests_file.write("%s,test-result,%s" % (test_class_name, test_class_name))
-        java_args = [test_type, "test-result/ui-tests.txt"]
+        java_args = [test_type, test_class_name]
 
     java_cmd = app.java_cmd(args, cp_args=classpath, className='play.test.JUnitRunnerWithXMLOutput', args=java_args)
     # print 'RUNNING: %s' % java_cmd
