@@ -9,22 +9,24 @@ import java.io.*;
 import java.util.*;
 
 import static com.google.common.collect.Collections2.filter;
-import static java.util.Collections.emptyList;
+import static java.lang.Boolean.parseBoolean;
 import static play.test.TestType.UNIT;
 
 public class JUnitRunnerWithXMLOutput {
   private final File testResults = new File("test-result");
   private final TestType testType;
   private final List<BuildFailures> lastFailedTests;
+  private final boolean randomOrder;
 
-  private boolean stackfilter = true;
+  private boolean stackFilter = true;
   private boolean haltOnError = false;
   private boolean haltOnFail = false;
   private boolean showOutput = true;
   private boolean logTestListenerEvents = false;
 
-  public JUnitRunnerWithXMLOutput(TestType testType) throws IOException {
+  public JUnitRunnerWithXMLOutput(TestType testType, boolean randomOrder) throws IOException {
     this.testType = testType;
+    this.randomOrder = randomOrder;
     lastFailedTests = IO.readLastFailedTests(testType);
   }
 
@@ -52,12 +54,12 @@ public class JUnitRunnerWithXMLOutput {
     return file;
   }
 
-  private int runTest(String testClass) throws Exception {
+  private int runSingleTest(String testClass) throws Exception {
     JUnitTest jUnitTest = executeTest(testClass);
     return (int) (jUnitTest.errorCount() + jUnitTest.failureCount());
   }
 
-  private int runTests() throws Exception {
+  private int runAllTests() throws Exception {
     List<Class> classes = sort(findTestClasses(testType));
 
     saveTestsOrder(classes);
@@ -72,14 +74,15 @@ public class JUnitRunnerWithXMLOutput {
         results.add(executeTest(test));
       }
 
-      if (haveFailures(results)) {
+      int failures = countFailures(results);
+      if (failures > 0) {
+        printSummary(results);
         System.out.println();
         System.out.println("NB! Stop execution of tests because some of recently failed tests failed again");
-        classes = emptyList();
+        return failures;
       }
-      else {
-        removeAll(classes, lastFailedBuild.failedTests);
-      }
+
+      removeAll(classes, lastFailedBuild.failedTests);
     }
 
     for (Class testClass : classes) {
@@ -100,18 +103,29 @@ public class JUnitRunnerWithXMLOutput {
     }
   }
 
-  private boolean haveFailures(List<JUnitTest> results) {
+  private int countFailures(List<JUnitTest> results) {
+    int errors = 0;
     for (JUnitTest testResult : results) {
-      if (testResult.errorCount() > 0 || testResult.failureCount() > 0) {
-        return true;
-      }
+      errors += testResult.errorCount() + testResult.failureCount();
     }
-    return false;
+    return errors;
+  }
+
+  private static final class ClassNameComparator implements Comparator<Class> {
+    @Override public int compare(Class aClass, Class bClass) {
+      return aClass.getName().compareTo(bClass.getName());
+    }
   }
 
   private List<Class> sort(Collection<Class> classes) {
     List<Class> sorted = new ArrayList<Class>(classes);
-    Collections.shuffle(sorted);
+    if (randomOrder) {
+      Collections.shuffle(sorted);
+    }
+    else {
+      Collections.sort(sorted, new ClassNameComparator());
+    }
+
     Collections.sort(sorted, new TestComparatorByFailuresHistory(lastFailedTests));
     return sorted;
   }
@@ -166,7 +180,7 @@ public class JUnitRunnerWithXMLOutput {
     t.setProperties(System.getProperties());
     t.setFork(true);
 
-    JUnitTestRunner runner = new JUnitTestRunner(t, null, haltOnError, stackfilter, haltOnFail, showOutput, logTestListenerEvents);
+    JUnitTestRunner runner = new JUnitTestRunner(t, null, haltOnError, stackFilter, haltOnFail, showOutput, logTestListenerEvents);
     XMLJUnitResultFormatter resultFormatter = new XMLJUnitResultFormatter();
     resultFormatter.setOutput(new BufferedOutputStream(new FileOutputStream(t.getOutfile())));
     runner.addFormatter(resultFormatter);
@@ -181,8 +195,9 @@ public class JUnitRunnerWithXMLOutput {
 
   public static void main(String[] args) throws Exception {
     TestType testType = args.length > 0 ? TestType.valueOf(args[0]) : UNIT;
-    JUnitRunnerWithXMLOutput runner = new JUnitRunnerWithXMLOutput(testType);
-    int exitCode = args.length > 1 ? runner.runTest(args[1]) : runner.runTests();
+    boolean randomOrder = args.length > 1 && parseBoolean(args[1]);
+    JUnitRunnerWithXMLOutput runner = new JUnitRunnerWithXMLOutput(testType, randomOrder);
+    int exitCode = args.length > 2 ? runner.runSingleTest(args[2]) : runner.runAllTests();
     System.exit(exitCode);
   }
 }

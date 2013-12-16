@@ -82,7 +82,7 @@ def get_classpath(app):
     return classpath
 
 
-def run_tests(app, args, test_type, test_class_name=None):
+def run_tests(app, args, test_type, is_random_order=False, test_class_name=None):
     app.check()
     print "~ Running %s tests" % test_type
 
@@ -91,9 +91,9 @@ def run_tests(app, args, test_type, test_class_name=None):
     classpath = ':'.join(get_classpath(app))
     # print "CLASSPATH: %s" % string.join(classpath.split(':'), ",\n")
 
-    java_args=[test_type]
+    java_args=[test_type, is_random_order]
     if test_class_name:
-        java_args = [test_type, test_class_name]
+        java_args = [test_type, is_random_order, test_class_name]
 
     java_cmd = app.java_cmd(args, cp_args=classpath, className='play.test.JUnitRunnerWithXMLOutput', args=java_args)
     # print 'RUNNING: %s' % java_cmd
@@ -110,15 +110,15 @@ def run_tests(app, args, test_type, test_class_name=None):
     print "Executed %s tests successfully" % test_type
 
 
-def run_unit_tests(app, args, test_class_name, include, exclude):
+def run_unit_tests(app, args, test_class_name, is_random_order, include, exclude):
     print "UNIT TESTS"
-    run_tests(app, args, 'UNIT', test_class_name)
+    run_tests(app, args, 'UNIT', is_random_order, test_class_name)
 
 
-def run_ui_tests(app, args, test_class_name, include, exclude):
+def run_ui_tests(app, args, test_class_name, is_random_order, include, exclude):
     print "UI TESTS"
     ui_args = ['-Dprecompiled=true', '-Dbrowser=chrome', '-Dselenide.reports=test-result']
-    run_tests(app, args + ui_args, 'UI', test_class_name)
+    run_tests(app, args + ui_args, 'UI', is_random_order, test_class_name)
 
 
 def execute(**kargs):
@@ -128,8 +128,9 @@ def execute(**kargs):
 
     include = None
     exclude = None
+    is_random_order = ''
     test_class_name = None
-    optlist, args = getopt.getopt(args, '', ['include=', 'exclude=', 'test='])
+    optlist, args = getopt.getopt(args, '', ['include=', 'exclude=', 'test=', 'random='])
     for o, a in optlist:
         if o == '--include':
             include = a
@@ -143,19 +144,24 @@ def execute(**kargs):
             test_class_name = a
             print "TEST CLASS: %s" % exclude
             print "~ "
+        if o == '--random':
+            is_random_order = a
+            if is_random_order.lower() == 'true':
+                print "RANDOM ORDER"
+                print "~ "
 
     if command == 'tests':
         clean_tests(app)
         compile_sources(app, args)
-        run_unit_tests(app, args, test_class_name, include, exclude)
-        run_ui_tests(app, args, test_class_name, include, exclude)
+        run_unit_tests(app, args, test_class_name, is_random_order, include, exclude)
+        run_ui_tests(app, args, test_class_name, is_random_order, include, exclude)
     elif command == 'compile':
         compile_sources(app, args)
     elif command == 'clean-tests':
         clean_tests(app)
     elif command == 'unit-tests':
-        run_unit_tests(app, args, test_class_name, include, exclude)
+        run_unit_tests(app, args, test_class_name, is_random_order, include, exclude)
     elif command == 'ui-tests':
-        run_ui_tests(app, args, test_class_name, include, exclude)
+        run_ui_tests(app, args, test_class_name, is_random_order, include, exclude)
     else:
         raise ValueError("Unknown command: %s" % command)
