@@ -131,7 +131,8 @@ public class JUnitRunnerWithXMLOutput {
   }
 
   private void printLongestTests(List<JUnitTest> results) {
-    Collections.sort(results, new Comparator<JUnitTest>() {
+    ArrayList<JUnitTest> sorted = new ArrayList<JUnitTest>(results);
+    Collections.sort(sorted, new Comparator<JUnitTest>() {
       @Override public int compare(JUnitTest o1, JUnitTest o2) {
         return Long.compare(o2.getRunTime(), o1.getRunTime());
       }
@@ -141,7 +142,7 @@ public class JUnitRunnerWithXMLOutput {
     System.out.println();
     System.out.println("Longest tests:");
 
-    final List<JUnitTest> top = results.size() < 10 ? results : results.subList(0, 10);
+    final List<JUnitTest> top = sorted.size() < 10 ? sorted : sorted.subList(0, 10);
     for (JUnitTest result : top) {
       System.out.println(result.getName() + " -> " + result.getRunTime() + " ms.");
     }
