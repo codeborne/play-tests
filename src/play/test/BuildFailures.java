@@ -81,11 +81,25 @@ class IO {
       Set<String> testClasses = new LinkedHashSet<String>();
       String line;
       while ((line = in.readLine()) != null) {
-        testClasses.add(line);
+        if (isExistingClass(line)) {
+          testClasses.add(line);
+        }
+        else {
+          System.out.println("Skipping test " + line + " because this class does not exist");
+        }
       }
       return new BuildFailures(testType, testClasses);
     } finally {
       in.close();
+    }
+  }
+
+  private static boolean isExistingClass(String className) {
+    try {
+      Class.forName(className);
+      return true;
+    } catch (Exception e) {
+      return false;
     }
   }
 
