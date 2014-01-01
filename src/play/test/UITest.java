@@ -1,7 +1,9 @@
 package play.test;
 
 import com.codeborne.selenide.Configuration;
+import com.codeborne.selenide.junit.ScreenShooter;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import play.Play;
 import play.i18n.Messages;
 import play.mvc.Router;
@@ -11,6 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.codeborne.selenide.Selenide.executeJavaScript;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
+import static com.codeborne.selenide.junit.ScreenShooter.failedTests;
 
 public abstract class UITest extends BaseTest {
   private static final AtomicBoolean serverStarted = new AtomicBoolean(false);
@@ -29,6 +32,8 @@ public abstract class UITest extends BaseTest {
       Configuration.baseUrl = "http://localhost:" + Play.configuration.getProperty("http.port");
     }
   }
+
+  @Rule public ScreenShooter makeScreenshotOnFailure = failedTests();
 
   protected String label(String key) {
     return Messages.get(key);
