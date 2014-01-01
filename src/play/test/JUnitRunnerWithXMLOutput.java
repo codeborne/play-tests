@@ -94,11 +94,6 @@ public class JUnitRunnerWithXMLOutput {
 
     BuildFailures build = new BuildFailures(testType, results);
     IO.save(build);
-
-    if (build.hasProblems()) {
-      System.out.println("To reproduce the problem, run the following test suite:");
-      System.out.println(build.constructTestSuiteSource());
-    }
     return build.problemsCount;
   }
 
@@ -172,7 +167,27 @@ public class JUnitRunnerWithXMLOutput {
     }
 
     System.out.println();
+
+    if (errors > 0) {
+      System.out.println("To reproduce the problem, run the following test suite:");
+      System.out.println(constructTestSuiteSource(results));
+    }
+    System.out.println();
     return errors;
+  }
+
+  private String constructTestSuiteSource(List<JUnitTest> results) {
+    StringBuilder sb = new StringBuilder();
+    for (JUnitTest test : results) {
+      sb.append(test.getName()).append(".class, ");
+    }
+
+    return "import org.junit.runner.RunWith;\n" +
+        "import org.junit.runners.Suite;\n\n" +
+        "@RunWith(Suite.class)\n" +
+        "@Suite.SuiteClasses({" + sb + "})\n" +
+        "public class TestSuite {\n" +
+        "}\n";
   }
 
   private JUnitTest executeTest(Class testClass) throws FileNotFoundException {

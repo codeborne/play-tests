@@ -40,20 +40,6 @@ public class BuildFailures {
   public boolean contains(Class testClass) {
     return failedTests.contains(testClass.getName());
   }
-
-  public String constructTestSuiteSource() {
-    StringBuilder sb = new StringBuilder();
-    for (String test : failedTests) {
-      sb.append(test).append(".class,");
-    }
-
-    return "import org.junit.runner.RunWith;\n" +
-        "import org.junit.runners.Suite;\n\n" +
-        "@RunWith(Suite.class)\n" +
-        "@Suite.SuiteClasses({" + sb + "})\n" +
-        "public class TestSuite {\n" +
-        "}\n";
-  }
 }
 
 class IO {
