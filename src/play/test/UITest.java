@@ -12,6 +12,7 @@ import play.server.Server;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.codeborne.selenide.Selenide.executeJavaScript;
+import static com.codeborne.selenide.Selenide.open;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static com.codeborne.selenide.junit.ScreenShooter.failedTests;
 
@@ -28,9 +29,14 @@ public abstract class UITest extends BaseTest {
         Play.usePrecompiled = true;
       }
       new Server(new String[]{});
-      serverStarted.set(true);
       Configuration.baseUrl = "http://localhost:" + Play.configuration.getProperty("http.port");
+      warmupServer();
+      serverStarted.set(true);
     }
+  }
+
+  private static void warmupServer() {
+    open("/");
   }
 
   @Rule public ScreenShooter makeScreenshotOnFailure = failedTests();
