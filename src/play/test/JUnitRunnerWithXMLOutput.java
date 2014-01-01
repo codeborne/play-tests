@@ -94,6 +94,11 @@ public class JUnitRunnerWithXMLOutput {
 
     BuildFailures build = new BuildFailures(testType, results);
     IO.save(build);
+
+    if (build.hasProblems()) {
+      System.out.println("To reproduce the problem, run the following test suite:");
+      System.out.println(build.constructTestSuiteSource());
+    }
     return build.problemsCount;
   }
 
