@@ -117,7 +117,9 @@ def run_unit_tests(app, args, test_class_name, is_random_order, include, exclude
 
 def run_ui_tests(app, args, test_class_name, is_random_order, include, exclude):
     print "UI TESTS"
-    ui_args = ['-Dprecompiled=true', '-Dbrowser=chrome', '-Dselenide.reports=test-result', '-Djava.net.preferIPv4Stack=true']
+    ui_args = ['-Dprecompiled=true', '-Dbrowser=chrome', '-Dselenide.reports=test-result',
+               '-Djava.net.preferIPv4Stack=true',
+               '-Dselenide.reportsUrl=%sartifact/' % os.environ['BUILD_URL']]
     run_tests(app, args + ui_args, 'UI', is_random_order, test_class_name)
 
 
