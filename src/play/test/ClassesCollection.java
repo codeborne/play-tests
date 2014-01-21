@@ -33,7 +33,7 @@ class ClassesCollection {
 
   private void scanCpEntry(String cpEntry) throws ClassNotFoundException {
     currentCpEntry = cpEntry;
-    System.out.println("SCAN " + cpEntry);
+//    System.out.println("SCAN " + cpEntry);
     scanFileOrDirectory(new File(currentCpEntry));
   }
 

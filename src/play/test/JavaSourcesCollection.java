@@ -52,7 +52,7 @@ class JavaSourcesCollection {
   }
 
   public JavaSourcesCollection scan() {
-    System.out.println("SCAN " + sourceRoots);
+//    System.out.println("SCAN " + sourceRoots);
     for (String sourceRoot : sourceRoots) {
       scanSourceRoot(sourceRoot);
     }

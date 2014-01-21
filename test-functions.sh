@@ -97,7 +97,6 @@ function run_ui_tests() {
   echo "Finished UI tests."
 }
 
-
 function install_chromedriver() {
   echo "Downloading chromedriver binary into ~/bin"
   mkdir -p ~/bin
