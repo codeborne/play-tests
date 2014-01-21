@@ -74,7 +74,7 @@ function run_unit_tests() {
 }
 
 function run_ui_tests() {
-  install_chromedriver
+  check_and_install_chromedriver
   TESTS_FILE=$1
 
   echo "Running UI tests... "
@@ -97,17 +97,23 @@ function run_ui_tests() {
   echo "Finished UI tests."
 }
 
+
 function install_chromedriver() {
+  echo "Downloading chromedriver binary into ~/bin"
+  mkdir -p ~/bin
+  FILE=`wget http://chromedriver.storage.googleapis.com/ -O - | sed 's@.*\([0-9]\+\.[0-9]\+/chromedriver_linux64.zip\).*@\1@'`
+  wget http://chromedriver.storage.googleapis.com/$FILE -O ~/bin/chromedriver.zip &&
+  cd ~/bin && unzip chromedriver.zip && rm chromedriver.zip && cd -
+}
+
+function check_and_install_chromedriver() {
   which chromedriver >/dev/null
   if [ $? != 0 ]; then
-      echo "Downloading chromedriver binary into ~/bin"
-      mkdir -p ~/bin
-      wget https://chromedriver.googlecode.com/files/chromedriver_linux64_2.3.zip -O ~/bin/chromedriver.zip &&
-      cd ~/bin && unzip chromedriver.zip && rm chromedriver.zip && cd -
-      which chromedriver
-      if [ $? != 0 ]; then
-    echo "Cannot start downloaded chromedriver, probably you need to restart your terminal"
-    exit 1
-      fi
+    install_chromedriver
+    which chromedriver
+    if [ $? != 0 ]; then
+      echo "Cannot start downloaded chromedriver, probably you need to restart your terminal"
+      exit 1
+    fi
   fi
 }
