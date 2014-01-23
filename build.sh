@@ -1,7 +1,7 @@
 #!/bin/bash
-MODULE="selenide"
+MODULE="play-tests"
 VERSION=`grep self conf/dependencies.yml | sed "s/.*$MODULE //"`
-TARGET=/var/www/repo/play-$MODULE/$MODULE-$VERSION.zip
+TARGET=/var/www/repo/$MODULE/$MODULE-$VERSION.zip
 
 rm -fr dist
 play dependencies --sync
