@@ -9,12 +9,14 @@ import play.i18n.Messages;
 import play.mvc.Router;
 import play.server.Server;
 
+import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.codeborne.selenide.Selenide.executeJavaScript;
 import static com.codeborne.selenide.Selenide.open;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static com.codeborne.selenide.junit.ScreenShooter.failedTests;
+import static org.openqa.selenium.net.PortProber.findFreePort;
 
 public abstract class UITest extends BaseTest {
   private static final AtomicBoolean serverStarted = new AtomicBoolean(false);
@@ -23,14 +25,17 @@ public abstract class UITest extends BaseTest {
   public static boolean isPlayStartNeeded = !"false".equals(System.getProperty("selenide.play.start", "true"));
 
   @BeforeClass
-  public static synchronized void startServer() {
+  public static synchronized void startServer() throws IOException {
     if (isPlayStartNeeded && !serverStarted.get()) {
       if (isPrecompileNeeded) {
         Play.usePrecompiled = true;
       }
-      new Server(new String[]{});
-      Configuration.baseUrl = "http://localhost:" + Play.configuration.getProperty("http.port");
+
+      int port = findFreePort();
+      Configuration.baseUrl = "http://localhost:" + port;
+      new Server(new String[]{"--http.port=" + port});
       warmupServer();
+      Play.configuration.setProperty("application.baseUrl", Configuration.baseUrl);
       serverStarted.set(true);
     }
   }
