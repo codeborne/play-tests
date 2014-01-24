@@ -1,6 +1,7 @@
 package play.test;
 
 import com.codeborne.selenide.Configuration;
+import com.codeborne.selenide.Screenshots;
 import com.codeborne.selenide.junit.ScreenShooter;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -11,6 +12,7 @@ import play.server.Server;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static com.codeborne.selenide.Selenide.executeJavaScript;
 import static com.codeborne.selenide.Selenide.open;
@@ -54,8 +56,14 @@ public abstract class UITest extends BaseTest {
     return Messages.get(key, args);
   }
 
+  private static final AtomicLong counter = new AtomicLong();
   protected void assertAction(String action) {
-    assertEquals(Router.getFullUrl(action), getWebDriver().getCurrentUrl().replaceFirst("\\?.*$", ""));
+    String expectedUrl = Router.getFullUrl(action);
+    String actualUrl = getWebDriver().getCurrentUrl().replaceFirst("\\?.*$", "");
+    if (!expectedUrl.equals(actualUrl)) {
+      Screenshots.takeScreenShot(getClass().getName(), "screenshot_" + counter.getAndIncrement());
+    }
+    assertEquals(expectedUrl, actualUrl);
   }
 
   protected void mockConfirm() {
