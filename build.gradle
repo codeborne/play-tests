@@ -24,6 +24,10 @@ dependencies {
   compile fileTree(dir: "$PLAY_APP/lib", include: '*.jar')
 }
 
+def _resolveModule(module) {
+  return module.isDirectory() ? module : new File(module.text.trim()).getCanonicalFile();
+}
+
 def addModules() {
     //println "======================="
     // println "using build file '$buildFile.name' in '$buildFile.parentFile.name'."
@@ -36,20 +40,19 @@ def addModules() {
     def modules = new File(PLAY_APP, 'modules').listFiles()
 
     modules.each {File module ->
-      if (!module.isDirectory()) {
-        module = new File(module.text.trim()).getCanonicalFile()
-      }
-
-      File test = new File(module, "test")
-
-      def isModuleWithBrokenTests = module.name.matches("guice.*") || module.name.matches("cms.*");
+      module = _resolveModule(module)
 
       sourceSets['main']['java']['srcDirs'] += new File(module, "app");
+      sourceSets['main']['resources']['srcDirs'] += new File(module, "app");
+
+      File test = new File(module, "test")
+      def isModuleWithBrokenTests = module.name.matches("guice.*") || module.name.matches("cms.*");
+
       if (test.exists() && !isModuleWithBrokenTests) {
         sourceSets['test']['java']['srcDirs'] += test;
         sourceSets['test']['resources']['srcDirs'] += test;
       }
-      addToClasspath("$module/lib")
+      _addToClasspath("$module/lib")
     }
 
     //println "src:"
@@ -61,11 +64,11 @@ def addModules() {
 }
 
 def addPlayToClasspath() {
-    addToClasspath("$PLAY_HOME/framework/lib")
-    addToClasspath("$PLAY_HOME/framework")
+    _addToClasspath("$PLAY_HOME/framework/lib")
+    _addToClasspath("$PLAY_HOME/framework")
 }
 
-def addToClasspath(dir) {
+def _addToClasspath(dir) {
     // println "+ " + lib
 
     def lib = fileTree(dir: dir, include: '*.jar')
@@ -84,6 +87,7 @@ addPlayToClasspath()
 
 test {
   exclude 'ui/**'
+  exclude 'integration/**'
 }
 
 task uitest(type: Test, dependsOn: 'classes') {
