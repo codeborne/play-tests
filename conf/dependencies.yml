@@ -1,4 +1,4 @@
-self: play-tests -> play-tests 2.7.1
+self: play-tests -> play-tests 2.7.2
 
 require:
     - play 1.2+

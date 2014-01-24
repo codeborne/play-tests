@@ -1,22 +1,23 @@
-# Secure
 import getopt
 import sys
 import os
 import os.path
 import shutil
 import subprocess
+from exceptions import ValueError
 
+MODULE = "play-tests"
 
-MODULE = "selenide"
-
-COMMANDS = ["tests", "compile", "clean-tests", "unit-tests", "ui-tests"]
+COMMANDS = ["tests", "compile", "clean-tests", "unit-tests", "ui-tests", "unit-tests2", "ui-tests2"]
 
 HELP = {
     "tests": "Compile and run all tests",
     "compile": "Compile all the tests with Java code",
     "clean-tests": "Clean compiled tests and test results",
     "unit-tests": "Run plain unit-tests",
-    "ui-tests": "Run UI tests"
+    "unit-tests2": "Run unit-tests (with Gradle)",
+    "ui-tests": "Run UI tests",
+    "ui-tests2": "Run UI tests (with Gradle)"
 }
 
 
@@ -123,6 +124,24 @@ def run_ui_tests(app, args, test_class_name, is_random_order, include, exclude):
     run_tests(app, args + ui_args, 'UI', is_random_order, test_class_name)
 
 
+def run_tests2(app, task_clean, task_run):
+    # TODO add app.agent_path() ?
+    module_dir = os.path.dirname(os.path.realpath(__file__))
+    gradle_cmd = ["%s/gradle" % module_dir, "-b", "%s/build.gradle" % module_dir,
+                  #"--daemon",
+                  "-PPLAY_APP=%s" % app.path,
+                  "-PPLAY_HOME=%s" % app.play_env["basedir"],
+                  task_clean, task_run]
+
+    print gradle_cmd
+    return_code = subprocess.call(gradle_cmd, env=os.environ)
+    if 0 != return_code:
+        print "%ss FAILED" % task_run
+        sys.exit(return_code)
+
+    print "Executed %ss successfully" % task_run
+
+
 def execute(**kargs):
     command = kargs.get("command")
     app = kargs.get("app")
@@ -165,5 +184,9 @@ def execute(**kargs):
         run_unit_tests(app, args, test_class_name, is_random_order, include, exclude)
     elif command == 'ui-tests':
         run_ui_tests(app, args, test_class_name, is_random_order, include, exclude)
+    elif command == 'unit-tests2':
+        run_tests2(app, 'cleanTest', 'test')
+    elif command == 'ui-tests2':
+        run_tests2(app, 'cleanUitest', 'uitest')
     else:
         raise ValueError("Unknown command: %s" % command)

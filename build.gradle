@@ -1,0 +1,103 @@
+apply plugin: 'java'
+sourceCompatibility = 1.7
+compileJava.options.debugOptions.debugLevel = "source,lines,vars"
+
+buildDir = "$PLAY_APP/build"
+
+defaultTasks 'clean', 'test'
+
+sourceSets {
+  main {
+    java {srcDir "$PLAY_APP/app"}
+    resources {srcDir "$PLAY_APP/app"}
+  }
+  test {
+    java {srcDir "$PLAY_APP/test"}
+    resources {srcDir "$PLAY_APP/test"}
+  }
+}
+
+dependencies {
+  //println "======================="
+  //println "$PLAY_APP/lib"
+  //println "======================="
+  compile fileTree(dir: "$PLAY_APP/lib", include: '*.jar')
+}
+
+def addModules() {
+    //println "======================="
+    // println "using build file '$buildFile.name' in '$buildFile.parentFile.name'."
+    println "Play app: $PLAY_APP"
+    println "Play home: $PLAY_HOME"
+    //println "======================="
+
+    //println sourceSets['main']['java']['srcDirs']
+
+    def modules = new File(PLAY_APP, 'modules').listFiles()
+
+    modules.each {File module ->
+      if (!module.isDirectory()) {
+        module = new File(module.text.trim()).getCanonicalFile()
+      }
+
+      File test = new File(module, "test")
+
+      def isModuleWithBrokenTests = module.name.matches("guice.*") || module.name.matches("cms.*");
+
+      sourceSets['main']['java']['srcDirs'] += new File(module, "app");
+      if (test.exists() && !isModuleWithBrokenTests) {
+        sourceSets['test']['java']['srcDirs'] += test;
+        sourceSets['test']['resources']['srcDirs'] += test;
+      }
+      addToClasspath("$module/lib")
+    }
+
+    //println "src:"
+    //println sourceSets['main']['java']['srcDirs']
+
+    // println "Available processors: " + Runtime.runtime.availableProcessors()
+    //println ""
+    //println "======================="
+}
+
+def addPlayToClasspath() {
+    addToClasspath("$PLAY_HOME/framework/lib")
+    addToClasspath("$PLAY_HOME/framework")
+}
+
+def addToClasspath(dir) {
+    // println "+ " + lib
+
+    def lib = fileTree(dir: dir, include: '*.jar')
+    sourceSets['main']['compileClasspath'] += lib
+    sourceSets['test']['compileClasspath'] += lib
+    sourceSets['test']['runtimeClasspath'] += lib
+}
+
+task showClasspath << {
+  println "CLASSPATH:"
+  sourceSets['main']['compileClasspath'].each { println it }
+}
+
+addModules()
+addPlayToClasspath()
+
+test {
+  exclude 'ui/**'
+}
+
+task uitest(type: Test, dependsOn: 'classes') {
+  include 'ui/**'
+  systemProperties['browser'] = 'chrome'
+  //systemProperties['webdriver.chrome.driver'] = '/usr/bin/chromedriver'
+  systemProperties['BUILD_URL'] = System.getenv()['BUILD_URL']
+  //systemProperties['java.net.preferIPv4Stack'] = 'true'
+  maxParallelForks = 2
+}
+
+tasks.withType(Test).all { testTask ->
+  testTask.jvmArgs = ['-ea', '-XX:-UseSplitVerifier', '-XX:MaxPermSize=256m']
+  testTask.systemProperties['file.encoding'] = 'UTF-8'
+  testTask.testLogging.showStandardStreams = true
+  testTask.workingDir = PLAY_APP
+}
