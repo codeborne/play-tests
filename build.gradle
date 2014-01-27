@@ -88,6 +88,11 @@ addPlayToClasspath()
 test {
   exclude 'ui/**'
   exclude 'integration/**'
+  exclude 'itest/**'
+}
+
+task itest(type: Test, dependsOn: 'classes') {
+  include 'itest/**'
 }
 
 task uitest(type: Test, dependsOn: 'classes') {

@@ -8,7 +8,7 @@ from exceptions import ValueError
 
 MODULE = "play-tests"
 
-COMMANDS = ["tests", "compile", "clean-tests", "unit-tests", "ui-tests", "unit-tests2", "ui-tests2"]
+COMMANDS = ["tests", "compile", "clean-tests", "unit-tests", "ui-tests", "unit-tests2", "ui-tests2", "itests"]
 
 HELP = {
     "tests": "Compile and run all tests",
@@ -16,6 +16,7 @@ HELP = {
     "clean-tests": "Clean compiled tests and test results",
     "unit-tests": "Run plain unit-tests",
     "unit-tests2": "Run unit-tests (with Gradle)",
+    "itests": "Run integration tests (unit-tests that required play start - they cannot be run with usual unit-tests)",
     "ui-tests": "Run UI tests",
     "ui-tests2": "Run UI tests (with Gradle)"
 }
@@ -188,5 +189,7 @@ def execute(**kargs):
         run_tests2(app, 'cleanTest', 'test')
     elif command == 'ui-tests2':
         run_tests2(app, 'cleanUitest', 'uitest')
+    elif command == 'itests':
+        run_tests2(app, 'cleanItest', 'itest')
     else:
         raise ValueError("Unknown command: %s" % command)
