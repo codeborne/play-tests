@@ -5,5 +5,5 @@
 *.iml
 *.ipr
 *.iws
-/test-result
+/.gradle
 /dist
