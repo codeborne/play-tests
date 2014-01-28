@@ -37,7 +37,11 @@ def addModules() {
 
     //println sourceSets['main']['java']['srcDirs']
 
-    def modules = new File(PLAY_APP, 'modules').listFiles()
+    _addModules(PLAY_APP)
+}
+
+def _addModules(appDirectory) {
+    def modules = new File(appDirectory, 'modules').listFiles()
 
     modules.each {File module ->
       module = _resolveModule(module)
@@ -53,6 +57,7 @@ def addModules() {
         sourceSets['test']['resources']['srcDirs'] += test;
       }
       _addToClasspath("$module/lib")
+      _addModules(module)
     }
 
     //println "src:"
