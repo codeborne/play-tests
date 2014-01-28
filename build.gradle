@@ -106,7 +106,7 @@ task uitest(type: Test, dependsOn: 'classes') {
   //systemProperties['webdriver.chrome.driver'] = '/usr/bin/chromedriver'
   systemProperties['BUILD_URL'] = System.getenv()['BUILD_URL']
   //systemProperties['java.net.preferIPv4Stack'] = 'true'
-  maxParallelForks = 2
+  //maxParallelForks = 2
 }
 
 tasks.withType(Test).all { testTask ->
