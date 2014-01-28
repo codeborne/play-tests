@@ -129,7 +129,6 @@ def run_tests2(app, task_clean, task_run):
     # TODO add app.agent_path() ?
     module_dir = os.path.dirname(os.path.realpath(__file__))
     gradle_cmd = ["bash", "%s/gradle" % module_dir, "-b", "%s/build.gradle" % module_dir,
-                  "--daemon",
                   "-PPLAY_APP=%s" % app.path,
                   "-PPLAY_HOME=%s" % app.play_env["basedir"],
                   task_clean, task_run]
