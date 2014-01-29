@@ -1,10 +1,11 @@
 package play.test;
 
+import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
-import com.codeborne.selenide.Screenshots;
 import com.codeborne.selenide.junit.ScreenShooter;
 import org.junit.BeforeClass;
 import org.junit.Rule;
+import org.openqa.selenium.WebElement;
 import play.Play;
 import play.i18n.Messages;
 import play.mvc.Router;
@@ -12,10 +13,8 @@ import play.server.Server;
 
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 
-import static com.codeborne.selenide.Selenide.executeJavaScript;
-import static com.codeborne.selenide.Selenide.open;
+import static com.codeborne.selenide.Selenide.*;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static com.codeborne.selenide.junit.ScreenShooter.failedTests;
 import static org.openqa.selenium.net.PortProber.findFreePort;
@@ -56,14 +55,25 @@ public abstract class UITest extends BaseTest {
     return Messages.get(key, args);
   }
 
-  private static final AtomicLong counter = new AtomicLong();
+  private static Condition action(final String action) {
+    return new Condition("action") {
+      @Override public boolean apply(WebElement element) {
+        String expectedUrl = Router.getFullUrl(action);
+        return expectedUrl.equals(actualUrl());
+      }
+
+      private String actualUrl() {
+        return getWebDriver().getCurrentUrl().replaceFirst("\\?.*$", "");
+      }
+
+      @Override public String actualValue(WebElement element) {
+        return actualUrl();
+      }
+    };
+  }
+
   protected void assertAction(String action) {
-    String expectedUrl = Router.getFullUrl(action);
-    String actualUrl = getWebDriver().getCurrentUrl().replaceFirst("\\?.*$", "");
-    if (!expectedUrl.equals(actualUrl)) {
-      Screenshots.takeScreenShot(getClass().getName(), "screenshot_" + counter.getAndIncrement());
-    }
-    assertEquals(expectedUrl, actualUrl);
+    $("body").shouldHave(action(action));
   }
 
   protected void mockConfirm() {
