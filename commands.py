@@ -189,7 +189,7 @@ def execute(**kargs):
                 print "~ "
 
     if remote_debug:
-        gradle_opts.append("-Dtest.debug=true")
+        gradle_opts.append("-Duitest.debug=true")
     if daemon:
         gradle_opts.append('--daemon')
 
