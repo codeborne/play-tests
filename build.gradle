@@ -57,7 +57,9 @@ def _addModules(appDirectory) {
         sourceSets['test']['resources']['srcDirs'] += test;
       }
       _addToClasspath("$module/lib")
-      _addModules(module)
+      if (module.isDirectory()) {
+        _addModules(module)
+      }
     }
 
     //println "src:"
@@ -90,23 +92,35 @@ task showClasspath << {
 addModules()
 addPlayToClasspath()
 
+task copyTestClassesToPlayPrecompiled(type: Copy) {
+  from project.sourceSets.test.output.classesDir
+  into "$PLAY_APP/precompiled/java"
+  include 'itest/**'
+  include 'ui/**'
+}
+
 test {
   exclude 'ui/**'
   exclude 'integration/**'
   exclude 'itest/**'
 }
 
-task itest(type: Test, dependsOn: 'classes') {
+task itest(type: Test, dependsOn: ['classes', 'copyTestClassesToPlayPrecompiled']) {
   include 'itest/**'
 }
 
-task uitest(type: Test, dependsOn: 'classes') {
-  include 'ui/**'
+task uitest(type: Test, dependsOn: ['classes', 'copyTestClassesToPlayPrecompiled']) {
+  if (project.hasProperty('UITEST_CLASS')) {
+    include UITEST_CLASS
+  }
+  else {
+    include 'ui/*'
+  }
   systemProperties['browser'] = 'chrome'
-  //systemProperties['webdriver.chrome.driver'] = '/usr/bin/chromedriver'
+  systemProperties['selenid.timeout'] = '8000'
+  systemProperties['precompiled'] = 'true'
   systemProperties['BUILD_URL'] = System.getenv()['BUILD_URL']
-  //systemProperties['java.net.preferIPv4Stack'] = 'true'
-  //maxParallelForks = 2
+  maxParallelForks = 2
 }
 
 tasks.withType(Test).all { testTask ->

@@ -8,14 +8,14 @@ Add it to your dependencies.yml
 
     require:
         - play
-        - play-selenide -> selenide 2.3
+        - play-tests -> play-tests 2.7.6
     
     repositories:
-        - play-selenide:
+        - play-tests:
           type: http
           artifact: http://repo.codeborne.com/play-selenide/[module]-[revision].zip
           contains:
-            - play-selenide -> *
+            - play-tests -> *
 
 Your first test
 ---------------
@@ -46,3 +46,32 @@ Configuration
 By default, play-selenide starts Play server in "test" mode before running tests.
 If you need to disable it (for example, for running tests against remote server), you can do it by the following 
 system property: `-Dselenide.play.start=false`
+
+Running
+-------------
+
+`play tests`
+ Compile and run unit-, integration- and UI tests
+
+ `play clean-tests`
+ Cleans compiled classes and test results
+
+ `pay unit-tests`
+ Runs unit-tests (all tests excluding ui/**, integration/**, itest/**)
+
+ `play itests`
+ Runs integration tests (all tests in folders itest/**)
+
+ `pay ui-tests`
+ Runs UI tests (all tests in folders ui/**)
+
+
+Additional command line options
+-------------
+`play tests --remote_debug=true`  - runs tests with remote debug option
+
+`play unit-tests --daemon`  - runs Gradle as daemon - should cause faster Gradle startup
+
+`play unit-tests --gradle_opts=--debug` - uses additional Gradle options
+
+`play tests --uitest=ui/SomeSingleTest*` - runs single UI test instead of all UI tests

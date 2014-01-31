@@ -25,16 +25,32 @@ public abstract class UITest extends BaseTest {
   public static boolean isPrecompileNeeded = Boolean.getBoolean("precompiled");
   public static boolean isPlayStartNeeded = !"false".equals(System.getProperty("selenide.play.start", "true"));
 
+  static {
+    if (isPrecompileNeeded) {
+      System.out.println("Precompiled static -------------------");
+      Play.usePrecompiled = true;
+    }
+  }
+
   @BeforeClass
   public static synchronized void startServer() throws IOException {
     if (isPlayStartNeeded && !serverStarted.get()) {
       if (isPrecompileNeeded) {
+        System.out.println("Precompiled before class -------------------");
         Play.usePrecompiled = true;
       }
+
+      System.out.println("Setup play server -------------------");
 
       int port = findFreePort();
       Configuration.baseUrl = "http://localhost:" + port;
       new Server(new String[]{"--http.port=" + port});
+
+//      (Experimental)
+//      Make cookie unique to avoid clashes between parallel Chrome instances:
+//      String sessionCookie = Play.configuration.getProperty("application.session.cookie");
+//      Play.configuration.setProperty("application.session.cookie", sessionCookie + "_" + ManagementFactory.getRuntimeMXBean().getName());
+
       warmupServer();
       Play.configuration.setProperty("application.baseUrl", Configuration.baseUrl);
       serverStarted.set(true);
