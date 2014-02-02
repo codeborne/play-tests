@@ -12,6 +12,8 @@ import play.mvc.Router;
 import play.server.Server;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.codeborne.selenide.Selenide.*;
@@ -71,11 +73,15 @@ public abstract class UITest extends BaseTest {
     return Messages.get(key, args);
   }
 
-  private static Condition action(final String action) {
-    return new Condition("action") {
+  private static Condition action(final String action, final Map<String, String> args) {
+    return new Condition("action " + action + " " + args) {
       @Override public boolean apply(WebElement element) {
-        String expectedUrl = Router.getFullUrl(action);
-        return expectedUrl.equals(actualUrl());
+        String expectedUrl = Router.getFullUrl(action, new HashMap<String, Object>(args));
+        String actualUrl = actualUrl();
+        if (!expectedUrl.equals(actualUrl)) {
+          System.out.println("Actual url: " + actualUrl + ", expected url: " + expectedUrl);
+        }
+        return expectedUrl.equals(actualUrl);
       }
 
       private String actualUrl() {
@@ -89,7 +95,11 @@ public abstract class UITest extends BaseTest {
   }
 
   protected void assertAction(String action) {
-    $("body").shouldHave(action(action));
+    $("body").shouldHave(action(action, new HashMap<String, String>(0)));
+  }
+
+  protected void assertAction(String action, Map<String, String> args) {
+    $("body").shouldHave(action(action, args));
   }
 
   protected void mockConfirm() {
