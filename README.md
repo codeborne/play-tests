@@ -75,3 +75,5 @@ Additional command line options
 `play unit-tests --gradle_opts=--debug` - uses additional Gradle options
 
 `play tests --uitest=ui/SomeSingleTest*` - runs single UI test instead of all UI tests
+
+`play tests --threads=3` - runs UI tests in N parallel threads

@@ -117,11 +117,18 @@ task uitest(type: Test, dependsOn: 'copyTestClassesToPlayPrecompiled') {
   else {
     include 'ui/**'
   }
+
   systemProperties['browser'] = 'chrome'
   systemProperties['selenide.timeout'] = '8000'
   systemProperties['precompiled'] = 'true'
   systemProperties['BUILD_URL'] = System.getenv()['BUILD_URL']
-  maxParallelForks = 2
+
+  if (project.hasProperty('THREADS')) {
+    maxParallelForks = THREADS
+  }
+  else {
+    maxParallelForks = 2
+  }
 }
 
 tasks.withType(Test).all { testTask ->

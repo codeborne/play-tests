@@ -130,7 +130,7 @@ def run_ui_tests(app, args, test_class_name, is_random_order):
     run_tests(app, args + ui_args, 'UI', is_random_order, test_class_name)
 
 
-def run_tests2(app, args, gradle_opts, *tasks):
+def run_tests2(app, args, threads_count, gradle_opts, *tasks):
     module_dir = os.path.dirname(os.path.realpath(__file__))
     gradle_cmd = ["bash",
                   "%s/gradle" % module_dir,
@@ -139,6 +139,8 @@ def run_tests2(app, args, gradle_opts, *tasks):
                   "-PPLAY_HOME=%s" % app.play_env["basedir"],
                   "-Dfile.encoding=UTF-8",
                   ] + list(tasks) + list(args) + gradle_opts
+    if threads_count:
+        gradle_cmd += ['-PTHREADS=%s' % threads_count]
 
     print "~ %s" % ' '.join(gradle_cmd)
     return_code = subprocess.call(gradle_cmd, env=os.environ)
@@ -160,7 +162,8 @@ def execute(**kargs):
     gradle_opts = []
     remote_debug = False
     daemon = False
-    optlist, args = getopt.getopt(args, '', ['test=', 'uitest=', 'daemon=', 'remote_debug=', 'gradle_opts=', 'random='])
+    threads_count = None
+    optlist, args = getopt.getopt(args, '', ['test=', 'uitest=', 'threads=', 'daemon=', 'remote_debug=', 'gradle_opts=', 'random='])
     for o, a in optlist:
         if o == '--test':  # deprecated
             test_class_name = a
@@ -169,6 +172,10 @@ def execute(**kargs):
         if o == '--uitest':
             uitest_class_pattern = a
             print "~ UI TEST: %s" % uitest_class_pattern
+            print "~ "
+        if o == '--threads':
+            threads_count = a
+            print "~ THREADS: %s" % threads_count
             print "~ "
         if o == '--gradle_opts':
             gradle_opts = a.split()
@@ -194,15 +201,15 @@ def execute(**kargs):
         gradle_opts.append('--daemon')
 
     if command == 'tests' or command == 'tests2':
-        run_tests2(app, args, gradle_opts, 'clean', 'test', 'itest', 'uitest', '-PUITEST_CLASS=%s' % uitest_class_pattern)
+        run_tests2(app, args, threads_count, gradle_opts, 'clean', 'test', 'itest', 'uitest', '-PUITEST_CLASS=%s' % uitest_class_pattern)
     elif command == 'clean-tests' or command == 'clean-tests2':
-        run_tests2(app, args, gradle_opts, 'cleanTest')
+        run_tests2(app, args, threads_count, gradle_opts, 'cleanTest')
     elif command == 'unit-tests' or command == 'unit-tests2':
-        run_tests2(app, args, gradle_opts, 'test')
+        run_tests2(app, args, threads_count, gradle_opts, 'test')
     elif command == 'ui-tests' or command == 'ui-tests2':
-        run_tests2(app, args, gradle_opts, 'uitest', '-PUITEST_CLASS=%s' % uitest_class_pattern)
+        run_tests2(app, args, threads_count, gradle_opts, 'uitest', '-PUITEST_CLASS=%s' % uitest_class_pattern)
     elif command == 'itests':
-        run_tests2(app, args, gradle_opts, 'itest')
+        run_tests2(app, args, threads_count, gradle_opts, 'itest')
 
     # Deprecated commands:
     elif command == 'tests1':
