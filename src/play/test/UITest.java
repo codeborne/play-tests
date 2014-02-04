@@ -3,8 +3,10 @@ package play.test;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.junit.ScreenShooter;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
+import org.junit.runner.RunWith;
 import org.openqa.selenium.WebElement;
 import play.Play;
 import play.i18n.Messages;
@@ -21,7 +23,11 @@ import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static com.codeborne.selenide.junit.ScreenShooter.failedTests;
 import static org.openqa.selenium.net.PortProber.findFreePort;
 
-public abstract class UITest extends BaseTest {
+@RunWith(PlayTestsRunner.class)
+public abstract class UITest extends Assert {
+  @Rule
+  public PlayTestsRunner.StartPlay startPlayBeforeTests = PlayTestsRunner.StartPlay.rule();
+
   private static final AtomicBoolean serverStarted = new AtomicBoolean(false);
 
   public static boolean isPrecompileNeeded = Boolean.getBoolean("precompiled");
@@ -47,11 +53,6 @@ public abstract class UITest extends BaseTest {
       int port = findFreePort();
       Configuration.baseUrl = "http://localhost:" + port;
       new Server(new String[]{"--http.port=" + port});
-
-//      (Experimental)
-//      Make cookie unique to avoid clashes between parallel Chrome instances:
-//      String sessionCookie = Play.configuration.getProperty("application.session.cookie");
-//      Play.configuration.setProperty("application.session.cookie", sessionCookie + "_" + ManagementFactory.getRuntimeMXBean().getName());
 
       warmupServer();
       Play.configuration.setProperty("application.baseUrl", Configuration.baseUrl);
