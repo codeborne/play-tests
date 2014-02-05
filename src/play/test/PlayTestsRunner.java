@@ -18,26 +18,12 @@ import play.Play;
 import java.io.File;
 
 public class PlayTestsRunner extends Runner implements Filterable {
-
-  public static boolean useCustomRunner = false;
-
-  // *******************
-  JUnit4 jUnit4;
+  private Class testClass;
+  private JUnit4 jUnit4;
 
   public PlayTestsRunner(Class testClass) throws ClassNotFoundException, InitializationError {
-    synchronized (Play.class) {
-      if (!Play.started) {
-        Play.init(new File("."), getPlayId());
-        Play.javaPath.add(Play.getVirtualFile("test"));
-        if (!Play.started) {
-          Play.start();
-        }
-        useCustomRunner = true;
-        Class classToRun = Play.classloader.loadApplicationClass(testClass.getName());
-      }
-      Class classToRun = Play.classloader.loadApplicationClass(testClass.getName());
-      jUnit4 = new JUnit4(classToRun);
-    }
+    this.testClass = testClass;
+    jUnit4 = new JUnit4(testClass);
   }
 
   private static String getPlayId() {
@@ -55,7 +41,29 @@ public class PlayTestsRunner extends Runner implements Filterable {
 
   @Override
   public void run(final RunNotifier notifier) {
+    startPlayIfNeeded();
+
+    testClass = Play.classloader.loadApplicationClass(testClass.getName());
+    try {
+      jUnit4 = new JUnit4(testClass);
+    }
+    catch (InitializationError initializationError) {
+      throw new RuntimeException(initializationError);
+    }
+
     jUnit4.run(notifier);
+  }
+
+  protected void startPlayIfNeeded() {
+    synchronized (Play.class) {
+      if (!Play.started) {
+        Play.init(new File("."), getPlayId());
+        Play.javaPath.add(Play.getVirtualFile("test"));
+        if (!Play.started) {
+          Play.start();
+        }
+      }
+    }
   }
 
   @Override
@@ -64,57 +72,37 @@ public class PlayTestsRunner extends Runner implements Filterable {
 
   }
 
-  // *********************
-  public enum StartPlay implements MethodRule {
+  public static class PlayContextTestInvoker implements MethodRule {
+    @Override public Statement apply(final Statement base, FrameworkMethod method, Object target) {
 
-    INVOKE_THE_TEST_IN_PLAY_CONTEXT {
+      return new Statement() {
 
-      @Override public Statement apply(final Statement base, FrameworkMethod method, Object target) {
+        @Override
+        public void evaluate() throws Throwable {
+          try {
+            Invoker.invokeInThread(new Invoker.DirectInvocation() {
 
-        return new Statement() {
-
-          @Override
-          public void evaluate() throws Throwable {
-            try {
-              Invoker.invokeInThread(new Invoker.DirectInvocation() {
-
-                @Override
-                public void execute() throws Exception {
-                  try {
-                    base.evaluate();
-                  }
-                  catch (Throwable e) {
-                    throw new RuntimeException(e);
-                  }
+              @Override
+              public void execute() throws Exception {
+                try {
+                  base.evaluate();
                 }
-
-                @Override
-                public Invoker.InvocationContext getInvocationContext() {
-                  return new Invoker.InvocationContext(invocationType);
+                catch (Throwable e) {
+                  throw new RuntimeException(e);
                 }
-              });
-            } catch (Throwable e) {
-              throw ExceptionUtils.getRootCause(e);
-            }
+              }
+
+              @Override
+              public Invoker.InvocationContext getInvocationContext() {
+                return new Invoker.InvocationContext(invocationType);
+              }
+            });
           }
-        };
-      }
-    },
-    JUST_RUN_THE_TEST {
-
-      @Override public Statement apply(final Statement base, FrameworkMethod method, Object target) {
-        return new Statement() {
-
-          @Override
-          public void evaluate() throws Throwable {
-            base.evaluate();
+          catch (Throwable e) {
+            throw ExceptionUtils.getRootCause(e);
           }
-        };
-      }
-    };
-
-    public static StartPlay rule() {
-      return useCustomRunner ? INVOKE_THE_TEST_IN_PLAY_CONTEXT : JUST_RUN_THE_TEST;
+        }
+      };
     }
   }
 }

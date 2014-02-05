@@ -6,6 +6,7 @@ import com.codeborne.selenide.junit.ScreenShooter;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
+import org.junit.rules.MethodRule;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebElement;
 import play.Play;
@@ -26,7 +27,7 @@ import static org.openqa.selenium.net.PortProber.findFreePort;
 @RunWith(PlayTestsRunner.class)
 public abstract class UITest extends Assert {
   @Rule
-  public PlayTestsRunner.StartPlay startPlayBeforeTests = PlayTestsRunner.StartPlay.rule();
+  public MethodRule testsRunnerRule = new PlayTestsRunner.PlayContextTestInvoker();
 
   private static final AtomicBoolean serverStarted = new AtomicBoolean(false);
 
