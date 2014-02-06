@@ -77,3 +77,17 @@ Additional command line options
 `play tests --uitest=ui/SomeSingleTest*` - runs single UI test instead of all UI tests
 
 `play tests --threads=3` - runs UI tests in N parallel threads
+
+
+Changelog
+-------------
+
+=== 2.7.8
+Added MailMock for emulating smtp mail server.
+
+=== 2.7.7
+Do not re-start play if it's already started. Big performance improvement!
+
+=== 2.7.6
+* Runs Play in precompiled mode
+* Method assertAction() now waits until the URL actually changes
