@@ -3,13 +3,11 @@ package play.test;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.junit.ScreenShooter;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.rules.MethodRule;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebElement;
 import play.Play;
+import play.db.jpa.JPAPlugin;
 import play.i18n.Messages;
 import play.mvc.Router;
 import play.server.Server;
@@ -26,9 +24,6 @@ import static org.openqa.selenium.net.PortProber.findFreePort;
 
 @RunWith(PlayTestsRunner.class)
 public abstract class UITest extends Assert {
-  @Rule
-  public MethodRule testsRunnerRule = new PlayTestsRunner.PlayContextTestInvoker();
-
   private static final AtomicBoolean serverStarted = new AtomicBoolean(false);
 
   public static boolean isPrecompileNeeded = Boolean.getBoolean("precompiled");
@@ -119,5 +114,15 @@ public abstract class UITest extends Assert {
     String flashCookiePrefix = Play.configuration.getProperty("application.session.cookie", "PLAY");
     String flashCookie = flashCookiePrefix + "_FLASH";
     getWebDriver().manage().deleteCookieNamed(flashCookie);
+  }
+
+  @Before
+  public void startTransaction() {
+    JPAPlugin.startTx(false);
+  }
+
+  @After
+  public void closeTransaction() {
+    JPAPlugin.closeTx(true);
   }
 }
