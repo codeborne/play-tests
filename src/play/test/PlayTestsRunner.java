@@ -13,6 +13,7 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import play.Invoker;
 import play.Play;
+import play.exceptions.UnexpectedException;
 
 import java.io.File;
 
@@ -97,17 +98,11 @@ public class PlayTestsRunner extends Runner implements Filterable {
               }
             });
           }
-          catch (Throwable e) {
-            throw getRootCause(e);
+          catch (UnexpectedException e) {
+            throw e.getCause();
           }
         }
       };
-    }
-
-    private Throwable getRootCause(Throwable e) {
-      Throwable cause = e;
-      while (cause.getCause() != null && cause != cause.getCause()) cause = e.getCause();
-      return cause;
     }
   }
 }
