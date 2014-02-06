@@ -1,6 +1,5 @@
 package play.test;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.junit.rules.MethodRule;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
@@ -99,10 +98,16 @@ public class PlayTestsRunner extends Runner implements Filterable {
             });
           }
           catch (Throwable e) {
-            throw ExceptionUtils.getRootCause(e);
+            throw getRootCause(e);
           }
         }
       };
+    }
+
+    private Throwable getRootCause(Throwable e) {
+      Throwable cause = e;
+      while (cause.getCause() != null && cause != cause.getCause()) cause = e.getCause();
+      return cause;
     }
   }
 }
