@@ -1,66 +1,29 @@
 package play.test;
 
 import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.junit.ScreenShooter;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebElement;
 import play.Play;
 import play.db.jpa.JPAPlugin;
 import play.i18n.Messages;
 import play.mvc.Router;
-import play.server.Server;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.codeborne.selenide.Selenide.*;
+import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.executeJavaScript;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static com.codeborne.selenide.junit.ScreenShooter.failedTests;
-import static org.openqa.selenium.net.PortProber.findFreePort;
 
 @RunWith(PlayTestsRunner.class)
 public abstract class UITest extends Assert {
   @Rule public ScreenShooter makeScreenshotOnFailure = failedTests();
-
-  private static final AtomicBoolean serverStarted = new AtomicBoolean(false);
-
-  public static boolean isPrecompileNeeded = Boolean.getBoolean("precompiled");
-  public static boolean isPlayStartNeeded = !"false".equals(System.getProperty("selenide.play.start", "true"));
-
-  static {
-    if (isPrecompileNeeded) {
-      System.out.println("Precompiled static -------------------");
-      Play.usePrecompiled = true;
-    }
-  }
-
-  @BeforeClass
-  public static synchronized void startServer() throws IOException {
-    if (isPlayStartNeeded && !serverStarted.get()) {
-      if (isPrecompileNeeded) {
-        System.out.println("Precompiled before class -------------------");
-        Play.usePrecompiled = true;
-      }
-
-      System.out.println("Setup play server -------------------");
-
-      int port = findFreePort();
-      Configuration.baseUrl = "http://localhost:" + port;
-      new Server(new String[]{"--http.port=" + port});
-
-      warmupServer();
-      Play.configuration.setProperty("application.baseUrl", Configuration.baseUrl);
-      serverStarted.set(true);
-    }
-  }
-
-  private static void warmupServer() {
-    open("/");
-  }
 
   @Before
   public void usePlayClassloader() {

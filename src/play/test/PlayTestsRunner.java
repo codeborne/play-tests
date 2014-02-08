@@ -1,5 +1,6 @@
 package play.test;
 
+import com.codeborne.selenide.Configuration;
 import org.junit.rules.MethodRule;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
@@ -14,8 +15,11 @@ import org.junit.runners.model.Statement;
 import play.Invoker;
 import play.Play;
 import play.exceptions.UnexpectedException;
+import play.server.Server;
 
 import java.io.File;
+
+import static org.openqa.selenium.net.PortProber.findFreePort;
 
 public class PlayTestsRunner extends Runner implements Filterable {
   private Class testClass;
@@ -64,13 +68,22 @@ public class PlayTestsRunner extends Runner implements Filterable {
   }
 
   protected void startPlayIfNeeded() {
+    boolean isPlayStartNeeded = !"false".equalsIgnoreCase(System.getProperty("selenide.play.start", "true"));
+
     synchronized (Play.class) {
-      if (!Play.started) {
+      if (isPlayStartNeeded && !Play.started) {
+        Play.usePrecompiled = "true".equalsIgnoreCase(System.getProperty("precompiled", "false"));
         Play.init(new File("."), getPlayId());
         Play.javaPath.add(Play.getVirtualFile("test"));
         if (!Play.started) {
           Play.start();
         }
+
+        int port = findFreePort();
+        new Server(new String[]{"--http.port=" + port});
+
+        Configuration.baseUrl = "http://localhost:" + port;
+        Play.configuration.setProperty("application.baseUrl", Configuration.baseUrl);
       }
     }
   }
@@ -81,6 +94,11 @@ public class PlayTestsRunner extends Runner implements Filterable {
     jUnit4.filter(filter);
   }
 
+  /**
+   * @deprecated
+   * No need to use this class.
+   */
+  @Deprecated
   public static class PlayContextTestInvoker implements MethodRule {
     @Override public Statement apply(final Statement base, FrameworkMethod method, Object target) {
 
