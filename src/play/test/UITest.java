@@ -24,6 +24,8 @@ import static org.openqa.selenium.net.PortProber.findFreePort;
 
 @RunWith(PlayTestsRunner.class)
 public abstract class UITest extends Assert {
+  @Rule public ScreenShooter makeScreenshotOnFailure = failedTests();
+
   private static final AtomicBoolean serverStarted = new AtomicBoolean(false);
 
   public static boolean isPrecompileNeeded = Boolean.getBoolean("precompiled");
@@ -60,7 +62,20 @@ public abstract class UITest extends Assert {
     open("/");
   }
 
-  @Rule public ScreenShooter makeScreenshotOnFailure = failedTests();
+  @Before
+  public void usePlayClassloader() {
+    Thread.currentThread().setContextClassLoader(Play.classloader);
+  }
+
+  @Before
+  public void startTransaction() {
+    JPAPlugin.startTx(false);
+  }
+
+  @After
+  public void closeTransaction() {
+    JPAPlugin.closeTx(true);
+  }
 
   protected String label(String key) {
     return Messages.get(key);
@@ -114,15 +129,5 @@ public abstract class UITest extends Assert {
     String flashCookiePrefix = Play.configuration.getProperty("application.session.cookie", "PLAY");
     String flashCookie = flashCookiePrefix + "_FLASH";
     getWebDriver().manage().deleteCookieNamed(flashCookie);
-  }
-
-  @Before
-  public void startTransaction() {
-    JPAPlugin.startTx(false);
-  }
-
-  @After
-  public void closeTransaction() {
-    JPAPlugin.closeTx(true);
   }
 }
