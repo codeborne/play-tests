@@ -20,6 +20,7 @@ import java.io.File;
 public class PlayTestsRunner extends Runner implements Filterable {
   private Class testClass;
   private JUnit4 jUnit4;
+  private Filter filter;
 
   public PlayTestsRunner(Class testClass) throws ClassNotFoundException, InitializationError {
     this.testClass = testClass;
@@ -42,16 +43,24 @@ public class PlayTestsRunner extends Runner implements Filterable {
   @Override
   public void run(final RunNotifier notifier) {
     startPlayIfNeeded();
+    loadTestClassWithPlayClassloader();
+    jUnit4.run(notifier);
+  }
 
+  private void loadTestClassWithPlayClassloader() {
     testClass = Play.classloader.loadApplicationClass(testClass.getName());
     try {
       jUnit4 = new JUnit4(testClass);
+      if (filter != null) {
+        jUnit4.filter(filter);
+      }
     }
     catch (InitializationError initializationError) {
       throw new RuntimeException(initializationError);
     }
-
-    jUnit4.run(notifier);
+    catch (NoTestsRemainException itCannotHappen) {
+      throw new RuntimeException(itCannotHappen);
+    }
   }
 
   protected void startPlayIfNeeded() {
@@ -67,9 +76,9 @@ public class PlayTestsRunner extends Runner implements Filterable {
   }
 
   @Override
-  public void filter(Filter toFilter) throws NoTestsRemainException {
-    jUnit4.filter(toFilter);
-
+  public void filter(Filter filter) throws NoTestsRemainException {
+    this.filter = filter;
+    jUnit4.filter(filter);
   }
 
   public static class PlayContextTestInvoker implements MethodRule {
