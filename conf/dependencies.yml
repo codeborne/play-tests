@@ -6,6 +6,7 @@ require:
     - com.codeborne -> selenide 2.7
     - com.google.guava -> guava 16.0
     - junit -> junit 4.11
+    - org.mockito -> mockito-all 1.9.5
     - org.apache.ant -> ant-junit 1.9.3
     - org.apache.ant -> ant-junit4 1.9.3
     - org.subethamail -> subethasmtp 3.1.7
