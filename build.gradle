@@ -120,6 +120,7 @@ task uitest(type: Test, dependsOn: 'copyTestClassesToPlayPrecompiled') {
 
   systemProperties['browser'] = 'chrome'
   systemProperties['selenide.timeout'] = '8000'
+  systemProperties['precompiled'] = 'true'
   systemProperties['BUILD_URL'] = System.getenv()['BUILD_URL']
 
   if (project.hasProperty('THREADS')) {
@@ -133,7 +134,6 @@ task uitest(type: Test, dependsOn: 'copyTestClassesToPlayPrecompiled') {
 tasks.withType(Test).all { testTask ->
   testTask.jvmArgs = ['-ea', '-XX:-UseSplitVerifier', '-XX:MaxPermSize=256m']
   testTask.systemProperties['file.encoding'] = 'UTF-8'
-  testTask.systemProperties['precompiled'] = 'true'
   testTask.testLogging.showStandardStreams = true
   testTask.workingDir = PLAY_APP
   testTask.outputs.upToDateWhen { false }
