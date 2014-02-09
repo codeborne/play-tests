@@ -160,10 +160,12 @@ def execute(**kargs):
     test_class_name = None
     uitest_class_pattern = 'ui/**'
     gradle_opts = []
-    remote_debug = False
+    test_debug = False
+    uitest_debug = False
     daemon = False
     threads_count = None
-    optlist, args = getopt.getopt(args, '', ['test=', 'uitest=', 'threads=', 'daemon=', 'remote_debug=', 'gradle_opts=', 'random='])
+    optlist, args = getopt.getopt(args, '', ['test=', 'uitest=', 'threads=', 'daemon=',
+                                             'remote_debug=', 'uitest.debug=', 'test.debug=', 'gradle_opts=', 'random='])
     for o, a in optlist:
         if o == '--test':  # deprecated
             test_class_name = a
@@ -181,9 +183,13 @@ def execute(**kargs):
             gradle_opts = a.split()
             print "~ GRADLE OPTS: %s" % gradle_opts
             print "~ "
-        if o == '--remote_debug':
-            remote_debug = a.lower() in ['true', '1', 't', 'y', 'yes']
-            print "~ REMOTE DEBUG"
+        if o == '--remote_debug' or o == '--uitest.debug':
+            uitest_debug = a.lower() in ['true', '1', 't', 'y', 'yes']
+            print "~ UI Test DEBUG"
+            print "~ "
+        if o == '--test.debug' :
+            test_debug = a.lower() in ['true', '1', 't', 'y', 'yes']
+            print "~ Test DEBUG"
             print "~ "
         if o == '--daemon':
             daemon = a.lower() in ['true', '1', 't', 'y', 'yes']
@@ -195,7 +201,9 @@ def execute(**kargs):
                 print "~ RANDOM ORDER"
                 print "~ "
 
-    if remote_debug:
+    if test_debug:
+        gradle_opts.append("-Dtest.debug=true")
+    if uitest_debug:
         gradle_opts.append("-Duitest.debug=true")
     if daemon:
         gradle_opts.append('--daemon')
