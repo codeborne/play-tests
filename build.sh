@@ -1,5 +1,5 @@
 #!/bin/bash
-MODULE="play-tests"
+MODULE="tests"
 VERSION=`grep self conf/dependencies.yml | sed "s/.*$MODULE //"`
 TARGET=/var/www/repo/$MODULE/$MODULE-$VERSION.zip
 
