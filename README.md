@@ -1,4 +1,4 @@
-play-selenide
+play-tests
 =============
 
 Play framework module for easy integration with Selenide (based on Selenium Web Driver) to be able to write UI tests for Play apps in plain Java instead of html files.
@@ -8,12 +8,12 @@ Add it to your dependencies.yml
 
     require:
         - play
-        - play-tests -> play-tests 2.7.6
+        - play-tests -> tests 2.7.10
     
     repositories:
         - play-tests:
           type: http
-          artifact: http://repo.codeborne.com/play-selenide/[module]-[revision].zip
+          artifact: http://repo.codeborne.com/[organization]/[module]-[revision].zip
           contains:
             - play-tests -> *
 
@@ -82,12 +82,24 @@ Additional command line options
 Changelog
 -------------
 
+=== 2.7.10
+
+Clear default language before every test.
+
+=== 2.7.9
+
+* Added possibility to save/restore database state before every test.
+
 === 2.7.8
-Added MailMock for emulating smtp mail server.
+
+* Added MailMock for emulating smtp mail server.
+* Do not invoke each test in Play context. It' just not needed.
 
 === 2.7.7
-Do not re-start play if it's already started. Big performance improvement!
+
+* Do not re-start play if it's already started. Big performance improvement!
 
 === 2.7.6
+
 * Runs Play in precompiled mode
 * Method assertAction() now waits until the URL actually changes
