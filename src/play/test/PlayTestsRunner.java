@@ -10,6 +10,7 @@ import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.JUnit4;
 import org.junit.runners.model.InitializationError;
 import play.Play;
+import play.i18n.Lang;
 import play.server.Server;
 
 import java.io.File;
@@ -43,6 +44,7 @@ public class PlayTestsRunner extends Runner implements Filterable {
   public void run(final RunNotifier notifier) {
     startPlayIfNeeded();
     loadTestClassWithPlayClassloader();
+    Lang.clear();
     jUnit4.run(notifier);
   }
 
