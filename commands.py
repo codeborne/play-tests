@@ -209,11 +209,11 @@ def execute(**kargs):
         gradle_opts.append('--daemon')
 
     if command == 'tests' or command == 'tests2':
-        run_tests2(app, args, threads_count, gradle_opts, 'clean', 'test', 'itest', 'uitest', '-PUITEST_CLASS=%s' % uitest_class_pattern)
+        run_tests2(app, args, threads_count, gradle_opts, 'clean', 'test', 'jacocoTestReport', 'itest', 'uitest', '-PUITEST_CLASS=%s' % uitest_class_pattern)
     elif command == 'clean-tests' or command == 'clean-tests2':
         run_tests2(app, args, threads_count, gradle_opts, 'cleanTest')
     elif command == 'unit-tests' or command == 'unit-tests2':
-        run_tests2(app, args, threads_count, gradle_opts, 'test')
+        run_tests2(app, args, threads_count, gradle_opts, 'test', 'jacocoTestReport')
     elif command == 'ui-tests' or command == 'ui-tests2':
         run_tests2(app, args, threads_count, gradle_opts, 'uitest', '-PUITEST_CLASS=%s' % uitest_class_pattern)
     elif command == 'itests':
