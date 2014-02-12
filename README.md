@@ -79,27 +79,30 @@ Additional command line options
 `play tests --threads=3` - runs UI tests in N parallel threads
 
 
-Changelog
--------------
+## Changelog
 
-=== 2.7.10
+### 2.7.11
+
+Now "play unit-tests" calculates code coverage.
+
+### 2.7.10
 
 Clear default language before every test.
 
-=== 2.7.9
+### 2.7.9
 
 * Added possibility to save/restore database state before every test.
 
-=== 2.7.8
+### 2.7.8
 
 * Added MailMock for emulating smtp mail server.
 * Do not invoke each test in Play context. It' just not needed.
 
-=== 2.7.7
+### 2.7.7
 
 * Do not re-start play if it's already started. Big performance improvement!
 
-=== 2.7.6
+### 2.7.6
 
 * Runs Play in precompiled mode
 * Method assertAction() now waits until the URL actually changes

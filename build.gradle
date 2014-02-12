@@ -1,4 +1,6 @@
 apply plugin: 'java'
+apply plugin: "jacoco"
+
 sourceCompatibility = 1.7
 compileJava.options.debugOptions.debugLevel = "source,lines,vars"
 
@@ -100,10 +102,21 @@ task copyTestClassesToPlayPrecompiled(type: Copy, dependsOn: 'testClasses') {
   outputs.upToDateWhen { false }
 }
 
+jacoco {
+  toolVersion = "0.6.4.201312101107"
+}
+
+repositories {
+    mavenCentral()
+}
+
 test {
   exclude 'ui/**'
   exclude 'integration/**'
   exclude 'itest/**'
+  jacoco {
+    append = false
+  }
 }
 
 task itest(type: Test, dependsOn: 'copyTestClassesToPlayPrecompiled') {
