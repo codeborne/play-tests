@@ -121,6 +121,9 @@ test {
 
 task itest(type: Test, dependsOn: 'copyTestClassesToPlayPrecompiled') {
   include 'itest/**'
+  jacoco {
+    enabled = false
+  }
 }
 
 task uitest(type: Test, dependsOn: 'copyTestClassesToPlayPrecompiled') {
@@ -135,6 +138,10 @@ task uitest(type: Test, dependsOn: 'copyTestClassesToPlayPrecompiled') {
   systemProperties['selenide.timeout'] = '8000'
   systemProperties['precompiled'] = 'true'
   systemProperties['BUILD_URL'] = System.getenv()['BUILD_URL']
+
+  jacoco {
+    enabled = false
+  }
 
   if (project.hasProperty('THREADS')) {
     maxParallelForks = THREADS
