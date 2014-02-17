@@ -20,9 +20,6 @@ sourceSets {
 }
 
 dependencies {
-  //println "======================="
-  //println "$PLAY_APP/lib"
-  //println "======================="
   compile fileTree(dir: "$PLAY_APP/lib", include: '*.jar')
 }
 
@@ -31,14 +28,8 @@ def _resolveModule(module) {
 }
 
 def addModules() {
-    //println "======================="
-    // println "using build file '$buildFile.name' in '$buildFile.parentFile.name'."
     println "Play app: $PLAY_APP"
     println "Play home: $PLAY_HOME"
-    //println "======================="
-
-    //println sourceSets['main']['java']['srcDirs']
-
     _addModules(PLAY_APP)
 }
 
@@ -52,7 +43,7 @@ def _addModules(appDirectory) {
       sourceSets['main']['resources']['srcDirs'] += new File(module, "app");
 
       File test = new File(module, "test")
-      def isModuleWithBrokenTests = module.name.matches("guice.*") || module.name.matches("cms.*") || module.name.matches("logger.*");
+      def isModuleWithBrokenTests = module.name.matches("guice.*");
 
       if (test.exists() && !isModuleWithBrokenTests) {
         sourceSets['test']['java']['srcDirs'] += test;
@@ -63,13 +54,6 @@ def _addModules(appDirectory) {
         _addModules(module)
       }
     }
-
-    //println "src:"
-    //println sourceSets['main']['java']['srcDirs']
-
-    // println "Available processors: " + Runtime.runtime.availableProcessors()
-    //println ""
-    //println "======================="
 }
 
 def addPlayToClasspath() {
@@ -78,8 +62,6 @@ def addPlayToClasspath() {
 }
 
 def _addToClasspath(dir) {
-    // println "+ " + lib
-
     def lib = fileTree(dir: dir, include: '*.jar')
     sourceSets['main']['compileClasspath'] += lib
     sourceSets['test']['compileClasspath'] += lib
@@ -116,6 +98,7 @@ test {
   exclude 'itest/**'
   jacoco {
     append = false
+    enabled = TEST_COVERAGE_ENABLED.toBoolean()
   }
 }
 

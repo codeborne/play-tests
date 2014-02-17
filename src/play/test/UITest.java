@@ -52,11 +52,7 @@ public abstract class UITest extends Assert {
     return new Condition("action " + action + " " + args) {
       @Override public boolean apply(WebElement element) {
         String expectedUrl = Router.getFullUrl(action, new HashMap<String, Object>(args));
-        String actualUrl = actualUrl();
-        if (!expectedUrl.equals(actualUrl)) {
-          System.out.println("Actual url: " + actualUrl + ", expected url: " + expectedUrl);
-        }
-        return expectedUrl.equals(actualUrl);
+        return expectedUrl.equals(actualUrl());
       }
 
       private String actualUrl() {
