@@ -117,6 +117,7 @@ task uitest(type: Test, dependsOn: 'copyTestClassesToPlayPrecompiled') {
     include 'ui/**'
   }
 
+  maxHeapSize = "256m"
   systemProperties['browser'] = 'chrome'
   systemProperties['selenide.timeout'] = '8000'
   systemProperties['precompiled'] = 'true'
@@ -135,7 +136,7 @@ task uitest(type: Test, dependsOn: 'copyTestClassesToPlayPrecompiled') {
 }
 
 tasks.withType(Test).all { testTask ->
-  testTask.jvmArgs = ['-ea', '-XX:-UseSplitVerifier', '-XX:MaxPermSize=256m']
+  testTask.jvmArgs = ['-ea', '-XX:-UseSplitVerifier', '-XX:MaxPermSize=128m']
   testTask.systemProperties['file.encoding'] = 'UTF-8'
   testTask.testLogging.showStandardStreams = true
   testTask.workingDir = PLAY_APP

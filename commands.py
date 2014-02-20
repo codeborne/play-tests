@@ -23,6 +23,7 @@ def execute_gradle(app, args, threads_count, gradle_opts, *tasks):
     gradle_cmd = ["bash",
                   "%s/gradle" % module_dir,
                   "-b", "%s/build.gradle" % module_dir,
+                  "-p", app.path,
                   "-PPLAY_APP=%s" % app.path,
                   "-PPLAY_HOME=%s" % app.play_env["basedir"],
                   "-Dfile.encoding=UTF-8",
