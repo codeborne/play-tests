@@ -98,7 +98,7 @@ test {
   exclude 'itest/**'
   jacoco {
     append = false
-    enabled = TEST_COVERAGE_ENABLED.toBoolean()
+    enabled = project.hasProperty('TEST_COVERAGE_ENABLED') && TEST_COVERAGE_ENABLED.toBoolean()
   }
 }
 
@@ -128,7 +128,7 @@ task uitest(type: Test, dependsOn: 'copyTestClassesToPlayPrecompiled') {
   }
 
   if (project.hasProperty('THREADS')) {
-    maxParallelForks = THREADS
+    maxParallelForks = THREADS.toInteger()
   }
   else {
     maxParallelForks = 2
