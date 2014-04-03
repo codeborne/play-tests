@@ -1,6 +1,7 @@
 package play.test;
 
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.impl.Html;
 import com.codeborne.selenide.junit.ScreenShooter;
 import org.junit.After;
 import org.junit.Assert;
@@ -40,12 +41,24 @@ public abstract class UITest extends Assert {
     JPAPlugin.closeTx(true);
   }
 
-  protected String label(String key) {
+  public static String getLabel(String key) {
     return Messages.get(key);
   }
 
-  protected String label(String key, Object... args) {
+  public static String getLabel(String key, Object... args) {
     return Messages.get(key, args);
+  }
+
+  public static Condition haveLabel(final String key, final Object... args) {
+    return new Condition("label") {
+      @Override public boolean apply(WebElement element) {
+        return Html.text.contains(element.getText(), Messages.get(key, args));
+      }
+
+      @Override public String toString() {
+        return "have label " + Messages.get(key, args);
+      }
+    };
   }
 
   private static Condition action(final String action, final Map<String, String> args) {
@@ -65,19 +78,19 @@ public abstract class UITest extends Assert {
     };
   }
 
-  protected void assertAction(String action) {
+  public static void assertAction(String action) {
     $("body").shouldHave(action(action, new HashMap<String, String>(0)));
   }
 
-  protected void assertAction(String action, Map<String, String> args) {
+  public static void assertAction(String action, Map<String, String> args) {
     $("body").shouldHave(action(action, args));
   }
 
-  protected void mockConfirm() {
+  public static void mockConfirm() {
     executeJavaScript("window.confirm = function() {return true;};");
   }
 
-  protected void mockAlert() {
+  public static void mockAlert() {
     getWebDriver().switchTo().alert().accept();
   }
 
