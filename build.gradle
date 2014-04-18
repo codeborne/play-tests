@@ -124,7 +124,9 @@ task uitest(type: Test, dependsOn: 'copyTestClassesToPlayPrecompiled') {
   systemProperties['BUILD_URL'] = System.getenv()['BUILD_URL']
 
   jacoco {
-    enabled = false
+    append = true
+    enabled = project.hasProperty('TEST_COVERAGE_ENABLED') && TEST_COVERAGE_ENABLED.toBoolean()
+    excludes = ["util.geoip.*", "play.*"]
   }
 
   if (project.hasProperty('THREADS')) {

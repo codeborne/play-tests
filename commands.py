@@ -92,7 +92,7 @@ def execute(**kargs):
         gradle_opts.append('--daemon')
 
     if command == 'tests':
-        execute_gradle(app, args, threads_count, gradle_opts, 'clean', 'test', 'jacocoTestReport', 'itest', 'uitest',
+        execute_gradle(app, args, threads_count, gradle_opts, 'clean', 'test', 'itest', 'uitest',
                        '-PUITEST_CLASS=%s' % uitest_class_pattern, '-PTEST_COVERAGE_ENABLED=%s' % test_coverage_enabled)
     elif command == 'clean-tests':
         execute_gradle(app, args, threads_count, gradle_opts, 'cleanTest')
@@ -100,7 +100,8 @@ def execute(**kargs):
         execute_gradle(app, args, threads_count, gradle_opts, 'test', 'jacocoTestReport',
                        '-PTEST_COVERAGE_ENABLED=%s' % test_coverage_enabled)
     elif command == 'ui-tests':
-        execute_gradle(app, args, threads_count, gradle_opts, 'uitest', '-PUITEST_CLASS=%s' % uitest_class_pattern)
+        execute_gradle(app, args, threads_count, gradle_opts, 'uitest',
+                       '-PUITEST_CLASS=%s' % uitest_class_pattern, '-PTEST_COVERAGE_ENABLED=%s' % test_coverage_enabled)
     elif command == 'itests':
         execute_gradle(app, args, threads_count, gradle_opts, 'itest')
     else:
