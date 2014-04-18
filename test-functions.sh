@@ -59,7 +59,7 @@ function run_unit_tests() {
 
   set -o pipefail
 
-  java $TEST_JAVA_OPTS -XX:-UseSplitVerifier -cp test-classes:$TEST_CLASSPATH \
+  java $TEST_JAVA_OPTS -noverify -cp test-classes:$TEST_CLASSPATH \
     play.test.JUnitRunnerWithXMLOutput UNIT 2>&1 | tee test-result/unit-tests.log || exit 2
 
   echo ""
@@ -82,7 +82,7 @@ function run_ui_tests() {
 
   set -o pipefail
 
-  java $TEST_JAVA_OPTS -XX:-UseSplitVerifier -Dprecompiled=true -Dbrowser=chrome -Dselenide.reports=test-result \
+  java $TEST_JAVA_OPTS -noverify -Dprecompiled=true -Dbrowser=chrome -Dselenide.reports=test-result \
     -cp test-classes:$TEST_CLASSPATH \
     play.test.JUnitRunnerWithXMLOutput UI $TESTS_FILE 2>&1 | tee test-result/ui-tests.log || exit 3
 

@@ -85,7 +85,7 @@ task copyTestClassesToPlayPrecompiled(type: Copy, dependsOn: 'testClasses') {
 }
 
 jacoco {
-  toolVersion = "0.6.4.201312101107"
+  toolVersion = "0.7.0.201403182114"
 }
 
 repositories {
@@ -136,7 +136,7 @@ task uitest(type: Test, dependsOn: 'copyTestClassesToPlayPrecompiled') {
 }
 
 tasks.withType(Test).all { testTask ->
-  testTask.jvmArgs = ['-ea', '-XX:-UseSplitVerifier', '-XX:MaxPermSize=128m']
+  testTask.jvmArgs = ['-ea', '-noverify', '-XX:MaxPermSize=128m']
   testTask.systemProperties['file.encoding'] = 'UTF-8'
   testTask.testLogging.showStandardStreams = true
   testTask.workingDir = PLAY_APP
