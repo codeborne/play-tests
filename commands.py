@@ -7,14 +7,15 @@ from exceptions import ValueError
 
 MODULE = "play-tests"
 
-COMMANDS = ["tests", "clean-tests", "unit-tests", "itests", "ui-tests"]
+COMMANDS = ["tests", "clean-tests", "unit-tests", "itests", "ui-tests", "ui-tests-with-coverage"]
 
 HELP = {
     "tests": "Compile and run all tests",
     "clean-tests": "Clean compiled tests and test results",
     "unit-tests": "Run plain unit-tests",
     "itests": "Run integration tests (unit-tests that required play start - they cannot be run with usual unit-tests)",
-    "ui-tests": "Run UI tests (in parallel)"
+    "ui-tests": "Run UI tests (in parallel)",
+    "ui-tests-with-coverage": "Run UI tests with code coverage (slower, single thread, non-precompiled)"
 }
 
 
@@ -100,8 +101,10 @@ def execute(**kargs):
         execute_gradle(app, args, threads_count, gradle_opts, 'test', 'jacocoTestReport',
                        '-PTEST_COVERAGE_ENABLED=%s' % test_coverage_enabled)
     elif command == 'ui-tests':
-        execute_gradle(app, args, threads_count, gradle_opts, 'uitest',
-                       '-PUITEST_CLASS=%s' % uitest_class_pattern, '-PTEST_COVERAGE_ENABLED=%s' % test_coverage_enabled)
+        execute_gradle(app, args, threads_count, gradle_opts, 'uitest', '-PUITEST_CLASS=%s' % uitest_class_pattern)
+    elif command == 'ui-tests-with-coverage':
+        execute_gradle(app, args, threads_count, gradle_opts, 'uitestWithCoverage', 'jacocoTestReport',
+                       '-PUITEST_CLASS=%s' % uitest_class_pattern)
     elif command == 'itests':
         execute_gradle(app, args, threads_count, gradle_opts, 'itest')
     else:

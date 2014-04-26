@@ -1,4 +1,4 @@
-self: play-tests -> tests 2.10
+self: play-tests -> tests 2.11
 
 require:
     - play 1.2+
@@ -8,8 +8,17 @@ require:
     - junit -> junit 4.11
     - org.mockito -> mockito-all 1.9.5
     - org.subethamail -> subethasmtp 3.1.7
+#    - com.github.detro.ghostdriver -> phantomjsdriver 1.1.0
+    - org.jacoco -> org.jacoco.core.with_asm 0.7.1:
+        transitive: false
 
-#repositories:
+repositories:
+    - local-jars:
+        type:       local
+        artifact:   ${application.path}/jars/[module].jar
+        contains:
+            - org.jacoco
+
 #    - snapshots:
 #        type:       iBiblio
 #        root:       "https://oss.sonatype.org/content/repositories/snapshots/"

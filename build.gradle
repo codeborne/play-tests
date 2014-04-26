@@ -124,9 +124,7 @@ task uitest(type: Test, dependsOn: 'copyTestClassesToPlayPrecompiled') {
   systemProperties['BUILD_URL'] = System.getenv()['BUILD_URL']
 
   jacoco {
-    append = true
-    enabled = project.hasProperty('TEST_COVERAGE_ENABLED') && TEST_COVERAGE_ENABLED.toBoolean()
-    excludes = ["util.geoip.*", "play.*"]
+    enabled = false
   }
 
   if (project.hasProperty('THREADS')) {
@@ -137,8 +135,38 @@ task uitest(type: Test, dependsOn: 'copyTestClassesToPlayPrecompiled') {
   }
 }
 
+task uitestWithCoverage(type: Test) {
+  if (project.hasProperty('UITEST_CLASS')) {
+    include UITEST_CLASS
+  }
+  else {
+    include 'ui/**'
+  }
+
+  maxHeapSize = "256m"
+  systemProperties['browser'] = 'chrome'
+  systemProperties['selenide.timeout'] = '8000'
+  systemProperties['BUILD_URL'] = System.getenv()['BUILD_URL']
+  systemProperties['jacoco.enabled'] = 'true'
+  systemProperties['jacoco.destfile'] = "${buildDir}/jacoco/uitest.exec"
+  systemProperties['jacoco.excludes'] = "util.geoip.*"
+
+  jacoco {
+    enabled = false
+  }
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.enabled true
+        html.destination "${buildDir}/reports/jacoco"
+    }
+}
+
 tasks.withType(Test).all { testTask ->
-  testTask.jvmArgs = ['-ea', '-noverify', '-XX:MaxPermSize=128m']
+  testTask.jvmArgs += ['-ea', '-noverify', '-XX:MaxPermSize=128m']
   testTask.systemProperties['file.encoding'] = 'UTF-8'
   testTask.testLogging.showStandardStreams = true
   testTask.workingDir = PLAY_APP
