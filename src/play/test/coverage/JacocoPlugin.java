@@ -17,9 +17,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.net.URL;
-import java.security.CodeSource;
-import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +29,6 @@ public class JacocoPlugin extends PlayPlugin {
   private final boolean enabled = Play.runingInTestMode() && Boolean.getBoolean("jacoco.enabled");
   private final PrintStream out = System.out;
 
-  private JarClassLoader jacocoClassLoader = new JarClassLoader();
   private Instrumenter instr;
   private RuntimeData runtimeData;
   private IRuntime runtime;
@@ -102,18 +98,6 @@ public class JacocoPlugin extends PlayPlugin {
       }
       printed = true;
     }
-  }
-
-  private String getSource(String className) throws ClassNotFoundException {
-    Class aClass = jacocoClassLoader.loadClass(className);
-    if (aClass == null) return "class null";
-    ProtectionDomain protectionDomain = aClass.getProtectionDomain();
-    if (protectionDomain == null) return "pd null";
-    CodeSource codeSource = protectionDomain.getCodeSource();
-    if (codeSource == null) return "cs null";
-    URL location = codeSource.getLocation();
-    if (location == null) return "loc null";
-    return location.toString();
   }
 
   @Override public void onApplicationStop() {
