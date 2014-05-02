@@ -11,7 +11,7 @@ defaultTasks 'clean', 'test'
 sourceSets {
   main {
     java {srcDir "$PLAY_APP/app"}
-    resources {srcDir "$PLAY_APP/app"}
+    resources {srcDirs "$PLAY_APP/app", "$PLAY_APP/public/javascripts"}
   }
   test {
     java {srcDir "$PLAY_APP/test"}
@@ -41,6 +41,7 @@ def _addModules(appDirectory) {
 
       sourceSets['main']['java']['srcDirs'] += new File(module, "app");
       sourceSets['main']['resources']['srcDirs'] += new File(module, "app");
+      sourceSets['main']['resources']['srcDirs'] += new File(module, "public/javascripts");
 
       File test = new File(module, "test")
       def isModuleWithBrokenTests = module.name.matches("guice.*");
