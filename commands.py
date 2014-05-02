@@ -96,7 +96,7 @@ def execute(**kargs):
         execute_gradle(app, args, threads_count, gradle_opts, 'clean', 'test', 'itest', 'uitest',
                        '-PUITEST_CLASS=%s' % uitest_class_pattern, '-PTEST_COVERAGE_ENABLED=%s' % test_coverage_enabled)
     elif command == 'clean-tests':
-        execute_gradle(app, args, threads_count, gradle_opts, 'cleanTest')
+        execute_gradle(app, args, threads_count, gradle_opts, 'clean')
     elif command == 'unit-tests':
         execute_gradle(app, args, threads_count, gradle_opts, 'test', 'jacocoTestReport',
                        '-PTEST_COVERAGE_ENABLED=%s' % test_coverage_enabled)
