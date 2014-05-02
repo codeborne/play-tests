@@ -2,6 +2,8 @@ package play.test.db;
 
 import play.db.DB;
 
+import java.lang.management.ManagementFactory;
+
 public class DatabaseState {
   public static String initialDatabaseStateFile;
 
@@ -10,7 +12,8 @@ public class DatabaseState {
   }
 
   public static void save() {
-    String fileName = "tmp/tests.backup." + System.currentTimeMillis() + ".sql";
+    String jvmName = ManagementFactory.getRuntimeMXBean().getName();
+    String fileName = "tmp/tests.backup." + System.nanoTime() + '_' + jvmName + ".sql";
     DB.execute("CHECKPOINT SYNC");
     DB.execute("script drop to '" + fileName + "'");
     play.Logger.info("Stored initial database state to " + fileName);
