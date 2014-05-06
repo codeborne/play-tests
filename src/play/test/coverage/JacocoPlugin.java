@@ -33,7 +33,6 @@ public class JacocoPlugin extends PlayPlugin {
   private RuntimeData runtimeData;
   private IRuntime runtime;
   private final List<ApplicationClass> instrumentedClasses = new ArrayList<ApplicationClass>();
-  private boolean printed;
 
   private Instrumenter instrumenter() {
     if (instr == null) {
@@ -64,9 +63,13 @@ public class JacocoPlugin extends PlayPlugin {
     return instr;
   }
 
+  @Override public void onApplicationStart() {
+    if (!enabled)
+      Play.pluginCollection.disablePlugin(this);
+  }
+
   @Override
   public void enhance(ApplicationClass applicationClass) throws IOException, ClassNotFoundException {
-//    if (!enabled) return;
 //    if (applicationClass.name.startsWith("util.geoip."))
 //      return;
 
@@ -88,15 +91,6 @@ public class JacocoPlugin extends PlayPlugin {
           .instrument(applicationClass.enhancedByteCode, applicationClass.name);
 
       instrumentedClasses.add(applicationClass);
-    }
-    else if (!printed){
-      if (!Play.runingInTestMode()) {
-        Logger.info("Jacoco plugin is not enabled: play not running in test mode, Play.id=%s", Play.id);
-      }
-      else if (!enabled) {
-        Logger.info("Jacoco plugin is not enabled: jacoco.enabled=%s", System.getProperty("jacoco.enabled"));
-      }
-      printed = true;
     }
   }
 
