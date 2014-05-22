@@ -119,7 +119,12 @@ task uitest(type: Test, dependsOn: 'copyTestClassesToPlayPrecompiled') {
   }
 
   maxHeapSize = "256m"
+
   systemProperties['browser'] = 'chrome'
+  if (System.getenv()['BROWSER']) {
+    systemProperties['browser'] = System.getenv()['BROWSER']
+  }
+
   systemProperties['selenide.timeout'] = '8000'
   systemProperties['precompiled'] = 'true'
   systemProperties['BUILD_URL'] = System.getenv()['BUILD_URL']
