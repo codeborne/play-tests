@@ -1,14 +1,13 @@
-self: play-tests -> tests 2.14
+self: play-tests -> tests 2.14.1
 
 require:
     - play 1.2+
 
-    - com.codeborne -> selenide 2.10.2
+    - com.codeborne -> selenide 2.11
     - com.google.guava -> guava 16.0.1
     - junit -> junit 4.11
     - org.mockito -> mockito-all 1.9.5
     - org.subethamail -> subethasmtp 3.1.7
-    - com.github.detro -> phantomjsdriver 1.2.0
     - org.jacoco -> org.jacoco.core.with_asm 0.7.1:
         transitive: false
 
