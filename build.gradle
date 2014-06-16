@@ -77,14 +77,6 @@ task showClasspath << {
 addModules()
 addPlayToClasspath()
 
-task copyTestClassesToPlayPrecompiled(type: Copy, dependsOn: 'testClasses') {
-  from project.sourceSets.test.output.classesDir
-  into "$PLAY_APP/precompiled/java"
-  include 'itest/**'
-  include 'ui/**'
-  outputs.upToDateWhen { false }
-}
-
 jacoco {
   toolVersion = "0.7.0.201403182114"
 }
@@ -103,14 +95,14 @@ test {
   }
 }
 
-task itest(type: Test, dependsOn: 'copyTestClassesToPlayPrecompiled') {
+task itest(type: Test, dependsOn: 'testClasses') {
   include 'itest/**'
   jacoco {
     enabled = false
   }
 }
 
-task uitest(type: Test, dependsOn: 'copyTestClassesToPlayPrecompiled') {
+task uitest(type: Test, dependsOn: 'testClasses') {
   if (project.hasProperty('UITEST_CLASS')) {
     include UITEST_CLASS
   }

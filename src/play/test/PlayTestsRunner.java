@@ -18,12 +18,9 @@ import java.io.File;
 import static org.openqa.selenium.net.PortProber.findFreePort;
 
 public class PlayTestsRunner extends Runner implements Filterable {
-  private Class testClass;
   private JUnit4 jUnit4;
-  private Filter filter;
 
-  public PlayTestsRunner(Class testClass) throws ClassNotFoundException, InitializationError {
-    this.testClass = testClass;
+  public PlayTestsRunner(Class testClass) throws InitializationError {
     jUnit4 = new JUnit4(testClass);
   }
 
@@ -43,25 +40,8 @@ public class PlayTestsRunner extends Runner implements Filterable {
   @Override
   public void run(final RunNotifier notifier) {
     startPlayIfNeeded();
-    loadTestClassWithPlayClassloader();
     Lang.clear();
     jUnit4.run(notifier);
-  }
-
-  private void loadTestClassWithPlayClassloader() {
-    testClass = Play.classloader.loadApplicationClass(testClass.getName());
-    try {
-      jUnit4 = new JUnit4(testClass);
-      if (filter != null) {
-        jUnit4.filter(filter);
-      }
-    }
-    catch (InitializationError initializationError) {
-      throw new RuntimeException(initializationError);
-    }
-    catch (NoTestsRemainException itCannotHappen) {
-      throw new RuntimeException(itCannotHappen);
-    }
   }
 
   protected void startPlayIfNeeded() {
@@ -87,7 +67,6 @@ public class PlayTestsRunner extends Runner implements Filterable {
 
   @Override
   public void filter(Filter filter) throws NoTestsRemainException {
-    this.filter = filter;
     jUnit4.filter(filter);
   }
 }
