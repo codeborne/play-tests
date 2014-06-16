@@ -7,7 +7,7 @@ from exceptions import ValueError
 
 MODULE = "play-tests"
 
-COMMANDS = ["tests", "clean-tests", "unit-tests", "itests", "ui-tests", "ui-tests-with-coverage"]
+COMMANDS = ["tests", "clean-tests", "unit-tests", "itests", "ui-tests", "ui-tests-with-coverage", "compile-check"]
 
 HELP = {
     "tests": "Compile and run all tests",
@@ -15,7 +15,8 @@ HELP = {
     "unit-tests": "Run plain unit-tests",
     "itests": "Run integration tests (unit-tests that required play start - they cannot be run with usual unit-tests)",
     "ui-tests": "Run UI tests (in parallel)",
-    "ui-tests-with-coverage": "Run UI tests with code coverage (slower, single thread, non-precompiled)"
+    "ui-tests-with-coverage": "Run UI tests with code coverage (slower, single thread, non-precompiled)",
+    "compile-check": "Check that java sources are compilable"
 }
 
 
@@ -107,5 +108,7 @@ def execute(**kargs):
                        '-PUITEST_CLASS=%s' % uitest_class_pattern)
     elif command == 'itests':
         execute_gradle(app, args, threads_count, gradle_opts, 'itest')
+    elif command == 'compile-check':
+        execute_gradle(app, args, threads_count, gradle_opts, 'testClasses')
     else:
         raise ValueError("Unknown command: %s" % command)
