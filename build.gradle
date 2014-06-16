@@ -28,45 +28,45 @@ def _resolveModule(module) {
 }
 
 def addModules() {
-    println "Play app: $PLAY_APP"
-    println "Play home: $PLAY_HOME"
-    _addModules(PLAY_APP)
+  println "Play app: $PLAY_APP"
+  println "Play home: $PLAY_HOME"
+  _addModules(PLAY_APP)
 }
 
 def _addModules(appDirectory) {
-    def modules = new File(appDirectory, 'modules').listFiles()
+  def modules = new File(appDirectory, 'modules').listFiles()
 
-    modules.each {File module ->
-      module = _resolveModule(module)
+  modules.each {File module ->
+    module = _resolveModule(module)
 
-      sourceSets['main']['java']['srcDirs'] += new File(module, "app");
-      sourceSets['main']['resources']['srcDirs'] += new File(module, "app");
-      sourceSets['main']['resources']['srcDirs'] += new File(module, "public/javascripts");
+    sourceSets['main']['java']['srcDirs'] += new File(module, "app");
+    sourceSets['main']['resources']['srcDirs'] += new File(module, "app");
+    sourceSets['main']['resources']['srcDirs'] += new File(module, "public/javascripts");
 
-      File test = new File(module, "test")
-      def isModuleWithBrokenTests = module.name.matches("guice.*");
+    File test = new File(module, "test")
+    def isModuleWithBrokenTests = module.name.matches("guice.*");
 
-      if (test.exists() && !isModuleWithBrokenTests) {
-        sourceSets['test']['java']['srcDirs'] += test;
-        sourceSets['test']['resources']['srcDirs'] += test;
-      }
-      _addToClasspath("$module/lib")
-      if (module.isDirectory()) {
-        _addModules(module)
-      }
+    if (test.exists() && !isModuleWithBrokenTests) {
+      sourceSets['test']['java']['srcDirs'] += test;
+      sourceSets['test']['resources']['srcDirs'] += test;
     }
+    _addToClasspath("$module/lib")
+    if (module.isDirectory()) {
+      _addModules(module)
+    }
+  }
 }
 
 def addPlayToClasspath() {
-    _addToClasspath("$PLAY_HOME/framework/lib")
-    _addToClasspath("$PLAY_HOME/framework")
+  _addToClasspath("$PLAY_HOME/framework/lib")
+  _addToClasspath("$PLAY_HOME/framework")
 }
 
 def _addToClasspath(dir) {
-    def lib = fileTree(dir: dir, include: '*.jar')
-    sourceSets['main']['compileClasspath'] += lib
-    sourceSets['test']['compileClasspath'] += lib
-    sourceSets['test']['runtimeClasspath'] += lib
+  def lib = fileTree(dir: dir, include: '*.jar')
+  sourceSets['main']['compileClasspath'] += lib
+  sourceSets['test']['compileClasspath'] += lib
+  sourceSets['test']['runtimeClasspath'] += lib
 }
 
 task showClasspath << {
@@ -77,12 +77,20 @@ task showClasspath << {
 addModules()
 addPlayToClasspath()
 
+task copyTestClassesToPlayPrecompiled(type: Copy, dependsOn: 'testClasses') {
+  from project.sourceSets.test.output.classesDir
+  into "$PLAY_APP/precompiled/java"
+  include 'itest/**'
+  include 'ui/**'
+  outputs.upToDateWhen { false }
+}
+
 jacoco {
   toolVersion = "0.7.0.201403182114"
 }
 
 repositories {
-    mavenCentral()
+  mavenCentral()
 }
 
 test {
@@ -95,14 +103,14 @@ test {
   }
 }
 
-task itest(type: Test, dependsOn: 'testClasses') {
+task itest(type: Test, dependsOn: 'copyTestClassesToPlayPrecompiled') {
   include 'itest/**'
   jacoco {
     enabled = false
   }
 }
 
-task uitest(type: Test, dependsOn: 'testClasses') {
+task uitest(type: Test, dependsOn: 'copyTestClassesToPlayPrecompiled') {
   if (project.hasProperty('UITEST_CLASS')) {
     include UITEST_CLASS
   }
@@ -155,12 +163,12 @@ task uitestWithCoverage(type: Test) {
 }
 
 jacocoTestReport {
-    reports {
-        xml.enabled false
-        csv.enabled false
-        html.enabled true
-        html.destination "${buildDir}/reports/jacoco"
-    }
+  reports {
+    xml.enabled false
+    csv.enabled false
+    html.enabled true
+    html.destination "${buildDir}/reports/jacoco"
+  }
 }
 
 tasks.withType(Test).all { testTask ->
