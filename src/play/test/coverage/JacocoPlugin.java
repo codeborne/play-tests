@@ -1,14 +1,17 @@
 package play.test.coverage;
 
-import org.jacoco.core.analysis.Analyzer;
-import org.jacoco.core.analysis.CoverageBuilder;
-import org.jacoco.core.analysis.IClassCoverage;
-import org.jacoco.core.analysis.ICounter;
+import org.apache.commons.io.IOUtils;
+import org.jacoco.core.analysis.*;
 import org.jacoco.core.data.*;
 import org.jacoco.core.instr.Instrumenter;
 import org.jacoco.core.runtime.IRuntime;
 import org.jacoco.core.runtime.LoggerRuntime;
 import org.jacoco.core.runtime.RuntimeData;
+import org.jacoco.report.DirectorySourceFileLocator;
+import org.jacoco.report.FileMultiReportOutput;
+import org.jacoco.report.IReportVisitor;
+import org.jacoco.report.MultiSourceFileLocator;
+import org.jacoco.report.html.HTMLFormatter;
 import play.Logger;
 import play.Play;
 import play.PlayPlugin;
@@ -17,8 +20,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import static play.classloading.ApplicationClasses.ApplicationClass;
 
@@ -27,30 +31,26 @@ public class JacocoPlugin extends PlayPlugin {
 //  public static final String DEFAULT_REGEX_IGNORE = "*Test**,helpers.CheatSheetHelper*,controllers.CRUD*";
 
   private final boolean enabled = Play.runingInTestMode() && Boolean.getBoolean("jacoco.enabled");
+  private final String executionDataFile = System.getProperty("jacoco.executionData", "build/jacoco/uitest.exec");
+  private final String reportFolder = System.getProperty("jacoco.report", "build/reports/jacoco");
+
+  static String[] excludes() {return System.getProperty("jacoco.excludes", "").split(", ");}
+  static String[] sources() {return System.getProperty("jacoco.sources", "").replace("[", "").replace("]", "").split(", ");}
+
   private final PrintStream out = System.out;
 
   private Instrumenter instr;
   private RuntimeData runtimeData;
   private IRuntime runtime;
-  private final List<ApplicationClass> instrumentedClasses = new ArrayList<ApplicationClass>();
+  private final Map<ApplicationClass, byte[]> instrumentedClasses = new HashMap<ApplicationClass, byte[]>(1280);
 
   private Instrumenter instrumenter() {
     if (instr == null) {
-      // For instrumentation and runtime we need a IRuntime instance
-      // to collect execution data:
       runtime = new LoggerRuntime();
 
       try {
+        Instrumenter instrumenter = new Instrumenter(runtime);
 
-        // The Instrumenter creates a modified version of our test target class
-        // that contains additional probes for execution data recording:
-//        Instrumenter instrumenter = (Instrumenter) jacocoClassLoader
-//            .loadClass("org.jacoco.core.instr.Instrumenter")
-//            .getConstructor(IExecutionDataAccessorGenerator.class).newInstance(runtime);
-      Instrumenter instrumenter = new Instrumenter(runtime);
-
-        // Now we're ready to run our instrumented class and need to startup the
-        // runtime first:
         runtimeData = new RuntimeData();
         runtime.startup(runtimeData);
 
@@ -66,82 +66,170 @@ public class JacocoPlugin extends PlayPlugin {
   @Override public void onApplicationStart() {
     if (!enabled)
       Play.pluginCollection.disablePlugin(this);
+    else {
+      System.out.println("---------------------------------------");
+      System.out.println("---------------------------------------");
+      System.out.println("---------------------------------------");
+      System.out.println("JACOCO: excludes=" + Arrays.toString(excludes()));
+      System.out.println("JACOCO: sources=" + Arrays.toString(sources()));
+      System.out.println("---------------------------------------");
+      System.out.println("---------------------------------------");
+      System.out.println("---------------------------------------");
+    }
   }
 
   @Override
   public void enhance(ApplicationClass applicationClass) throws IOException, ClassNotFoundException {
-//    if (applicationClass.name.startsWith("util.geoip."))
-//      return;
+    if (enabled && !isExcluded(applicationClass.name)) {
+//      Logger.info("JacocoPlugin: enhance " + applicationClass);
 
-    if (enabled && !applicationClass.name.startsWith("util.geoip.")) {
-//    if (enabled && (applicationClass.name.startsWith("util.") ||
-//                    applicationClass.name.startsWith("validation.") ||
-//                    applicationClass.name.startsWith("services.") ||
-//                    applicationClass.name.startsWith("play.db.") ||
-//                    applicationClass.name.startsWith("navigation.") ||
-//                    applicationClass.name.startsWith("jobs.")
-//    )) {
-      Logger.info("JacocoPlugin: enhance " + applicationClass);
-
-//      Logger.info("org.objectweb.asm.ClassVisitor: " + getSource("org.objectweb.asm.ClassVisitor"));
-//      Logger.info("org.jacoco.core.instr.Instrumenter: " + getSource("org.jacoco.core.instr.Instrumenter"));
-//      Logger.info("org.jacoco.core.internal.flow.ClassProbesAdapter: " + getSource("org.jacoco.core.internal.flow.ClassProbesAdapter"));
-
-      applicationClass.enhancedByteCode = instrumenter()
-          .instrument(applicationClass.enhancedByteCode, applicationClass.name);
-
-      instrumentedClasses.add(applicationClass);
+      byte[] originalBytecode = applicationClass.enhancedByteCode;
+      File classFile = new File("tmp/orig-classes/" + applicationClass.name.replace('.', '/') + ".class");
+      classFile.getParentFile().mkdirs();
+      IOUtils.write(originalBytecode, new FileOutputStream(classFile));
+      applicationClass.enhancedByteCode = instrumenter().instrument(originalBytecode, applicationClass.name);
+      instrumentedClasses.put(applicationClass, originalBytecode);
     }
   }
 
-  @Override public void onApplicationStop() {
-    Logger.info("JacocoPlugin: onApplicationStop");
+  private boolean isExcluded(String name) {
+    for (String exclude : excludes()) {
+      if (name.startsWith(exclude))
+        return true;
+    }
+    return false;
+  }
 
-    if (!enabled || instr == null) {
+  @Override public void onApplicationStop() {
+    if (!enabled) {
       return;
     }
 
+    if (instr == null) {
+      Logger.error("JacocoPlugin: onApplicationStop: skip generating report: instrumetator not initialized");
+      return;
+    }
+
+    Logger.info("JacocoPlugin: onApplicationStop");
     ExecutionDataStore executionData = new ExecutionDataStore();
     SessionInfoStore sessionInfos = new SessionInfoStore();
     runtimeData.collect(executionData, sessionInfos, false);
     runtime.shutdown();
 
     try {
-      writeExecutionDataTo(executionData, sessionInfos, "build/jacoco/uitest2.exec");
+      IBundleCoverage bundleCoverage = analyze(executionData);
+
+      writeExecutionDataTo(executionData, sessionInfos, executionDataFile);
+
+      printTotalCoverage(bundleCoverage);
+
+      generateReport(bundleCoverage, executionData, sessionInfos, reportFolder);
     }
     catch (IOException e) {
-      Logger.error(e, "Failed to write execution data", e);
+      Logger.error(e, "Failed to generate coverage report", e);
     }
-    // printAnalysis(executionData);
+  }
+  
+  private MultiSourceFileLocator sourceFolders() {
+    MultiSourceFileLocator multiSourceFileLocator = new MultiSourceFileLocator(2);
+    for (String sourceFolder : sources()) {
+      multiSourceFileLocator.add(new DirectorySourceFileLocator(new File(sourceFolder), "utf-8", 2));
+    }
+    return multiSourceFileLocator;
   }
 
-  private void printAnalysis(ExecutionDataStore executionData) {// Together with the original class definition we can calculate coverage information:
+  private void generateReport(IBundleCoverage bundleCoverage, ExecutionDataStore executionData, SessionInfoStore sessionInfos, String reportDirectory) throws IOException {
+    System.out.println("Generating coverage report to " + reportFolder + " ...");
+    // Create a concrete report visitor based on some supplied configuration. In this case we use the defaults
+    final HTMLFormatter htmlFormatter = new HTMLFormatter();
+    final IReportVisitor visitor = htmlFormatter.createVisitor(new FileMultiReportOutput(new File(reportDirectory)));
+
+    // Initialize the report with all of the execution and session
+    // information. At this point the report doesn't know about the structure of the report being created
+    visitor.visitInfo(sessionInfos.getInfos(), executionData.getContents());
+//    visitor.visitInfo(execFileLoader.getSessionInfoStore().getInfos(), execFileLoader.getExecutionDataStore().getContents());
+
+    // Populate the report structure with the bundle coverage information.
+    // Call visitGroup if you need groups in your report.
+    visitor.visitBundle(bundleCoverage, sourceFolders());
+
+    // Signal end of structure information to allow report to write all information out
+    visitor.visitEnd();
+
+    System.out.println("Report generated");
+  }
+
+  private IBundleCoverage analyze(ExecutionDataStore executionData) throws IOException {
     CoverageBuilder coverageBuilder = new CoverageBuilder();
     Analyzer analyzer = new Analyzer(executionData, coverageBuilder);
 
-    for (ApplicationClass applicationClass : instrumentedClasses) {
+    analyzer.analyzeAll(new File("tmp/orig-classes"));
+
+    String title = new File(System.getProperty("user.dir")).getName();
+    return coverageBuilder.getBundle(title);
+  }
+
+  private IBundleCoverage analyzeAndPrint(ExecutionDataStore executionData) {// Together with the original class definition we can calculate coverage information:
+    CoverageBuilder coverageBuilder = new CoverageBuilder();
+    Analyzer analyzer = new Analyzer(executionData, coverageBuilder);
+
+    for (ApplicationClass applicationClass : instrumentedClasses.keySet()) {
       try {
-        analyzer.analyzeClass(applicationClass.javaByteCode, applicationClass.name);
+        byte[] originalBytecode = instrumentedClasses.get(applicationClass);
+        analyzer.analyzeClass(originalBytecode, applicationClass.name);
       }
       catch (IOException e) {
         Logger.error(e, "Failed to analyze class " + applicationClass.name);
       }
     }
 
+    int totalLOC = 0;
+    int totalNotCoveredLOC = 0;
+
     // Let's dump some metrics and line coverage information:
     for (final IClassCoverage cc : coverageBuilder.getClasses()) {
+//      if (cc.getName().equals("controllers/Bank")) {
       out.printf("Coverage of class %s%n", cc.getName());
 
-      printCounter("instructions", cc.getInstructionCounter());
-      printCounter("branches", cc.getBranchCounter());
-      printCounter("lines", cc.getLineCounter());
-      printCounter("methods", cc.getMethodCounter());
-      printCounter("complexity", cc.getComplexityCounter());
+//        printCounter("instructions", cc.getInstructionCounter());
+//        printCounter("branches", cc.getBranchCounter());
+//        printCounter("lines", cc.getLineCounter());
+//        printCounter("methods", cc.getMethodCounter());
+//        printCounter("complexity", cc.getComplexityCounter());
+
+      totalLOC += cc.getLineCounter().getTotalCount();
+      totalNotCoveredLOC += cc.getLineCounter().getMissedCount();
 
       for (int i = cc.getFirstLine(); i <= cc.getLastLine(); i++) {
-        out.printf("Line %s: %s%n", i, getColor(cc.getLine(i).getStatus()));
+        if (ICounter.NOT_COVERED == cc.getLine(i).getStatus()) {
+          out.printf("Line %s: %s%n", i, getColor(cc.getLine(i).getStatus()));
+        }
       }
+//      }
     }
+
+    double codeCoverage = 100.0 * (totalLOC - totalNotCoveredLOC) / totalLOC;
+    System.out.println("-------------------------------");
+    System.out.println("-------------------------------");
+    System.out.println("Total code coverage: " + codeCoverage + "%");
+    System.out.println("-------------------------------");
+    System.out.println("-------------------------------");
+
+    String title = new File(System.getProperty("user.dir")).getName();
+    return coverageBuilder.getBundle(title);
+  }
+  
+  private void printTotalCoverage(IBundleCoverage bundle) {
+    System.out.println("-------------------------------");
+    System.out.println("Total code coverage:");
+    System.out.println("Line coverage: " + str(bundle.getLineCounter()));
+    System.out.println("Complexity coverage: " + str(bundle.getComplexityCounter()));
+    System.out.println("-------------------------------");
+
+  }
+
+  private static String str(ICounter counter) {
+    return 100*counter.getCoveredRatio() + "% (" + counter.getCoveredCount() + " / " + counter.getTotalCount() + ")";
   }
 
   private void writeExecutionDataTo(ExecutionDataStore executionData, SessionInfoStore sessionInfos, String fileName) throws IOException {
@@ -160,6 +248,7 @@ public class JacocoPlugin extends PlayPlugin {
     finally {
       out.close();
     }
+    System.out.println("Stored execution data to " + executionFile.getAbsolutePath());
   }
 
   private void printCounter(final String unit, final ICounter counter) {
