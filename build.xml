@@ -6,6 +6,10 @@
     <fail message="Please specify Play framework path using -Dplay.path=/path/to/framework/home"/>
   </target>
 
+  <target name="clean">
+    <delete dir="tmp"/>
+  </target>
+
   <path id="project.classpath">
     <pathelement path="${play.path}/framework/classes"/>
     <fileset dir="${play.path}/framework/lib">
@@ -19,16 +23,8 @@
     </fileset>
   </path>
 
-  <target name="build" depends="compile">
+  <target name="build" depends="clean, compile, test">
     <mkdir dir="lib"/>
-    <copy todir="tmp/classes">
-      <fileset dir="src">
-        <include name="**/*.properties"/>
-        <include name="**/*.xml"/>
-        <include name="**/play.plugins"/>
-        <include name="**/play.static"/>
-      </fileset>
-    </copy>
     <jar destfile="lib/tests.jar" basedir="tmp/classes">
       <manifest>
         <section name="Play-module">
@@ -44,6 +40,47 @@
     <javac srcdir="src" destdir="tmp/classes" target="1.6" source="1.6" debug="true">
       <classpath refid="project.classpath"/>
     </javac>
+    <copy todir="tmp/classes">
+      <fileset dir="src">
+        <include name="**/*.properties"/>
+        <include name="**/*.xml"/>
+        <include name="**/play.plugins"/>
+        <include name="**/play.static"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile-tests" depends="compile">
+    <mkdir dir="tmp/test-classes"/>
+    <javac destdir="tmp/test-classes" target="1.7" source="1.7" debug="true">
+      <src path="test"/>
+      <classpath>
+        <path path="tmp/classes"/>
+        <path refid="project.classpath"/>
+        <fileset dir="${play.path}/framework/lib-test">
+          <include name="*.jar"/>
+        </fileset>
+      </classpath>
+    </javac>
   </target>
 
+  <target name="test" depends="compile-tests">
+    <mkdir dir="tmp/test-results"/>
+    <junit maxmemory="128m" haltonfailure="false" failureproperty="tests-failed" fork="true">
+      <batchtest todir="tmp/test-results">
+        <fileset dir="tmp/test-classes" includes="**/*Test.class" excludes="**/Abstract*"/>
+        <formatter type="xml"/>
+        <formatter type="plain" usefile="false"/>
+      </batchtest>
+      <classpath>
+        <path path="tmp/classes"/>
+        <path path="tmp/test-classes"/>
+        <path refid="project.classpath"/>
+        <fileset dir="${play.path}/framework/lib-test">
+          <include name="*.jar"/>
+        </fileset>
+      </classpath>
+    </junit>
+    <fail if="tests-failed"/>
+  </target>
 </project>
