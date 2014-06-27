@@ -44,7 +44,7 @@ def _addModules(appDirectory) {
     sourceSets['main']['resources']['srcDirs'] += new File(module, "public/javascripts");
 
     File test = new File(module, "test")
-    def isModuleWithBrokenTests = module.name.matches("guice.*");
+    def isModuleWithBrokenTests = module.name.matches("guice.*") || module.name.matches("tests.*");
 
     if (test.exists() && !isModuleWithBrokenTests) {
       sourceSets['test']['java']['srcDirs'] += test;
