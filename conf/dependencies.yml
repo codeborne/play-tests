@@ -1,9 +1,9 @@
-self: play-tests -> tests 3.0
+self: play-tests -> tests 3.1
 
 require:
     - play 1.2+
 
-    - com.codeborne -> selenide 2.11.1
+    - com.codeborne -> selenide 2.12
     - com.google.guava -> guava 16.0.1
     - junit -> junit 4.11
     - org.mockito -> mockito-all 1.9.5
