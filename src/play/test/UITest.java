@@ -7,12 +7,14 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
+import org.junit.rules.TestWatcher;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebElement;
 import play.Play;
 import play.db.jpa.JPAPlugin;
 import play.i18n.Messages;
 import play.mvc.Router;
+import play.test.stats.ExecutionTimesWatcher;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,6 +41,18 @@ public abstract class UITest extends Assert {
   @After
   public void closeTransaction() {
     JPAPlugin.closeTx(true);
+  }
+
+  @Rule public TestWatcher executionTimesWatcher = new ExecutionTimesWatcher();
+
+  static {
+    Runtime.getRuntime().addShutdownHook(new Thread() {
+      @Override public void run() {
+        System.out.println("Test statistics:");
+        System.out.println(ExecutionTimesWatcher.times.longestClasses());
+        System.out.println(ExecutionTimesWatcher.times.longestMethods());
+      }
+    });
   }
 
   public static String getLabel(String key) {

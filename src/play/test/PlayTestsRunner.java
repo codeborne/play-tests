@@ -15,6 +15,8 @@ import play.server.Server;
 
 import java.io.File;
 
+import static com.codeborne.selenide.Selenide.open;
+import static java.lang.System.currentTimeMillis;
 import static org.openqa.selenium.net.PortProber.findFreePort;
 
 public class PlayTestsRunner extends Runner implements Filterable {
@@ -75,6 +77,8 @@ public class PlayTestsRunner extends Runner implements Filterable {
 
     synchronized (Play.class) {
       if (isPlayStartNeeded && !Play.started) {
+        long start = currentTimeMillis();
+        
         Play.usePrecompiled = "true".equalsIgnoreCase(System.getProperty("precompiled", "false"));
         Play.init(new File("."), getPlayId());
         Play.javaPath.add(Play.getVirtualFile("test"));
@@ -87,6 +91,10 @@ public class PlayTestsRunner extends Runner implements Filterable {
 
         Configuration.baseUrl = "http://localhost:" + port;
         Play.configuration.setProperty("application.baseUrl", Configuration.baseUrl);
+        open("/");
+
+        long end = currentTimeMillis();
+        System.out.println("Started Play! application in " + (end - start) + " ms.");
       }
     }
   }
