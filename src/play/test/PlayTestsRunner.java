@@ -44,9 +44,12 @@ public class PlayTestsRunner extends Runner implements Filterable {
 
   @Override
   public void run(final RunNotifier notifier) {
-    startPlayIfNeeded();
+    boolean firstRun = startPlayIfNeeded();
     loadTestClassWithPlayClassloader();
     Lang.clear();
+    
+    if (firstRun) open("/");
+    
     jUnit4.run(notifier);
   }
 
@@ -72,7 +75,7 @@ public class PlayTestsRunner extends Runner implements Filterable {
     }
   }
 
-  protected void startPlayIfNeeded() {
+  protected boolean startPlayIfNeeded() {
     boolean isPlayStartNeeded = !"false".equalsIgnoreCase(System.getProperty("selenide.play.start", "true"));
 
     synchronized (Play.class) {
@@ -91,12 +94,14 @@ public class PlayTestsRunner extends Runner implements Filterable {
 
         Configuration.baseUrl = "http://localhost:" + port;
         Play.configuration.setProperty("application.baseUrl", Configuration.baseUrl);
-        open("/");
 
         long end = currentTimeMillis();
         System.out.println("Started Play! application in " + (end - start) + " ms.");
+        
+        return true;
       }
     }
+    return false;
   }
 
   @Override
