@@ -56,13 +56,13 @@ public class ActionCoveragePlugin extends PlayPlugin {
       StringBuilder message = new StringBuilder(1024);
       List<Map.Entry<String, Long>> sorted = sortCounters(actionExecutions);
       message.append("-------------------------------\n");
-      message.append("Actions coverage @ ").append(ManagementFactory.getRuntimeMXBean().getName()).append("\n:");
+      message.append("Actions coverage @ ").append(ManagementFactory.getRuntimeMXBean().getName()).append(":\n");
       for (Map.Entry<String, Long> action : sorted) {
         message.append("   ").append(action.getKey()).append(" - tested ").append(action.getValue()).append(" times\n");
       }
-      message.append("-------------------------------");
+      message.append("-------------------------------\n");
 
-      System.out.println(message);
+      Logger.info(message.toString());
     }
   }
 
