@@ -3,20 +3,31 @@ package play.test.coverage;
 import play.Logger;
 import play.Play;
 import play.PlayPlugin;
+import play.classloading.ApplicationClasses;
+import play.mvc.Controller;
 import play.mvc.Http;
-import play.mvc.Router;
 import play.mvc.results.Result;
 
+import java.lang.management.ManagementFactory;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+
+import static java.lang.reflect.Modifier.isPublic;
+import static java.lang.reflect.Modifier.isStatic;
 
 public class ActionCoveragePlugin extends PlayPlugin {
   @Override public void onApplicationStart() {
     if (!Play.runingInTestMode())
       Play.pluginCollection.disablePlugin(this);
 
-    for (Router.Route route : Router.routes) {
-      actionExecutions.put(route.action, 0L);
+    for (ApplicationClasses.ApplicationClass controller : Play.classes.getAssignableClasses(Controller.class)) {
+      for (Method method : controller.javaClass.getDeclaredMethods()) {
+        if (isPublic(method.getModifiers()) && isStatic(method.getModifiers()) && method.getReturnType().equals(Void.TYPE)) {
+          String action = controller.javaClass.getName().replaceFirst("controllers\\.", "") + '.' + method.getName();
+          actionExecutions.put(action, 0L);
+        }
+      }
     }
   }
 
@@ -39,14 +50,20 @@ public class ActionCoveragePlugin extends PlayPlugin {
   }
 
   @Override public void onApplicationStop() {
-    Logger.info("ActionCoveragePlugin: onApplicationStop");
-    List<Map.Entry<String, Long>> sorted = sortCounters(actionExecutions);
-    System.out.println("-------------------------------");
-    System.out.println("Actions coverage:");
-    for (Map.Entry<String, Long> action : sorted) {
-      System.out.println("   " + action.getKey() + " - tested " + action.getValue() + " times");
+    if (Play.mode.isProd()) {
+      Logger.info("ActionCoveragePlugin: onApplicationStop");
+      
+      StringBuilder message = new StringBuilder(1024);
+      List<Map.Entry<String, Long>> sorted = sortCounters(actionExecutions);
+      message.append("-------------------------------\n");
+      message.append("Actions coverage @ ").append(ManagementFactory.getRuntimeMXBean().getName()).append("\n:");
+      for (Map.Entry<String, Long> action : sorted) {
+        message.append("   ").append(action.getKey()).append(" - tested ").append(action.getValue()).append(" times\n");
+      }
+      message.append("-------------------------------");
+
+      System.out.println(message);
     }
-    System.out.println("-------------------------------");
   }
 
   private List<Map.Entry<String, Long>> sortCounters(Map<String, Long> counters) {
