@@ -1,6 +1,9 @@
 package play.test;
 
 import com.codeborne.selenide.Configuration;
+import org.apache.log4j.Appender;
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.PatternLayout;
 import org.junit.runner.Description;
 import org.junit.runner.Runner;
 import org.junit.runner.manipulation.Filter;
@@ -9,11 +12,13 @@ import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.JUnit4;
 import org.junit.runners.model.InitializationError;
+import play.Logger;
 import play.Play;
 import play.i18n.Lang;
 import play.server.Server;
 
 import java.io.File;
+import java.lang.management.ManagementFactory;
 
 import static com.codeborne.selenide.Selenide.open;
 import static java.lang.System.currentTimeMillis;
@@ -48,9 +53,13 @@ public class PlayTestsRunner extends Runner implements Filterable {
     loadTestClassWithPlayClassloader();
     Lang.clear();
     
-    if (firstRun) open("/");
-    
+    if (firstRun) warmupApplication();
+
     jUnit4.run(notifier);
+  }
+
+  private void warmupApplication() {
+    open("/");
   }
 
   private void loadTestClassWithPlayClassloader() {
@@ -95,6 +104,8 @@ public class PlayTestsRunner extends Runner implements Filterable {
         Configuration.baseUrl = "http://localhost:" + port;
         Play.configuration.setProperty("application.baseUrl", Configuration.baseUrl);
 
+        duplicateLogsOfEveryTestProcessToSeparateFile();
+
         long end = currentTimeMillis();
         System.out.println("Started Play! application in " + (end - start) + " ms.");
         
@@ -102,6 +113,18 @@ public class PlayTestsRunner extends Runner implements Filterable {
       }
     }
     return false;
+  }
+
+  private void duplicateLogsOfEveryTestProcessToSeparateFile() {
+    Logger.log4j = org.apache.log4j.Logger.getLogger("play");
+    String logFileName = "test-result/" + ManagementFactory.getRuntimeMXBean().getName() + ".log";
+    org.apache.log4j.Logger rootLogger = org.apache.log4j.Logger.getRootLogger();
+    try {
+      Appender testLog = new FileAppender(new PatternLayout("%d{DATE} %-5p ~ %m%n"), Play.getFile(logFileName).getAbsolutePath(), false);
+      rootLogger.addAppender(testLog);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   @Override
