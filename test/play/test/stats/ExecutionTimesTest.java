@@ -9,11 +9,11 @@ public class ExecutionTimesTest {
 
   @Test
   public void calculatesExecutionTimesByMethod() {
-    times.add("com.Test1", "method1", 100L);
-    times.add("com.Test1", "method2", 200L);
-    times.add("com.Test1", "method3", 800L);
-    times.add("com.Test1", "method4", 800L);
-    times.add("com.Test2", "method1", 300L);
+    times.add("com.Test1", "method1", 100000000L);
+    times.add("com.Test1", "method2", 200000000L);
+    times.add("com.Test1", "method3", 800000000L);
+    times.add("com.Test1", "method4", 800000000L);
+    times.add("com.Test2", "method1", 300000000L);
 
     assertEquals("Longest methods:\n" +
         "     800 ms com.Test1.method3\n" +
@@ -26,11 +26,11 @@ public class ExecutionTimesTest {
 
   @Test
   public void calculatesExecutionTimesByClass() {
-    times.add("com.Test1", "method1", 100L);
-    times.add("com.Test1", "method2", 200L);
-    times.add("com.Test1", "method3", 800L);
-    times.add("com.Test1", "method4", 800L);
-    times.add("com.Test2", "method1", 300L);
+    times.add("com.Test1", "method1", 100000000L);
+    times.add("com.Test1", "method2", 200000000L);
+    times.add("com.Test1", "method3", 800000000L);
+    times.add("com.Test1", "method4", 800000000L);
+    times.add("com.Test2", "method1", 300000000L);
 
     assertEquals("Longest classes:\n" +
         "    1900 ms com.Test1\n" +

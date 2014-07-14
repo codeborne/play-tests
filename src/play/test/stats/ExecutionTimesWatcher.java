@@ -6,13 +6,13 @@ import org.junit.runner.Description;
 public class ExecutionTimesWatcher extends TestWatcher {
   public static final ExecutionTimes times = new ExecutionTimes();
   
-  private long startTime;
+  private long startTimeNs;
   
   @Override protected void starting(Description d) {
-    startTime = System.currentTimeMillis();
+    startTimeNs = System.nanoTime();
   }
 
   @Override protected void finished(Description d) {
-    times.add(d.getClassName(), d.getMethodName(), System.currentTimeMillis() - startTime);
+    times.add(d.getClassName(), d.getMethodName(), System.nanoTime() - startTimeNs);
   }
 }

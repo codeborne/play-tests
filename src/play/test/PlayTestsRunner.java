@@ -1,6 +1,7 @@
 package play.test;
 
 import com.codeborne.selenide.Configuration;
+import com.codeborne.selenide.WebDriverRunner;
 import org.apache.log4j.Appender;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.PatternLayout;
@@ -52,10 +53,28 @@ public class PlayTestsRunner extends Runner implements Filterable {
     boolean firstRun = startPlayIfNeeded();
     loadTestClassWithPlayClassloader();
     Lang.clear();
-    
+
+    addTimesLogger();
+
     if (firstRun) warmupApplication();
 
     jUnit4.run(notifier);
+  }
+
+  private void addTimesLogger() {
+    final UITimeLogger timeLogger = new UITimeLogger();
+    WebDriverRunner.addListener(timeLogger);
+    
+    Runtime.getRuntime().addShutdownHook(new Thread() {
+      @Override public void run() {
+        String message = "-------------------------------\n" +
+            "WebDriver statistics @ " + ManagementFactory.getRuntimeMXBean().getName() + ":\n" +
+            timeLogger.times.longestClasses() + "\n" +
+            timeLogger.times.longestMethods() + "\n" +
+            "-------------------------------\n";
+        System.out.println(message);
+      }
+    });
   }
 
   private void warmupApplication() {

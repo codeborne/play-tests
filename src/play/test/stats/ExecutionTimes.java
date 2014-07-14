@@ -9,12 +9,15 @@ public class ExecutionTimes {
   private final Map<String, Long> classDurations = new ConcurrentHashMap<String, Long>();
   
   public void add(String clazz, String method, long durationMs) {
-    methodDurations.put(clazz + '.' + method, durationMs);
-    
-    Long classTotal = classDurations.get(clazz);
-    if (classTotal == null) classTotal = 0L;
-    classTotal += durationMs;
-    classDurations.put(clazz, classTotal);
+    storeTime(methodDurations, clazz + '.' + method, durationMs);
+    storeTime(classDurations, clazz, durationMs);
+  }
+
+  private static void storeTime(Map<String, Long> storage, String key, long durationMs) {
+    Long total = storage.get(key);
+    if (total == null) total = 0L;
+    total += durationMs;
+    storage.put(key, total);
   }
 
   public String longestMethods() {
@@ -28,7 +31,7 @@ public class ExecutionTimes {
   private String print(final String title, List<Map.Entry<String, Long>> entries) {
     StringBuilder stats = new StringBuilder(title + ":\n");
     for (Map.Entry<String, Long> e : entries) {
-      stats.append(String.format("%8d", e.getValue())).append(" ms ").append(e.getKey()).append("\n");
+      stats.append(String.format("%8d", e.getValue()/1000000)).append(" ms ").append(e.getKey()).append("\n");
     }
     return stats.toString();
   }
