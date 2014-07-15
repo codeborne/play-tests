@@ -141,7 +141,7 @@ task uitest(type: Test, dependsOn: 'copyTestClassesToPlayPrecompiled') {
   }
 }
 
-task uitestWithCoverage(type: Test, dependsOn: 'copyTestClassesToPlayPrecompiled') {
+task uitestWithCoverage(type: Test) {
   if (project.hasProperty('UITEST_CLASS')) {
     include UITEST_CLASS
   }
