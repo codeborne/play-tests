@@ -17,8 +17,10 @@ import static java.lang.reflect.Modifier.isPublic;
 import static java.lang.reflect.Modifier.isStatic;
 
 public class ActionCoveragePlugin extends PlayPlugin {
+  private boolean enabled = Play.runingInTestMode() && Play.mode.isProd();
+  
   @Override public void onApplicationStart() {
-    if (!Play.runingInTestMode())
+    if (!enabled)
       Play.pluginCollection.disablePlugin(this);
 
     for (ApplicationClasses.ApplicationClass controller : Play.classes.getAssignableClasses(Controller.class)) {
@@ -50,20 +52,22 @@ public class ActionCoveragePlugin extends PlayPlugin {
   }
 
   @Override public void onApplicationStop() {
-    if (Play.mode.isProd()) {
-      Logger.info("ActionCoveragePlugin: onApplicationStop");
-      
-      StringBuilder message = new StringBuilder(1024);
-      List<Map.Entry<String, Long>> sorted = sortCounters(actionExecutions);
-      message.append("-------------------------------\n");
-      message.append("Actions coverage @ ").append(ManagementFactory.getRuntimeMXBean().getName()).append(":\n");
-      for (Map.Entry<String, Long> action : sorted) {
-        message.append("   ").append(action.getKey()).append(" - tested ").append(action.getValue()).append(" times\n");
-      }
-      message.append("-------------------------------\n");
+    if (!enabled) 
+      return;
 
-      Logger.info(message.toString());
+    StringBuilder message = new StringBuilder(2048);
+
+    message.append("ActionCoveragePlugin: onApplicationStop");
+    
+    List<Map.Entry<String, Long>> sorted = sortCounters(actionExecutions);
+    message.append("-------------------------------\n");
+    message.append("Actions coverage @ ").append(ManagementFactory.getRuntimeMXBean().getName()).append(":\n");
+    for (Map.Entry<String, Long> action : sorted) {
+      message.append("   ").append(action.getKey()).append(" - tested ").append(action.getValue()).append(" times\n");
     }
+    message.append("-------------------------------\n");
+
+    Logger.info(message.toString());
   }
 
   private List<Map.Entry<String, Long>> sortCounters(Map<String, Long> counters) {

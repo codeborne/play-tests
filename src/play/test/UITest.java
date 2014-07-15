@@ -49,12 +49,14 @@ public abstract class UITest extends Assert {
   static {
     Runtime.getRuntime().addShutdownHook(new Thread() {
       @Override public void run() {
-        String message = "-------------------------------\n" + 
-            "Test statistics @ " + ManagementFactory.getRuntimeMXBean().getName() + ":\n" +
-            ExecutionTimesWatcher.times.longestClasses() + "\n" +
-            ExecutionTimesWatcher.times.longestMethods() + "\n" +
-            "-------------------------------\n";
-        System.out.println(message);
+        if (Play.mode.isProd()) {
+          String message = "-------------------------------\n" +
+              "Test statistics @ " + ManagementFactory.getRuntimeMXBean().getName() + ":\n" +
+              ExecutionTimesWatcher.times.longestClasses() + "\n" +
+              ExecutionTimesWatcher.times.longestMethods() + "\n" +
+              "-------------------------------\n";
+          System.out.println(message);
+        }
       }
     });
   }
