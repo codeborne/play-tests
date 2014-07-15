@@ -54,7 +54,7 @@ public class PlayTestsRunner extends Runner implements Filterable {
     loadTestClassWithPlayClassloader();
     Lang.clear();
 
-    addTimesLogger();
+    if (Play.mode.isProd()) addTimesLogger();
 
     if (firstRun) warmupApplication();
 
