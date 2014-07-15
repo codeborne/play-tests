@@ -1,6 +1,7 @@
 package play.test.coverage;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jacoco.core.analysis.*;
 import org.jacoco.core.data.*;
 import org.jacoco.core.instr.Instrumenter;
@@ -94,7 +95,7 @@ public class JacocoPlugin extends PlayPlugin {
 
   private boolean isExcluded(String name) {
     for (String exclude : excludes()) {
-      if (name.startsWith(exclude))
+      if (StringUtils.isNotBlank(exclude) && name.startsWith(exclude))
         return true;
     }
     return false;
@@ -119,11 +120,11 @@ public class JacocoPlugin extends PlayPlugin {
     try {
       IBundleCoverage bundleCoverage = analyze(executionData);
 
-      writeExecutionDataTo(executionData, sessionInfos, executionDataFile);
+      writeExecutionDataTo(executionData, sessionInfos);
 
       printTotalCoverage(bundleCoverage);
 
-      generateReport(bundleCoverage, executionData, sessionInfos, reportFolder);
+      generateReport(bundleCoverage, executionData, sessionInfos);
     }
     catch (IOException e) {
       Logger.error(e, "Failed to generate coverage report", e);
@@ -138,11 +139,13 @@ public class JacocoPlugin extends PlayPlugin {
     return multiSourceFileLocator;
   }
 
-  private void generateReport(IBundleCoverage bundleCoverage, ExecutionDataStore executionData, SessionInfoStore sessionInfos, String reportDirectory) throws IOException {
-    System.out.println("Generating coverage report to " + reportFolder + " ...");
+  private void generateReport(IBundleCoverage bundleCoverage, ExecutionDataStore executionData, SessionInfoStore sessionInfos) throws IOException {
+    File target = new File(reportFolder);
+
+    System.out.println("Generating coverage report to " + target.getAbsolutePath() + " ...");
     // Create a concrete report visitor based on some supplied configuration. In this case we use the defaults
     final HTMLFormatter htmlFormatter = new HTMLFormatter();
-    final IReportVisitor visitor = htmlFormatter.createVisitor(new FileMultiReportOutput(new File(reportDirectory)));
+    final IReportVisitor visitor = htmlFormatter.createVisitor(new FileMultiReportOutput(target));
 
     // Initialize the report with all of the execution and session
     // information. At this point the report doesn't know about the structure of the report being created
@@ -156,7 +159,7 @@ public class JacocoPlugin extends PlayPlugin {
     // Signal end of structure information to allow report to write all information out
     visitor.visitEnd();
 
-    System.out.println("Report generated");
+    System.out.println("Report generated: " + target.getAbsolutePath());
   }
 
   private IBundleCoverage analyze(ExecutionDataStore executionData) throws IOException {
@@ -232,8 +235,8 @@ public class JacocoPlugin extends PlayPlugin {
     return 100*counter.getCoveredRatio() + "% (" + counter.getCoveredCount() + " / " + counter.getTotalCount() + ")";
   }
 
-  private void writeExecutionDataTo(ExecutionDataStore executionData, SessionInfoStore sessionInfos, String fileName) throws IOException {
-    File executionFile = new File(fileName);
+  private void writeExecutionDataTo(ExecutionDataStore executionData, SessionInfoStore sessionInfos) throws IOException {
+    File executionFile = new File(executionDataFile);
     executionFile.getParentFile().mkdirs();
     FileOutputStream out = new FileOutputStream(executionFile);
     try {
