@@ -1,9 +1,6 @@
 package play.test;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.StaleElementReferenceException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.events.AbstractWebDriverEventListener;
 import play.test.stats.ExecutionTimes;
 
@@ -77,6 +74,9 @@ public class UITimeLogger extends AbstractWebDriverEventListener {
       return element.getTagName() + '#' + element.getAttribute("id") + '.' + element.getAttribute("class");
     }
     catch (StaleElementReferenceException disappeared) {
+      return command.equals(this.command) ? this.arg : "?";
+    }
+    catch (UnhandledAlertException ignoreAlert) {
       return command.equals(this.command) ? this.arg : "?";
     }
     catch (Exception e) {
