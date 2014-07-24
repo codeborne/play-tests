@@ -156,7 +156,7 @@ task uitestWithCoverage(type: Test) {
   systemProperties['jacoco.enabled'] = 'true'
   systemProperties['jacoco.executionData'] = "$PLAY_APP/build/jacoco/uitest.exec"
   systemProperties['jacoco.report'] = "$PLAY_APP/build/reports/jacoco"
-  systemProperties['jacoco.excludes'] = "util.geoip."
+  systemProperties['jacoco.excludes'] = "lib."
   systemProperties['jacoco.sources'] = sourceSets['main']['java']['srcDirs']
 
   jacoco {
