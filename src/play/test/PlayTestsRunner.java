@@ -2,6 +2,7 @@ package play.test;
 
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.WebDriverRunner;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Appender;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.PatternLayout;
@@ -19,9 +20,10 @@ import play.i18n.Lang;
 import play.server.Server;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.net.URL;
 
-import static com.codeborne.selenide.Selenide.open;
 import static java.lang.System.currentTimeMillis;
 import static org.openqa.selenium.net.PortProber.findFreePort;
 
@@ -78,7 +80,12 @@ public class PlayTestsRunner extends Runner implements Filterable {
   }
 
   private void warmupApplication() {
-    open("/");
+    try {
+      IOUtils.toString(new URL(Configuration.baseUrl));
+    } catch (IOException e) {
+      System.err.println("Failed to load URL " + Configuration.baseUrl + ":");
+      e.printStackTrace();
+    }
   }
 
   private void loadTestClassWithPlayClassloader() {
