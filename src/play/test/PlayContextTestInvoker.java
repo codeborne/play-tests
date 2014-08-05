@@ -38,6 +38,14 @@ public class PlayContextTestInvoker implements MethodRule {
               return new Invoker.InvocationContext(invocationType);
             }
           });
+
+          System.out.println(
+              "After " + method.getMethod().getDeclaringClass() + '.' + method.getName() +
+                  ": Play.mode=" + Play.mode +
+                  ", Play.configuration.size=" + Play.configuration.size() +
+                  ", evolutions.enabled=" + Play.configuration.getProperty("evolutions.enabled")
+          );
+
         }
         catch (UnexpectedException e) {
           throw e.getCause();
