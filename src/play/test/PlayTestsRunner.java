@@ -22,8 +22,9 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.URL;
+import java.util.TimeZone;
 
-import static com.google.common.io.Resources.*;
+import static com.google.common.io.Resources.toByteArray;
 import static java.lang.System.currentTimeMillis;
 import static org.openqa.selenium.net.PortProber.findFreePort;
 
@@ -115,6 +116,8 @@ public class PlayTestsRunner extends Runner implements Filterable {
 
     synchronized (Play.class) {
       if (isPlayStartNeeded && !Play.started) {
+        TimeZone.setDefault(TimeZone.getTimeZone(System.getProperty("selenide.play.timeZone", "Asia/Krasnoyarsk")));
+
         long start = currentTimeMillis();
         
         Play.usePrecompiled = "true".equalsIgnoreCase(System.getProperty("precompiled", "false"));
