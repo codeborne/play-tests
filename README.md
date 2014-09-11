@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play
-        - play-tests -> tests 2.7.10
+        - play-tests -> tests 3.7
     
     repositories:
         - play-tests:
@@ -80,6 +80,47 @@ Additional command line options
 
 
 ## Changelog
+
+### 3.7
+
+Upgraded to Selenide 2.13 and Selenium 2.43.1
+
+### 3.6
+
+Run UI tests in non-system-default time zone.
+By default using "Asia/Krasnoyarsk", configurable via "selenide.play.timeZone" system property. 
+It's good practice to run tests in another time zone to assure that tests are not relying on your system's default time zone.
+
+### 3.5
+
+ - do NOT run unit-tests from modules because they can break own tests  (but run UI tests from modules because they can behave differently)
+ - avoid opening browser unless it's really needed
+ 
+### 3.4
+
+ - Calculate action coverage
+ - duplicate logs of every test process to a separate file
+ - log action coverage and webdriver statistics only in prod mode (on Jenkins)
+ 
+### 3.1
+
+Upgraded to Selenide 2.12 and Gradle 2.0
+
+### 3.0
+
+Added command "play ui-tests-with-coverage" that calculates code coverage (single-threaded, non-precompiled, slow run)
+
+### 2.14.2
+
+Added command "play compile-check" for checking that code base is compilable
+
+### 2.14.1
+
+Added option to define browser for UI tests, for example: -Dbrowser=firefox
+
+### 2.10
+
+Added support for Java8
 
 ### 2.7.11
 
