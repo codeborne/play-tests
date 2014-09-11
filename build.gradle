@@ -117,7 +117,7 @@ task uitest(type: Test, dependsOn: 'copyTestClassesToPlayPrecompiled') {
     include 'ui/**'
   }
 
-  maxHeapSize = "256m"
+  maxHeapSize = "512m"
 
   systemProperties['browser'] = 'chrome'
   if (System.getenv()['BROWSER']) {
@@ -164,7 +164,7 @@ task uitestWithCoverage(type: Test) {
 }
 
 tasks.withType(Test).all { testTask ->
-  testTask.jvmArgs += ['-ea', '-noverify', '-XX:MaxPermSize=128m']
+  testTask.jvmArgs += ['-ea', '-noverify', '-XX:MaxPermSize=256m']
   testTask.systemProperties['file.encoding'] = 'UTF-8'
   testTask.testLogging.showStandardStreams = true
   testTask.workingDir = PLAY_APP
