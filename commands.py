@@ -24,6 +24,7 @@ def execute_gradle(app, args, threads_count, gradle_opts, *tasks):
     module_dir = os.path.dirname(os.path.realpath(__file__))
     gradle_cmd = ["bash",
                   "%s/gradle" % module_dir,
+                  "--stacktrace",
                   "-b", "%s/build.gradle" % module_dir,
                   "-p", app.path,
                   "-PPLAY_APP=%s" % app.path,
