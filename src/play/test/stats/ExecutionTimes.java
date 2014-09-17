@@ -8,9 +8,18 @@ public class ExecutionTimes {
 
   private static final int PRINT_TOP_RECORDS = 15;
 
+  private final String name;
   private final Map<String, Long> methodDurations = new ConcurrentHashMap<String, Long>();
   private final Map<String, Long> classDurations = new ConcurrentHashMap<String, Long>();
-  
+
+  public ExecutionTimes() {
+    this(ManagementFactory.getRuntimeMXBean().getName());
+  }
+
+  public ExecutionTimes(String name) {
+    this.name = name;
+  }
+
   public void add(String clazz, String method, long durationMs) {
     storeTime(methodDurations, clazz + '.' + method, durationMs);
     storeTime(classDurations, clazz, durationMs);
@@ -24,11 +33,11 @@ public class ExecutionTimes {
   }
 
   public String longestMethods() {
-    return print("Longest methods @ " + ManagementFactory.getRuntimeMXBean().getName(), sortDurations(methodDurations));
+    return print("Longest methods @ " + name, sortDurations(methodDurations));
   }
 
   public String longestClasses() {
-    return print("Longest classes @ " + ManagementFactory.getRuntimeMXBean().getName(), sortDurations(classDurations));
+    return print("Longest classes @ " + name, sortDurations(classDurations));
   }
 
   private String print(final String title, List<Map.Entry<String, Long>> entries) {
