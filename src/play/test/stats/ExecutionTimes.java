@@ -1,9 +1,12 @@
 package play.test.stats;
 
+import java.lang.management.ManagementFactory;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ExecutionTimes {
+
+  private static final int PRINT_TOP_RECORDS = 15;
 
   private final Map<String, Long> methodDurations = new ConcurrentHashMap<String, Long>();
   private final Map<String, Long> classDurations = new ConcurrentHashMap<String, Long>();
@@ -21,17 +24,19 @@ public class ExecutionTimes {
   }
 
   public String longestMethods() {
-    return print("Longest methods", sortDurations(methodDurations));
+    return print("Longest methods @ " + ManagementFactory.getRuntimeMXBean().getName(), sortDurations(methodDurations));
   }
 
   public String longestClasses() {
-    return print("Longest classes", sortDurations(classDurations));
+    return print("Longest classes @ " + ManagementFactory.getRuntimeMXBean().getName(), sortDurations(classDurations));
   }
 
   private String print(final String title, List<Map.Entry<String, Long>> entries) {
     StringBuilder stats = new StringBuilder(title + ":\n");
+    int i = 0;
     for (Map.Entry<String, Long> e : entries) {
-      stats.append(String.format("%8d", e.getValue()/1000000)).append(" ms ").append(e.getKey()).append("\n");
+      if (i++ > PRINT_TOP_RECORDS) break;
+      stats.append(String.format("%8d", e.getValue() / 1000000)).append(" ms ").append(e.getKey()).append("\n");
     }
     return stats.toString();
   }
