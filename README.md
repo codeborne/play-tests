@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play
-        - play-tests -> tests 3.7
+        - play-tests -> tests 3.9
     
     repositories:
         - play-tests:
