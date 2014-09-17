@@ -109,18 +109,24 @@ public class ActionCoveragePlugin extends PlayPlugin {
 
     System.out.println("Combine actions coverage from");
     Gson gson = new Gson();
-    for (File file : new File("test-result").listFiles()) {
-      if (file.getName().startsWith("actions-coverage-")) {
-        String temp = FileUtils.readFileToString(file, "UTF-8");
-        Map<String, Long> actionExecutions = gson.fromJson(temp, totalActionExecutions.getClass());
-        
-        System.out.println("   - " + file.getName());
+    File testResults = new File("test-result");
+    if (!testResults.isDirectory() || testResults.listFiles() == null) {
+      System.err.println("ERROR: Cannot combine actions coverage from " + testResults.getAbsolutePath());
+    }
+    else {
+      for (File file : testResults.listFiles()) {
+        if (file.getName().startsWith("actions-coverage-")) {
+          String temp = FileUtils.readFileToString(file, "UTF-8");
+          Map<String, Long> actionExecutions = gson.fromJson(temp, totalActionExecutions.getClass());
 
-        for (Map.Entry<String, Long> entry : actionExecutions.entrySet()) {
-          Long counter = totalActionExecutions.get(entry.getKey());
-          if (counter == null) counter = 0L;
-          counter += ((Number) entry.getValue()).longValue();
-          totalActionExecutions.put(entry.getKey(), counter);
+          System.out.println("   - " + file.getName());
+
+          for (Map.Entry<String, Long> entry : actionExecutions.entrySet()) {
+            Long counter = totalActionExecutions.get(entry.getKey());
+            if (counter == null) counter = 0L;
+            counter += ((Number) entry.getValue()).longValue();
+            totalActionExecutions.put(entry.getKey(), counter);
+          }
         }
       }
     }
