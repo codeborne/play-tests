@@ -145,7 +145,7 @@ public class PlayTestsRunner extends Runner implements Filterable {
     return false;
   }
 
-  private void makeUniqueTempPath() {
+  void makeUniqueTempPath() {
     File tmp = new File(new File("tmp", Play.configuration.getProperty("application.name")), Play.id);
     tmp = new File(tmp, ManagementFactory.getRuntimeMXBean().getName());
 
