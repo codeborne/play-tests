@@ -163,6 +163,12 @@ task uitestWithCoverage(type: Test) {
   }
 }
 
+task(combineUiTestResults, type: JavaExec) {
+  main = 'play.test.coverage.ActionCoveragePlugin'
+  classpath = sourceSets.test.runtimeClasspath
+  systemProperty 'file.encoding', 'UTF-8'
+}
+
 tasks.withType(Test).all { testTask ->
   testTask.jvmArgs += ['-ea', '-noverify', '-XX:MaxPermSize=256m']
   testTask.systemProperties['file.encoding'] = 'UTF-8'

@@ -1,6 +1,7 @@
 package play.test.coverage;
 
-import play.Logger;
+import com.google.gson.Gson;
+import org.apache.commons.io.FileUtils;
 import play.Play;
 import play.PlayPlugin;
 import play.classloading.ApplicationClasses;
@@ -8,6 +9,8 @@ import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.results.Result;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -15,6 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static java.lang.reflect.Modifier.isPublic;
 import static java.lang.reflect.Modifier.isStatic;
+import static org.apache.commons.io.FileUtils.writeStringToFile;
 
 public class ActionCoveragePlugin extends PlayPlugin {
   private boolean enabled = Play.runingInTestMode() && Play.mode.isProd();
@@ -52,25 +56,22 @@ public class ActionCoveragePlugin extends PlayPlugin {
   }
 
   @Override public void onApplicationStop() {
-    if (!enabled) 
-      return;
-
-    StringBuilder message = new StringBuilder(2048);
-
-    message.append("ActionCoveragePlugin: onApplicationStop\n");
-    
-    List<Map.Entry<String, Long>> sorted = sortCounters(actionExecutions);
-    message.append("-------------------------------\n");
-    message.append("Actions coverage @ ").append(ManagementFactory.getRuntimeMXBean().getName()).append(":\n");
-    for (Map.Entry<String, Long> action : sorted) {
-      message.append("   ").append(action.getKey()).append(" - tested ").append(action.getValue()).append(" times\n");
-    }
-    message.append("-------------------------------\n");
-
-    Logger.info(message.toString());
+    if (enabled) 
+      storeCoverageToFile();
   }
 
-  private List<Map.Entry<String, Long>> sortCounters(Map<String, Long> counters) {
+  private void storeCoverageToFile() {
+    File file = new File("test-result/actions-coverage-" + ManagementFactory.getRuntimeMXBean().getName() + ".json");
+    try {
+      writeStringToFile(file, new Gson().toJson(actionExecutions));
+    }
+    catch (IOException e) {
+      System.err.println("Failed to store actions coverage to " + file.getAbsolutePath());
+      e.printStackTrace();
+    }
+  }
+
+  private static List<Map.Entry<String, Long>> sortCounters(Map<String, Long> counters) {
     List<Map.Entry<String, Long>> sorted = new ArrayList<Map.Entry<String, Long>>(counters.entrySet());
     Collections.sort(sorted, new Comparator<Map.Entry<String, Long>>() {
       @Override public int compare(Map.Entry<String, Long> o1, Map.Entry<String, Long> o2) {
@@ -78,5 +79,51 @@ public class ActionCoveragePlugin extends PlayPlugin {
       }
     });
     return sorted;
+  }
+  
+  public static void main(String[] args) throws IOException {
+    System.out.println(
+        formatActionsCoverage(
+            combineActionsCoveragesFromFiles()
+        )
+    );
+  }
+
+  private static StringBuilder formatActionsCoverage(Map<String, Long> totalActionExecutions) {
+    StringBuilder message = new StringBuilder(2048);
+
+    message.append("ActionCoveragePlugin\n");
+
+    List<Map.Entry<String, Long>> sorted = sortCounters(totalActionExecutions);
+    message.append("-------------------------------\n");
+    message.append("Actions coverage:\n");
+    for (Map.Entry<String, Long> action : sorted) {
+      message.append("   ").append(action.getKey()).append(" - tested ").append(action.getValue()).append(" times\n");
+    }
+    message.append("-------------------------------\n");
+    return message;
+  }
+
+  private static Map<String, Long> combineActionsCoveragesFromFiles() throws IOException {
+    Map<String, Long> totalActionExecutions = new HashMap<String, Long>();
+
+    System.out.println("Combine actions coverage from");
+    Gson gson = new Gson();
+    for (File file : new File("test-result").listFiles()) {
+      if (file.getName().startsWith("actions-coverage-")) {
+        String temp = FileUtils.readFileToString(file, "UTF-8");
+        Map<String, Long> actionExecutions = gson.fromJson(temp, totalActionExecutions.getClass());
+        
+        System.out.println("   - " + file.getName());
+
+        for (Map.Entry<String, Long> entry : actionExecutions.entrySet()) {
+          Long counter = totalActionExecutions.get(entry.getKey());
+          if (counter == null) counter = 0L;
+          counter += ((Number) entry.getValue()).longValue();
+          totalActionExecutions.put(entry.getKey(), counter);
+        }
+      }
+    }
+    return totalActionExecutions;
   }
 }
