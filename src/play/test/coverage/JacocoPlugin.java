@@ -85,7 +85,7 @@ public class JacocoPlugin extends PlayPlugin {
 //      Logger.info("JacocoPlugin: enhance " + applicationClass);
 
       byte[] originalBytecode = applicationClass.enhancedByteCode;
-      File classFile = new File("tmp/orig-classes/" + applicationClass.name.replace('.', '/') + ".class");
+      File classFile = new File(Play.tmpDir, "orig-classes/" + applicationClass.name.replace('.', '/') + ".class");
       classFile.getParentFile().mkdirs();
       IOUtils.write(originalBytecode, new FileOutputStream(classFile));
       applicationClass.enhancedByteCode = instrumenter().instrument(originalBytecode, applicationClass.name);
@@ -166,7 +166,7 @@ public class JacocoPlugin extends PlayPlugin {
     CoverageBuilder coverageBuilder = new CoverageBuilder();
     Analyzer analyzer = new Analyzer(executionData, coverageBuilder);
 
-    analyzer.analyzeAll(new File("tmp/orig-classes"));
+    analyzer.analyzeAll(new File(Play.tmpDir, "orig-classes"));
 
     String title = new File(System.getProperty("user.dir")).getName();
     return coverageBuilder.getBundle(title);
