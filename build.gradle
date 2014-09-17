@@ -136,7 +136,7 @@ task uitest(type: Test, dependsOn: 'copyTestClassesToPlayPrecompiled') {
     maxParallelForks = THREADS.toInteger()
   }
   else {
-    maxParallelForks = 2
+    maxParallelForks = 1
   }
 }
 
