@@ -57,7 +57,7 @@ public class ActionCoveragePlugin extends PlayPlugin {
 
     StringBuilder message = new StringBuilder(2048);
 
-    message.append("ActionCoveragePlugin: onApplicationStop");
+    message.append("ActionCoveragePlugin: onApplicationStop\n");
     
     List<Map.Entry<String, Long>> sorted = sortCounters(actionExecutions);
     message.append("-------------------------------\n");
