@@ -1,4 +1,4 @@
-self: play-tests -> tests 3.9
+self: play-tests -> tests 3.9.1
 
 require:
     - play 1.2+
@@ -7,7 +7,8 @@ require:
     - com.google.guava -> guava 18.0
     - junit -> junit 4.11
     - org.mockito -> mockito-all 1.9.5
-    - org.subethamail -> subethasmtp 3.1.7
+    - org.subethamail -> subethasmtp 3.1.7:
+        transitive: false
     - org.jacoco -> org.jacoco.core.with_asm 0.7.1:
         transitive: false
 
