@@ -11,6 +11,8 @@ require:
         transitive: false
     - org.jacoco -> org.jacoco.core 0.7.2.201409121644:
         transitive: false
+    - org.jacoco -> org.jacoco.report 0.7.2.201409121644:
+        transitive: false
 
 #repositories:
 #    - snapshots:
