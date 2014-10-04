@@ -1,12 +1,14 @@
 package play.test.db;
 
-import play.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import play.db.DB;
 
 import java.io.File;
 import java.lang.management.ManagementFactory;
 
 public class DatabaseState {
+  static final Logger logger = LoggerFactory.getLogger(DatabaseState.class);
   public File dumpFile;
 
   public DatabaseState() {
@@ -25,7 +27,7 @@ public class DatabaseState {
   public void save() {
     DB.execute("CHECKPOINT SYNC");
     DB.execute("script drop to '" + dumpFile.getPath() + "'");
-    Logger.info("Stored initial database state to " + dumpFile.getPath());
+    logger.info("Stored initial database state to " + dumpFile.getPath());
   }
 
   public void restore() {
@@ -33,6 +35,6 @@ public class DatabaseState {
     DB.execute("CHECKPOINT SYNC");
     DB.execute("runscript from '" + dumpFile + "'");
     long end = System.currentTimeMillis();
-    Logger.info("Restored initial database state from " + dumpFile + " in " + (end - start) + " ms");
+    logger.info("Restored initial database state from " + dumpFile + " in " + (end - start) + " ms");
   }
 }
