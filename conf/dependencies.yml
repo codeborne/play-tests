@@ -9,16 +9,10 @@ require:
     - org.mockito -> mockito-all 1.9.5
     - org.subethamail -> subethasmtp 3.1.7:
         transitive: false
-    - org.jacoco -> org.jacoco.core.with_asm 0.7.1:
+    - org.jacoco -> org.jacoco.core 0.7.2.201409121644:
         transitive: false
 
-repositories:
-    - local-jars:
-        type:       local
-        artifact:   ${application.path}/jars/[module].jar
-        contains:
-            - org.jacoco
-
+#repositories:
 #    - snapshots:
 #        type:       iBiblio
 #        root:       "https://oss.sonatype.org/content/repositories/snapshots/"
