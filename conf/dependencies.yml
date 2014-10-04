@@ -1,7 +1,7 @@
 self: play-tests -> tests 3.9.1
 
 require:
-    - play 1.2+
+    - play
 
     - com.codeborne -> selenide 2.14
     - com.google.guava -> guava 18.0
