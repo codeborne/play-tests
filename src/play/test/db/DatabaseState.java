@@ -1,32 +1,38 @@
 package play.test.db;
 
+import play.Logger;
 import play.db.DB;
 
+import java.io.File;
 import java.lang.management.ManagementFactory;
 
 public class DatabaseState {
-  public static String initialDatabaseStateFile;
+  public File dumpFile;
 
-  public static boolean isSaved() {
-    return initialDatabaseStateFile != null;
-  }
-
-  public static void save() {
+  public DatabaseState() {
     String jvmName = ManagementFactory.getRuntimeMXBean().getName();
-    String fileName = "tmp/tests.backup." + System.nanoTime() + '_' + jvmName + ".sql";
-    DB.execute("CHECKPOINT SYNC");
-    DB.execute("script drop to '" + fileName + "'");
-    play.Logger.info("Stored initial database state to " + fileName);
-
-    initialDatabaseStateFile = fileName;
+    this.dumpFile = new File("tmp/tests.backup." + System.nanoTime() + '_' + jvmName + ".sql");
   }
 
-  public static void restore() {
+  public DatabaseState(File dumpFile) {
+    this.dumpFile = dumpFile;
+  }
+
+  public boolean isSaved() {
+    return dumpFile.exists();
+  }
+
+  public void save() {
+    DB.execute("CHECKPOINT SYNC");
+    DB.execute("script drop to '" + dumpFile.getPath() + "'");
+    Logger.info("Stored initial database state to " + dumpFile.getPath());
+  }
+
+  public void restore() {
     long start = System.currentTimeMillis();
     DB.execute("CHECKPOINT SYNC");
-    DB.execute("runscript from '" + initialDatabaseStateFile + "'");
+    DB.execute("runscript from '" + dumpFile + "'");
     long end = System.currentTimeMillis();
-    play.Logger.info("Restored initial database state from " + initialDatabaseStateFile +
-        " in " + (end - start) + " ms.");
+    Logger.info("Restored initial database state from " + dumpFile + " in " + (end - start) + " ms");
   }
 }
