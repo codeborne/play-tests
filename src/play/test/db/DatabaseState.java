@@ -4,8 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import play.db.DB;
 
+import javax.sql.RowSet;
 import java.io.File;
 import java.lang.management.ManagementFactory;
+import java.sql.SQLException;
 
 public class DatabaseState {
   static final Logger logger = LoggerFactory.getLogger(DatabaseState.class);
@@ -25,16 +27,37 @@ public class DatabaseState {
   }
 
   public void save() {
-    DB.execute("CHECKPOINT SYNC");
+//    DB.execute("CHECKPOINT SYNC");
     DB.execute("script drop to '" + dumpFile.getPath() + "'");
+    showTables();
     logger.info("Stored initial database state to " + dumpFile.getPath());
   }
 
   public void restore() {
     long start = System.currentTimeMillis();
-    DB.execute("CHECKPOINT SYNC");
+//    DB.execute("CHECKPOINT SYNC");
     DB.execute("runscript from '" + dumpFile + "'");
+    showTables();
     long end = System.currentTimeMillis();
     logger.info("Restored initial database state from " + dumpFile + " in " + (end - start) + " ms");
+  }
+
+  private void showTables() {
+    logger.info("Tables:");
+    try {
+      RowSet rowSet = DB.executeQuery("show tables");
+      try {
+        while (rowSet.next()) {
+          logger.info(rowSet.getString(1));
+        }
+        logger.info("   ");
+      }
+      finally {
+        rowSet.close();
+      }
+    }
+    catch (SQLException e) {
+      e.printStackTrace();
+    }
   }
 }
