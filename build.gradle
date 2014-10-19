@@ -11,7 +11,7 @@ defaultTasks 'clean', 'test'
 sourceSets {
   main {
     java {srcDir "$PLAY_APP/app"}
-    resources {srcDirs "$PLAY_APP/app", "$PLAY_APP/public/javascripts"}
+    resources {srcDirs "$PLAY_APP/conf", "$PLAY_APP/app", "$PLAY_APP/public/javascripts"}
   }
   test {
     java {srcDir "$PLAY_APP/test"}
