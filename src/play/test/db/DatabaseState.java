@@ -4,9 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import play.db.DB;
 
-import javax.sql.RowSet;
 import java.io.File;
 import java.lang.management.ManagementFactory;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DatabaseState {
@@ -45,7 +45,7 @@ public class DatabaseState {
   private void showTables() {
     logger.info("Tables:");
     try {
-      RowSet rowSet = DB.executeQuery("show tables");
+      ResultSet rowSet = DB.executeQuery("show tables");
       try {
         while (rowSet.next()) {
           logger.info(rowSet.getString(1));
