@@ -8,6 +8,7 @@ import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class DatabaseState {
   static final Logger logger = LoggerFactory.getLogger(DatabaseState.class);
@@ -27,18 +28,15 @@ public class DatabaseState {
   }
 
   public void save() {
-    DB.execute("CHECKPOINT SYNC");
     DB.execute("script drop to '" + dumpFile.getPath() + "'");
-//    showTables();
+    showTables();
     logger.info("Stored initial database state to " + dumpFile.getPath());
   }
 
   public void restore() {
     long start = System.currentTimeMillis();
-    DB.execute("CHECKPOINT SYNC");
     DB.execute("runscript from '" + dumpFile + "'");
-    DB.execute("CHECKPOINT SYNC");
-//    showTables();
+    showTables();
     long end = System.currentTimeMillis();
     logger.info("Restored initial database state from " + dumpFile + " in " + (end - start) + " ms");
   }
@@ -46,15 +44,21 @@ public class DatabaseState {
   private void showTables() {
     logger.info("Tables:");
     try {
-      ResultSet rowSet = DB.executeQuery("show tables");
+      Statement statement = DB.getConnection().createStatement();
       try {
-        while (rowSet.next()) {
-          logger.info(rowSet.getString(1));
+        ResultSet resultSet = statement.executeQuery("show tables");
+        try {
+          while (resultSet.next()) {
+            logger.info(resultSet.getString(1));
+          }
+          logger.info("   ");
         }
-        logger.info("   ");
+        finally {
+          resultSet.close();
+        }
       }
       finally {
-        rowSet.close();
+        statement.close();
       }
     }
     catch (SQLException e) {
