@@ -28,6 +28,7 @@ public class DatabaseState {
   }
 
   public void save() {
+//    DB.execute("CHECKPOINT SYNC");
     DB.execute("script drop to '" + dumpFile.getPath() + "'");
     showTables();
     logger.info("Stored initial database state to " + dumpFile.getPath());
@@ -35,6 +36,7 @@ public class DatabaseState {
 
   public void restore() {
     long start = System.currentTimeMillis();
+//    DB.execute("CHECKPOINT SYNC");
     DB.execute("runscript from '" + dumpFile + "'");
     showTables();
     long end = System.currentTimeMillis();
