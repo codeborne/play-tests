@@ -63,10 +63,11 @@ public class UITimeLogger extends AbstractWebDriverEventListener {
   private void after(String command, String arg) {
     long duration = System.nanoTime() - startNs;
 
-    if (!command.equals(this.command) || !arg.equals(this.arg) && !"?".equals(arg))
-      System.out.println("ERROR: started " + this.command + "(" + this.arg + "), ended " + command + "(" + arg + ")");
-    else
-      times.add(command, arg, duration);
+    if (!command.equals(this.command) || !arg.equals(this.arg) && !"?".equals(arg)) {
+      System.out.println("info: started " + this.command + "(" + this.arg + "), ended " + command + "(" + arg + ")");
+    }
+
+    times.add(command, arg, duration);
   }
 
   private String toString(String command, WebElement element) {
