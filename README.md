@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play
-        - play-tests -> tests 3.9
+        - play-tests -> tests 3.10
     
     repositories:
         - play-tests:
@@ -80,6 +80,10 @@ Additional command line options
 
 
 ## Changelog
+
+### 3.10
+
+Upgraded to Selenide 2.15 and Selenium 2.44.0
 
 ### 3.7
 
