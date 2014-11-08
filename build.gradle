@@ -92,7 +92,7 @@ task copyTestClassesToPlayPrecompiled(type: Copy, dependsOn: 'testClasses') {
 }
 
 jacoco {
-  toolVersion = "0.7.0.201403182114"
+  toolVersion = "0.7.2.201409121644"
 }
 
 repositories {
@@ -107,6 +107,7 @@ test {
     append = false
     enabled = project.hasProperty('TEST_COVERAGE_ENABLED') && TEST_COVERAGE_ENABLED.toBoolean()
   }
+  jvmArgs "-XX:+HeapDumpOnOutOfMemoryError", "-XX:HeapDumpPath=tmp"
 }
 
 task itest(type: Test, dependsOn: 'copyTestClassesToPlayPrecompiled') {
@@ -125,6 +126,7 @@ task uitest(type: Test, dependsOn: 'copyTestClassesToPlayPrecompiled') {
   }
 
   maxHeapSize = "512m"
+  jvmArgs '-XX:+HeapDumpOnOutOfMemoryError', '-XX:HeapDumpPath=tmp'
 
   systemProperties['browser'] = 'chrome'
   if (System.getenv()['BROWSER']) {
