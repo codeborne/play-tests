@@ -1,7 +1,6 @@
 apply plugin: 'java'
 apply plugin: "jacoco"
 
-sourceCompatibility = 1.7
 compileJava.options.debugOptions.debugLevel = "source,lines,vars"
 
 buildDir = "$PLAY_APP/build"
