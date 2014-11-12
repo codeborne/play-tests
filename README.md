@@ -81,6 +81,16 @@ Additional command line options
 
 ## Changelog
 
+### 4.0
+
+UI tests must be in a separate folder "test-ui" (instead of "test").
+
+It increases performance of UI tests, because Play! doesn't need to compile/instrument all UNIT-tests twice.
+
+### 3.12
+
+Support for Java 8 (removed hard-coded language level 1.7)
+
 ### 3.10
 
 Upgraded to Selenide 2.15 and Selenium 2.44.0

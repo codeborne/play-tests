@@ -14,7 +14,9 @@ sourceSets {
   }
   test {
     java {srcDir "$PLAY_APP/test"}
+    java {srcDir "$PLAY_APP/test-ui"}
     resources {srcDir "$PLAY_APP/test"}
+    resources {srcDir "$PLAY_APP/test-ui"}
   }
 }
 
@@ -44,11 +46,15 @@ def _addModules(appDirectory) {
     sourceSets['main']['resources']['srcDirs'] += new File(module, "public/javascripts");
 
     File test = new File(module, "test")
+    File uiTest = new File(module, "test-ui")
 
-    if (new File(test, "ui").exists()) {
+    if (uiTest.exists()) {
       sourceSets['test']['java']['srcDirs'] += test;
+      sourceSets['test']['java']['srcDirs'] += uiTest;
       sourceSets['test']['resources']['srcDirs'] += test;
+      sourceSets['test']['resources']['srcDirs'] += uiTest;
     }
+
     _addToClasspath("$module/lib")
     if (module.isDirectory()) {
       _addModules(module)

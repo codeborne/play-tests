@@ -123,7 +123,7 @@ public class PlayTestsRunner extends Runner implements Filterable {
         Play.usePrecompiled = "true".equalsIgnoreCase(System.getProperty("precompiled", "false"));
         Play.init(new File("."), getPlayId());
         makeUniqueTempPath();
-        Play.javaPath.add(Play.getVirtualFile("test"));
+        Play.javaPath.add(Play.getVirtualFile("test-ui"));
         if (!Play.started) {
           Play.start();
         }
