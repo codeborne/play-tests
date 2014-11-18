@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -64,6 +65,12 @@ public class PlayTestsRunner extends Runner implements Filterable {
 
     jUnit4.run(notifier);
   }
+  
+  private static void log(String message) {
+    System.out.println("-------------------------------\n" +
+        new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date()) + " " + message + "\n" +
+        "-------------------------------\n");
+  }
 
   private void addTimesLogger() {
     final UITimeLogger timeLogger = new UITimeLogger();
@@ -71,12 +78,11 @@ public class PlayTestsRunner extends Runner implements Filterable {
     
     Runtime.getRuntime().addShutdownHook(new Thread() {
       @Override public void run() {
-        String message = "-------------------------------\n" +
+        String message = 
             "WebDriver statistics @ " + ManagementFactory.getRuntimeMXBean().getName() + ":\n" +
             timeLogger.times.longestClasses() + "\n" +
-            timeLogger.times.longestMethods() + "\n" +
-            "-------------------------------\n";
-        System.out.println(message);
+            timeLogger.times.longestMethods();
+        log(message);
       }
     });
   }
@@ -138,7 +144,7 @@ public class PlayTestsRunner extends Runner implements Filterable {
         duplicateLogsOfEveryTestProcessToSeparateFile();
 
         long end = currentTimeMillis();
-        System.out.println("Started Play! application in " + (end - start) + " ms.");
+        log("Started Play! application in " + (end - start) + " ms.");
         
         return true;
       }
@@ -151,7 +157,9 @@ public class PlayTestsRunner extends Runner implements Filterable {
   }
 
   private void runPlayKillerThread() {
-    new Thread(new PlayKillerThread()).start();
+    Thread thread = new Thread(new PlayKillerThread(), "Play killer thread");
+    thread.setDaemon(true);
+    thread.start();
   }
 
   void makeUniqueTempPath() {
@@ -194,9 +202,9 @@ public class PlayTestsRunner extends Runner implements Filterable {
     @Override public void run() {
       while (!Thread.interrupted()) {
         if (timeToKillPlay != null && timeToKillPlay < currentTimeMillis() && Play.started) {
-          System.out.println("============ Stopping play! application ==============");
-          System.out.println("============ Requested by: " + requesterInfo + " ==============");
+          log("Stopping play! application \nRequested by: " + requesterInfo);
           Play.stop();
+          log("Stopped play! application.");
           break;
         }
         else {
