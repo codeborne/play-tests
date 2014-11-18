@@ -8,6 +8,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebElement;
 import play.Play;
@@ -27,7 +28,12 @@ import static com.codeborne.selenide.junit.ScreenShooter.failedTests;
 
 @RunWith(PlayTestsRunner.class)
 public abstract class UITest extends Assert {
+  public static int MAXIMUM_TEST_EXECUTION_TIME = 100 * 1000;
+  public static int MAXIMUM_TEST_PREPARATION_TIME = 5 * 1000;
+
   @Rule public ScreenShooter makeScreenshotOnFailure = failedTests();
+  @Rule public TestWatcher executionTimesWatcher = new ExecutionTimesWatcher();
+  @Rule public PlayKiller playKiller = new PlayKiller();
 
   @Before
   public void usePlayClassloader() {
@@ -43,8 +49,6 @@ public abstract class UITest extends Assert {
   public void closeTransaction() {
     JPAPlugin.closeTx(true);
   }
-
-  @Rule public TestWatcher executionTimesWatcher = new ExecutionTimesWatcher();
 
   static {
     Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -121,5 +125,15 @@ public abstract class UITest extends Assert {
     String flashCookiePrefix = Play.configuration.getProperty("application.session.cookie", "PLAY");
     String flashCookie = flashCookiePrefix + "_FLASH";
     getWebDriver().manage().deleteCookieNamed(flashCookie);
+  }
+
+  private static class PlayKiller extends TestWatcher {
+    @Override protected void starting(Description description) {
+      PlayTestsRunner.scheduleKillPlay(description.getDisplayName(), MAXIMUM_TEST_EXECUTION_TIME);
+    }
+
+    @Override protected void finished(Description description) {
+      PlayTestsRunner.scheduleKillPlay(description.getDisplayName(), MAXIMUM_TEST_PREPARATION_TIME);
+    }
   }
 }

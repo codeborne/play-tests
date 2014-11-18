@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.URL;
+import java.util.Date;
 import java.util.TimeZone;
 
 import static com.google.common.io.Resources.toByteArray;
@@ -112,10 +113,8 @@ public class PlayTestsRunner extends Runner implements Filterable {
   }
 
   protected boolean startPlayIfNeeded() {
-    boolean isPlayStartNeeded = !"false".equalsIgnoreCase(System.getProperty("selenide.play.start", "true"));
-
     synchronized (Play.class) {
-      if (isPlayStartNeeded && !Play.started) {
+      if (isPlayStartNeeded() && !Play.started) {
         TimeZone.setDefault(TimeZone.getTimeZone(System.getProperty("selenide.play.timeZone", "Asia/Krasnoyarsk")));
 
         long start = currentTimeMillis();
@@ -127,6 +126,8 @@ public class PlayTestsRunner extends Runner implements Filterable {
         if (!Play.started) {
           Play.start();
         }
+
+        runPlayKillerThread();
 
         int port = findFreePort();
         new Server(new String[]{"--http.port=" + port});
@@ -143,6 +144,14 @@ public class PlayTestsRunner extends Runner implements Filterable {
       }
     }
     return false;
+  }
+
+  private boolean isPlayStartNeeded() {
+    return !"false".equalsIgnoreCase(System.getProperty("selenide.play.start", "true"));
+  }
+
+  private void runPlayKillerThread() {
+    new Thread(new PlayKillerThread()).start();
   }
 
   void makeUniqueTempPath() {
@@ -171,5 +180,34 @@ public class PlayTestsRunner extends Runner implements Filterable {
   public void filter(Filter filter) throws NoTestsRemainException {
     this.filter = filter;
     jUnit4.filter(filter);
+  }
+
+  private static Long timeToKillPlay;
+  private static String requesterInfo;
+
+  public static void scheduleKillPlay(String requester, long killAfterNMilliseconds) {
+    timeToKillPlay = currentTimeMillis() + killAfterNMilliseconds;
+    requesterInfo = "Scheduled Play! kill by " + requester  + "  to " + new Date(timeToKillPlay);
+  }
+
+  private static class PlayKillerThread implements Runnable {
+    @Override public void run() {
+      while (!Thread.interrupted()) {
+        if (timeToKillPlay != null && timeToKillPlay < currentTimeMillis() && Play.started) {
+          System.out.println("============ Stopping play! application ==============");
+          System.out.println("============ Requested by: " + requesterInfo + " ==============");
+          Play.stop();
+          break;
+        }
+        else {
+          try {
+            Thread.sleep(3000);
+          }
+          catch (InterruptedException e) {
+            break;
+          }
+        }
+      }
+    }
   }
 }

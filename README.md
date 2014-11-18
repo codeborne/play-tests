@@ -81,6 +81,10 @@ Additional command line options
 
 ## Changelog
 
+### 4.1
+
+Stop Play! application if tests are running too long (after 5 seconds from last test completion).
+
 ### 4.0
 
 UI tests must be in a separate folder "test-ui" (instead of "test").
