@@ -8,6 +8,8 @@ import play.classloading.ApplicationClasses;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.results.Result;
+import play.test.UITimeLogger;
+import play.test.stats.ExecutionTimesWatcher;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,6 +24,7 @@ import static org.apache.commons.io.FileUtils.writeStringToFile;
 
 public class ActionCoveragePlugin extends PlayPlugin {
   private boolean enabled = Play.runingInTestMode() && Play.mode.isProd();
+  public static UITimeLogger timeLogger;
   
   @Override public void onApplicationStart() {
     if (!enabled)
@@ -56,26 +59,31 @@ public class ActionCoveragePlugin extends PlayPlugin {
   }
 
   @Override public void onApplicationStop() {
-    if (enabled) 
-      storeCoverageToFile();
+    if (enabled) {
+      storeCoverageToFile("actions-coverage", actionExecutions);
+      storeCoverageToFile("tests-statistics-classes", ExecutionTimesWatcher.times.getClassDurations());
+      storeCoverageToFile("tests-statistics-methods", ExecutionTimesWatcher.times.getMethodDurations());
+      storeCoverageToFile("webdriver-statistics-classes", timeLogger.times.getClassDurations());
+      storeCoverageToFile("webdriver-statistics-methods", timeLogger.times.getMethodDurations());    }
   }
 
-  private void storeCoverageToFile() {
-    File file = new File("test-result/actions-coverage-" + ManagementFactory.getRuntimeMXBean().getName() + ".json");
+  private void storeCoverageToFile(final String prefix, Map<String, Long> actionsStatistics) {
+    File file = new File("test-result/" + prefix + "-" + ManagementFactory.getRuntimeMXBean().getName() + ".json");
     try {
-      writeStringToFile(file, new Gson().toJson(actionExecutions));
+      writeStringToFile(file, new Gson().toJson(actionsStatistics));
+      System.out.println("Store statistics to " + file.getAbsolutePath());
     }
     catch (IOException e) {
-      System.err.println("Failed to store actions coverage to " + file.getAbsolutePath());
+      System.err.println("Failed to store statistics to " + file.getAbsolutePath());
       e.printStackTrace();
     }
   }
 
-  private static List<Map.Entry<String, Long>> sortCounters(Map<String, Long> counters) {
+  private static List<Map.Entry<String, Long>> sortCounters(Map<String, Long> counters, final int asc) {
     List<Map.Entry<String, Long>> sorted = new ArrayList<Map.Entry<String, Long>>(counters.entrySet());
     Collections.sort(sorted, new Comparator<Map.Entry<String, Long>>() {
       @Override public int compare(Map.Entry<String, Long> o1, Map.Entry<String, Long> o2) {
-        return o1.getValue().compareTo(o2.getValue());
+        return asc * o1.getValue().compareTo(o2.getValue());
       }
     });
     return sorted;
@@ -83,28 +91,34 @@ public class ActionCoveragePlugin extends PlayPlugin {
   
   public static void main(String[] args) throws IOException {
     System.out.println(
-        formatActionsCoverage(
-            combineActionsCoveragesFromFiles()
-        )
+      "-------------------------------\n" +
+      formatActionsCoverage("Actions coverage", combineActionsCoveragesFromFiles("actions-coverage"), 1, Integer.MAX_VALUE, "times") +
+      formatActionsCoverage("Longest test classes", combineActionsCoveragesFromFiles("tests-statistics-classes"), -1, 20, "ms") +
+      formatActionsCoverage("Longest test methods", combineActionsCoveragesFromFiles("tests-statistics-methods"), -1, 20, "ms") +
+      formatActionsCoverage("Longest webdriver operations", combineActionsCoveragesFromFiles("webdriver-statistics-classes"), -1, 20, "ms") +
+      formatActionsCoverage("Longest webdriver calls", combineActionsCoveragesFromFiles("webdriver-statistics-methods"), -1, 20, "ms") +
+      "-------------------------------\n"
     );
   }
 
-  private static StringBuilder formatActionsCoverage(Map<String, Long> totalActionExecutions) {
+  private static String formatActionsCoverage(String title, Map<String, Long> totalActionExecutions, int asc, int maxRecords, final String suffix) {
     StringBuilder message = new StringBuilder(2048);
 
     message.append("ActionCoveragePlugin\n");
 
-    List<Map.Entry<String, Long>> sorted = sortCounters(totalActionExecutions);
-    message.append("-------------------------------\n");
-    message.append("Actions coverage:\n");
+    List<Map.Entry<String, Long>> sorted = sortCounters(totalActionExecutions, asc);
+
+    message.append(title).append(":\n");
+    int i = 0;
     for (Map.Entry<String, Long> action : sorted) {
-      message.append("   ").append(action.getKey()).append(" - tested ").append(action.getValue()).append(" times\n");
+      message.append("   ").append(action.getKey()).append(" - ").append(action.getValue()).append(" ").append(suffix).append("\n");
+      if (i++ > maxRecords) break;
     }
-    message.append("-------------------------------\n");
-    return message;
+
+    return message.toString();
   }
 
-  private static Map<String, Long> combineActionsCoveragesFromFiles() throws IOException {
+  private static Map<String, Long> combineActionsCoveragesFromFiles(final String prefix) throws IOException {
     Map<String, Long> totalActionExecutions = new HashMap<String, Long>();
 
     System.out.println("Combine actions coverage from");
@@ -115,7 +129,7 @@ public class ActionCoveragePlugin extends PlayPlugin {
     }
     else {
       for (File file : testResults.listFiles()) {
-        if (file.getName().startsWith("actions-coverage-")) {
+        if (file.getName().startsWith(prefix + "-")) {
           String temp = FileUtils.readFileToString(file, "UTF-8");
           Map<String, Long> actionExecutions = gson.fromJson(temp, totalActionExecutions.getClass());
 

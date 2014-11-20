@@ -17,7 +17,6 @@ import play.i18n.Messages;
 import play.mvc.Router;
 import play.test.stats.ExecutionTimesWatcher;
 
-import java.lang.management.ManagementFactory;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,21 +47,6 @@ public abstract class UITest extends Assert {
   @After
   public void closeTransaction() {
     JPAPlugin.closeTx(true);
-  }
-
-  static {
-    Runtime.getRuntime().addShutdownHook(new Thread() {
-      @Override public void run() {
-        if (Play.mode.isProd()) {
-          String message = "-------------------------------\n" +
-              "Test statistics @ " + ManagementFactory.getRuntimeMXBean().getName() + ":\n" +
-              ExecutionTimesWatcher.times.longestClasses() + "\n" +
-              ExecutionTimesWatcher.times.longestMethods() + "\n" +
-              "-------------------------------\n";
-          System.out.println(message);
-        }
-      }
-    });
   }
 
   public static String getLabel(String key) {

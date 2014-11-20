@@ -17,6 +17,7 @@ import play.Logger;
 import play.Play;
 import play.i18n.Lang;
 import play.server.Server;
+import play.test.coverage.ActionCoveragePlugin;
 
 import java.io.File;
 import java.io.IOException;
@@ -73,18 +74,8 @@ public class PlayTestsRunner extends Runner implements Filterable {
   }
 
   private void addTimesLogger() {
-    final UITimeLogger timeLogger = new UITimeLogger();
-    WebDriverRunner.addListener(timeLogger);
-    
-    Runtime.getRuntime().addShutdownHook(new Thread() {
-      @Override public void run() {
-        String message = 
-            "WebDriver statistics @ " + ManagementFactory.getRuntimeMXBean().getName() + ":\n" +
-            timeLogger.times.longestClasses() + "\n" +
-            timeLogger.times.longestMethods();
-        log(message);
-      }
-    });
+    ActionCoveragePlugin.timeLogger = new UITimeLogger();
+    WebDriverRunner.addListener(ActionCoveragePlugin.timeLogger);
   }
 
   private void warmupApplication() {

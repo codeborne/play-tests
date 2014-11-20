@@ -32,6 +32,14 @@ public class ExecutionTimes {
     storage.put(key, total);
   }
 
+  public Map<String, Long> getMethodDurations() {
+    return methodDurations;
+  }
+
+  public Map<String, Long> getClassDurations() {
+    return classDurations;
+  }
+
   public String longestMethods() {
     return print("Longest methods @ " + name, sortDurations(methodDurations));
   }
