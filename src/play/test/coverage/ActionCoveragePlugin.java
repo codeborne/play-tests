@@ -63,8 +63,8 @@ public class ActionCoveragePlugin extends PlayPlugin {
       storeCoverageToFile("actions-coverage", actionExecutions);
       storeCoverageToFile("tests-statistics-classes", ExecutionTimesWatcher.times.getClassDurations());
       storeCoverageToFile("tests-statistics-methods", ExecutionTimesWatcher.times.getMethodDurations());
-      storeCoverageToFile("webdriver-statistics-classes", timeLogger.times.getClassDurations());
-      storeCoverageToFile("webdriver-statistics-methods", timeLogger.times.getMethodDurations());    }
+      storeCoverageToFile("webdriver-statistics-operations", timeLogger.times.getClassDurations());
+      storeCoverageToFile("webdriver-statistics-calls", timeLogger.times.getMethodDurations());    }
   }
 
   private void storeCoverageToFile(final String prefix, Map<String, Long> actionsStatistics) {
@@ -93,10 +93,10 @@ public class ActionCoveragePlugin extends PlayPlugin {
     System.out.println(
       "-------------------------------\n" +
       formatActionsCoverage("Actions coverage", combineActionsCoveragesFromFiles("actions-coverage"), 1, Integer.MAX_VALUE, "times") +
-      formatActionsCoverage("Longest test classes", combineActionsCoveragesFromFiles("tests-statistics-classes"), -1, 20, "ms") +
-      formatActionsCoverage("Longest test methods", combineActionsCoveragesFromFiles("tests-statistics-methods"), -1, 20, "ms") +
-      formatActionsCoverage("Longest webdriver operations", combineActionsCoveragesFromFiles("webdriver-statistics-classes"), -1, 20, "ms") +
-      formatActionsCoverage("Longest webdriver calls", combineActionsCoveragesFromFiles("webdriver-statistics-methods"), -1, 20, "ms") +
+      formatActionsCoverage("Longest test classes", combineActionsCoveragesFromFiles("tests-statistics-classes"), -1, 20, "s") +
+      formatActionsCoverage("Longest test methods", combineActionsCoveragesFromFiles("tests-statistics-methods"), -1, 20, "s") +
+      formatActionsCoverage("Longest webdriver operations", combineActionsCoveragesFromFiles("webdriver-statistics-operations"), -1, 20, "s") +
+      formatActionsCoverage("Longest webdriver calls", combineActionsCoveragesFromFiles("webdriver-statistics-calls"), -1, 20, "s") +
       "-------------------------------\n"
     );
   }
@@ -104,14 +104,13 @@ public class ActionCoveragePlugin extends PlayPlugin {
   private static String formatActionsCoverage(String title, Map<String, Long> totalActionExecutions, int asc, int maxRecords, final String suffix) {
     StringBuilder message = new StringBuilder(2048);
 
-    message.append("ActionCoveragePlugin\n");
-
     List<Map.Entry<String, Long>> sorted = sortCounters(totalActionExecutions, asc);
 
     message.append(title).append(":\n");
     int i = 0;
     for (Map.Entry<String, Long> action : sorted) {
-      message.append("   ").append(action.getKey()).append(" - ").append(action.getValue()).append(" ").append(suffix).append("\n");
+      long execution = "s".equals(suffix) ? action.getValue() / 1000000000 : action.getValue();
+      message.append("   ").append(action.getKey()).append(" - ").append(execution).append(" ").append(suffix).append("\n");
       if (i++ > maxRecords) break;
     }
 
@@ -121,11 +120,11 @@ public class ActionCoveragePlugin extends PlayPlugin {
   private static Map<String, Long> combineActionsCoveragesFromFiles(final String prefix) throws IOException {
     Map<String, Long> totalActionExecutions = new HashMap<String, Long>();
 
-    System.out.println("Combine actions coverage from");
+    System.out.println("Combine statistics from");
     Gson gson = new Gson();
     File testResults = new File("test-result");
     if (!testResults.isDirectory() || testResults.listFiles() == null) {
-      System.err.println("ERROR: Cannot combine actions coverage from " + testResults.getAbsolutePath());
+      System.err.println("ERROR: Cannot combine statistics from " + testResults.getAbsolutePath());
     }
     else {
       for (File file : testResults.listFiles()) {
