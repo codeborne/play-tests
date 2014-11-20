@@ -88,8 +88,11 @@ public abstract class UITest extends Assert {
   private static Condition action(final String action, final Map<String, String> args) {
     return new Condition("action " + action + " " + args) {
       @Override public boolean apply(WebElement element) {
-        String expectedUrl = Router.getFullUrl(action, new HashMap<String, Object>(args));
-        return expectedUrl.equals(actualUrl());
+        return expectedUrl().equals(actualUrl());
+      }
+
+      private String expectedUrl() {
+        return Router.getFullUrl(action, new HashMap<String, Object>(args));
       }
 
       private String actualUrl() {
@@ -97,7 +100,7 @@ public abstract class UITest extends Assert {
       }
 
       @Override public String actualValue(WebElement element) {
-        return actualUrl();
+        return "url: " + actualUrl() + ", expected url: " + expectedUrl() + ", expected action: " + action;
       }
     };
   }
