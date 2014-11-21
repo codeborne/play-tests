@@ -1,4 +1,4 @@
-self: play-tests -> tests 4.3
+self: play-tests -> tests 4.4
 
 require:
     - play [1.2,1.3)

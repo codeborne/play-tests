@@ -15,19 +15,19 @@ public abstract class TwitterBootstrapUITest extends UITest {
   }
 
   public static void assertSuccessMessage(String message) {
-    $$(".alert-success").find(visible).shouldHave(text(message));
+    $$(".alert-success").findBy(text(message)).shouldBe(visible);
   }
 
   public static void assertWarningMessage(String message) {
-    $(".alert-warning").shouldHave(text(message));
+    $$(".alert-warning").findBy(text(message)).shouldBe(visible);
   }
 
   public static void assertInfoMessage(String message) {
-    $(".alert-info").shouldHave(text(message));
+    $$(".alert-info").findBy(text(message)).shouldBe(visible);
   }
 
   public static void assertErrorMessage(String message) {
-    $(".alert-error").shouldHave(text(message));
+    $$(".alert-error").findBy(text(message)).shouldBe(visible);
   }
 
   public static void assertFieldHasError(String name, String message) {

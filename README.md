@@ -81,6 +81,11 @@ Additional command line options
 
 ## Changelog
 
+### 4.4
+
+Fixed methods `assertSuccessMessage`, `assertWarningMessage`, `assertInfoMessage`, `assertErrorMessage` to support
+multiple messages (not only the first one).
+
 ### 4.1
 
 Stop Play! application if tests are running too long (after 5 seconds from last test completion).
