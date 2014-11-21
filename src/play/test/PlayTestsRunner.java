@@ -192,10 +192,15 @@ public class PlayTestsRunner extends Runner implements Filterable {
   private static class PlayKillerThread implements Runnable {
     @Override public void run() {
       while (!Thread.interrupted()) {
-        if (timeToKillPlay != null && timeToKillPlay < currentTimeMillis() && Play.started) {
-          log("Stopping play! application \nRequested by: " + requesterInfo);
-          Play.stop();
-          log("Stopped play! application.");
+        if (timeToKillPlay != null && timeToKillPlay < currentTimeMillis()) {
+          if (Play.started) {
+            log("Stopping play! application \nRequested by: " + requesterInfo);
+            Play.stop();
+            log("Stopped play! application.");
+          }
+          else {
+            log("Play! application is not started. Nothing to stop.");
+          }
           break;
         }
         else {
