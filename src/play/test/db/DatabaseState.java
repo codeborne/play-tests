@@ -38,7 +38,7 @@ public class DatabaseState {
     long start = System.currentTimeMillis();
 //    DB.execute("CHECKPOINT SYNC");
     DB.execute("runscript from '" + dumpFile + "'");
-    showTables();
+//    showTables();
     long end = System.currentTimeMillis();
     logger.info("Restored initial database state from " + dumpFile + " in " + (end - start) + " ms");
   }
