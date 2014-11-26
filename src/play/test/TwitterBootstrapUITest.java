@@ -1,7 +1,7 @@
 package play.test;
 
+import com.codeborne.selenide.SelenideElement;
 import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.$;
@@ -14,36 +14,36 @@ public abstract class TwitterBootstrapUITest extends UITest {
     $(by).should(disappear);
   }
 
-  public static void assertSuccessMessage(String message) {
-    $$(".alert-success").findBy(text(message)).shouldBe(visible);
+  public static SelenideElement assertSuccessMessage(String message) {
+    return $$(".alert-success").findBy(text(message)).shouldBe(visible);
   }
 
-  public static void assertWarningMessage(String message) {
-    $$(".alert-warning").findBy(text(message)).shouldBe(visible);
+  public static SelenideElement assertWarningMessage(String message) {
+    return $$(".alert-warning").findBy(text(message)).shouldBe(visible);
   }
 
-  public static void assertInfoMessage(String message) {
-    $$(".alert-info").findBy(text(message)).shouldBe(visible);
+  public static SelenideElement assertInfoMessage(String message) {
+    return $$(".alert-info").findBy(text(message)).shouldBe(visible);
   }
 
-  public static void assertErrorMessage(String message) {
-    $$(".alert-error").findBy(text(message)).shouldBe(visible);
+  public static SelenideElement assertErrorMessage(String message) {
+    return $$(".alert-error").findBy(text(message)).shouldBe(visible);
   }
 
-  public static void assertFieldHasError(String name, String message) {
-    assertFieldHasErrorText(name, message);
+  public static SelenideElement assertFieldHasError(String name, String message) {
+    return assertFieldHasErrorText(name, message);
   }
 
-  public static void assertFieldHasError(String name, String message, Object... args) {
-    assertFieldHasErrorText(name, message, args);
+  public static SelenideElement assertFieldHasError(String name, String message, Object... args) {
+    return assertFieldHasErrorText(name, message, args);
   }
 
   @SuppressWarnings("StatementWithEmptyBody")
-  private static void assertFieldHasErrorText(String name, String message, Object... args) {
-    WebElement element = $(By.name(name));
-    while (!(element = element.findElement(By.xpath(".."))).getAttribute("class").contains("control-group"));
+  private static SelenideElement assertFieldHasErrorText(String name, String message, Object... args) {
+    SelenideElement element = $(By.name(name));
+    while (!(element = element.parent()).getAttribute("class").contains("control-group"));
     if (!element.getAttribute("class").contains("error") && !element.findElement(By.className("error")).isDisplayed())
       fail("No error class on " + element.getText());
-    $(element).should(haveLabel(message, args));
+    return $(element).should(haveLabel(message, args));
   }
 }

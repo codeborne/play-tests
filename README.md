@@ -81,6 +81,10 @@ Additional command line options
 
 ## Changelog
 
+### 4.5
+
+Methods `assertSuccessMessage`, `assertWarningMessage`, `assertInfoMessage`, `assertErrorMessage` return found SelenideElement
+
 ### 4.4
 
 Fixed methods `assertSuccessMessage`, `assertWarningMessage`, `assertInfoMessage`, `assertErrorMessage` to support
