@@ -90,21 +90,23 @@ public class ActionCoveragePlugin extends PlayPlugin {
   }
   
   public static void main(String[] args) throws IOException {
+    Map<String, Long> actionsExecutions = combineActionsCoveragesFromFiles("actions-coverage");
     System.out.println(
       "-------------------------------\n" +
-      formatActionsCoverage("Actions coverage", combineActionsCoveragesFromFiles("actions-coverage"), 1, Integer.MAX_VALUE, "times") +
-      formatActionsCoverage("Longest test classes", combineActionsCoveragesFromFiles("tests-statistics-classes"), -1, 20, "s") +
-      formatActionsCoverage("Longest test methods", combineActionsCoveragesFromFiles("tests-statistics-methods"), -1, 20, "s") +
-      formatActionsCoverage("Longest webdriver operations", combineActionsCoveragesFromFiles("webdriver-statistics-operations"), -1, 20, "s") +
-      formatActionsCoverage("Longest webdriver calls", combineActionsCoveragesFromFiles("webdriver-statistics-calls"), -1, 20, "s") +
+      formatExecutionStatistics("Actions coverage", actionsExecutions, 1, Integer.MAX_VALUE, "times") +
+      calculateCoverage(actionsExecutions) +
+      formatExecutionStatistics("Longest test classes", combineActionsCoveragesFromFiles("tests-statistics-classes"), -1, 20, "s") +
+      formatExecutionStatistics("Longest test methods", combineActionsCoveragesFromFiles("tests-statistics-methods"), -1, 20, "s") +
+      formatExecutionStatistics("Longest webdriver operations", combineActionsCoveragesFromFiles("webdriver-statistics-operations"), -1, 20, "s") +
+      formatExecutionStatistics("Longest webdriver calls", combineActionsCoveragesFromFiles("webdriver-statistics-calls"), -1, 20, "s") +
       "-------------------------------\n"
     );
   }
 
-  private static String formatActionsCoverage(String title, Map<String, Long> totalActionExecutions, int asc, int maxRecords, final String suffix) {
+  private static String formatExecutionStatistics(String title, Map<String, Long> executionStatistics, int asc, int maxRecords, final String suffix) {
     StringBuilder message = new StringBuilder(2048);
 
-    List<Map.Entry<String, Long>> sorted = sortCounters(totalActionExecutions, asc);
+    List<Map.Entry<String, Long>> sorted = sortCounters(executionStatistics, asc);
 
     message.append(title).append(":\n");
     int i = 0;
@@ -115,6 +117,14 @@ public class ActionCoveragePlugin extends PlayPlugin {
     }
 
     return message.toString();
+  }
+
+  private static String calculateCoverage(Map<String, Long> actionExecutions) {
+    int coveredActions = 0;
+    for (Map.Entry<String, Long> entry : actionExecutions.entrySet()) {
+      if (entry.getValue() > 0) coveredActions++;
+    }
+    return "\nActions coverage: " + 100 * coveredActions / actionExecutions.size() + "%\n\n";
   }
 
   private static Map<String, Long> combineActionsCoveragesFromFiles(final String prefix) throws IOException {
