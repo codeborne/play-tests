@@ -197,6 +197,7 @@ public class PlayTestsRunner extends Runner implements Filterable {
             log("Stopping play! application \nRequested by: " + requesterInfo);
             Play.stop();
             log("Stopped play! application.");
+            System.exit(-666);
           }
           else {
             log("Play! application is not started. Nothing to stop.");
