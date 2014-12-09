@@ -56,13 +56,23 @@ public class PlayTestsRunner extends Runner implements Filterable {
 
   @Override
   public void run(final RunNotifier notifier) {
-    boolean firstRun = startPlayIfNeeded();
-    loadTestClassWithPlayClassloader();
-    Lang.clear();
+    try {
+      boolean firstRun = startPlayIfNeeded();
+      loadTestClassWithPlayClassloader();
+      Lang.clear();
 
-    if (Play.mode.isProd()) addTimesLogger();
-
-    if (firstRun) warmupApplication();
+      if (firstRun) {
+        warmupApplication();
+        if (Play.mode.isProd()) addTimesLogger();
+      }
+    }
+    catch (Throwable failedToStartPlay) {
+      log("Failed to start play:");
+      failedToStartPlay.printStackTrace();
+      log("Stop tests.");
+      notifier.pleaseStop();
+      System.exit(101);
+    }
 
     jUnit4.run(notifier);
   }
@@ -197,7 +207,8 @@ public class PlayTestsRunner extends Runner implements Filterable {
             log("Stopping play! application \nRequested by: " + requesterInfo);
             Play.stop();
             log("Stopped play! application.");
-            System.exit(-666);
+            log("Stop tests.");
+            System.exit(102);
           }
           else {
             log("Play! application is not started. Nothing to stop.");

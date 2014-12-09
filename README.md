@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play
-        - play-tests -> tests 3.10
+        - play-tests -> tests 4.7
     
     repositories:
         - play-tests:
@@ -80,6 +80,10 @@ Additional command line options
 
 
 ## Changelog
+
+### 4.7
+
+Immediately stop test execution if failed to start Play! application (otherwise multiple attempts to start play will cause OutOfMemory error).
 
 ### 4.5
 
