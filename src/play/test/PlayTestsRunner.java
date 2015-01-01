@@ -98,6 +98,9 @@ public class PlayTestsRunner extends Runner implements Filterable {
   }
 
   private void loadTestClassWithPlayClassloader() {
+    if (!isPlayStartNeeded())
+      return;
+    
     Class precompiledTestClass = Play.classloader.loadApplicationClass(testClass.getName());
     if (precompiledTestClass == null) {
       System.err.println("Warning: test classes are not precompiled. May cause problems if using JPA in tests.");
