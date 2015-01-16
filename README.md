@@ -8,12 +8,12 @@ Add it to your dependencies.yml
 
     require:
         - play
-        - play-tests -> tests 4.7
+        - play-tests -> tests 4.8
     
     repositories:
         - play-tests:
           type: http
-          artifact: http://repo.codeborne.com/[organization]/[module]-[revision].zip
+          artifact: https://repo.codeborne.com/[organization]/[module]-[revision].zip
           contains:
             - play-tests -> *
 
