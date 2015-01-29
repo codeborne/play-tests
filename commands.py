@@ -7,12 +7,13 @@ from exceptions import ValueError
 
 MODULE = "play-tests"
 
-COMMANDS = ["tests", "clean-tests", "unit-tests", "itests", "ui-tests", "ui-tests-with-coverage", "compile-check"]
+COMMANDS = ["tests", "clean-tests", "unit-tests", "pitest", "itests", "ui-tests", "ui-tests-with-coverage", "compile-check"]
 
 HELP = {
     "tests": "Compile and run all tests",
     "clean-tests": "Clean compiled tests and test results",
     "unit-tests": "Run plain unit-tests",
+    "pitest": "Mutation (unit-)tests",
     "itests": "Run integration tests (unit-tests that required play start - they cannot be run with usual unit-tests)",
     "ui-tests": "Run UI tests (in parallel)",
     "ui-tests-with-coverage": "Run UI tests with code coverage (slower, single thread, non-precompiled)",
@@ -101,6 +102,8 @@ def execute(**kargs):
     elif command == 'unit-tests':
         execute_gradle(app, args, threads_count, gradle_opts, 'test', 
                        '-PTEST_COVERAGE_ENABLED=%s' % test_coverage_enabled)
+    elif command == 'pitest':
+        execute_gradle(app, args, threads_count, gradle_opts, 'pitest')
     elif command == 'clean-and-unit-tests':
         execute_gradle(app, args, threads_count, gradle_opts, 'clean', 'test', 
                        '-PTEST_COVERAGE_ENABLED=%s' % test_coverage_enabled)

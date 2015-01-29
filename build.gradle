@@ -1,5 +1,5 @@
 apply plugin: 'java'
-apply plugin: "jacoco"
+apply plugin: 'jacoco'
 
 compileJava.options.debugOptions.debugLevel = "source,lines,vars"
 
@@ -102,6 +102,28 @@ jacoco {
 
 repositories {
   mavenCentral()
+}
+
+buildscript {
+  repositories { jcenter() }
+  dependencies { classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.1.2' }
+}
+
+apply plugin: 'info.solidsoft.pitest'
+
+def packages = {
+  // for unknown reason, pitest throws "No mutations found" exception when "services*" is included
+  return new File("$PLAY_APP/app").list()*.concat("*") - 'services*'
+}
+
+//packages().each { println it}
+
+pitest {
+  targetClasses = packages()
+  timestampedReports = false
+  threads = 4
+  outputFormats = ['XML', 'HTML']
+  enableDefaultIncrementalAnalysis = true
 }
 
 test {

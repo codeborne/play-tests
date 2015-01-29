@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play
-        - play-tests -> tests 4.8
+        - play-tests -> tests 4.9
     
     repositories:
         - play-tests:
@@ -80,6 +80,14 @@ Additional command line options
 
 
 ## Changelog
+
+### 4.9
+
+Added command "play pitest" for running mutation tests. See http://pitest.org/ for details.
+
+### 4.8
+
+Upgraded to Selenide 2.16 with test reports
 
 ### 4.7
 
