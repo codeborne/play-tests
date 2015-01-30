@@ -81,6 +81,10 @@ Additional command line options
 
 ## Changelog
 
+### 4.10
+
+Use mockito-core instead of mockito-all to avoid including old hamcrest 1.1
+
 ### 4.9
 
 Added command "play pitest" for running mutation tests. See http://pitest.org/ for details.
