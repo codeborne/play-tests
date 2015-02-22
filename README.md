@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play
-        - play-tests -> tests 4.9
+        - play-tests -> tests 4.11
     
     repositories:
         - play-tests:
@@ -80,6 +80,10 @@ Additional command line options
 
 
 ## Changelog
+
+### 4.11
+
+Does not modify play tmp folder to assure reusing of compiled classes between test runs
 
 ### 4.10
 

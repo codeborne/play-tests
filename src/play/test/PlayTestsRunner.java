@@ -131,7 +131,7 @@ public class PlayTestsRunner extends Runner implements Filterable {
         
         Play.usePrecompiled = "true".equalsIgnoreCase(System.getProperty("precompiled", "false"));
         Play.init(new File("."), getPlayId());
-        makeUniqueTempPath();
+        makeUniqueCachePath();
         Play.javaPath.add(Play.getVirtualFile("test-ui"));
         if (!Play.started) {
           Play.start();
@@ -166,14 +166,12 @@ public class PlayTestsRunner extends Runner implements Filterable {
     thread.start();
   }
 
-  void makeUniqueTempPath() {
+  void makeUniqueCachePath() {
     File tmp = new File(new File("tmp", Play.configuration.getProperty("application.name")), Play.id);
     tmp = new File(tmp, ManagementFactory.getRuntimeMXBean().getName());
 
     if (!tmp.exists()) tmp.mkdirs();
-    Play.configuration.setProperty("play.tmp", tmp.getAbsolutePath());
     System.setProperty("java.io.tmpdir", tmp.getAbsolutePath());
-    Play.tmpDir = tmp;
   }
 
   private void duplicateLogsOfEveryTestProcessToSeparateFile() {

@@ -25,11 +25,20 @@ public class PlayTestsRunnerTest {
     Play.id = "test";
     Play.mode = PROD;
 
-    new PlayTestsRunner(PlayTestsRunnerTest.class).makeUniqueTempPath();
+    new PlayTestsRunner(PlayTestsRunnerTest.class).makeUniqueCachePath();
     File tmp = new File("tmp/my-app/test/" + ManagementFactory.getRuntimeMXBean().getName());
     assertEquals(tmp.getAbsolutePath(), System.getProperty("java.io.tmpdir"));
     assertTrue(tmp.exists());
     assertTrue(tmp.isDirectory());
   }
 
+  @Test
+  public void shouldNotModifyPlayTmpToAssureReusingOfCompiledClasses() throws InitializationError {
+    Play.configuration.setProperty("play.tmp", "temp");
+    Play.tmpDir = new File("temp");
+
+    new PlayTestsRunner(PlayTestsRunnerTest.class).makeUniqueCachePath();
+    assertEquals(new File("temp"), Play.tmpDir);
+    assertEquals("temp", Play.configuration.getProperty("play.tmp"));
+  }
 }
