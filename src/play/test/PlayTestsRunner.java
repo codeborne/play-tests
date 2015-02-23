@@ -23,6 +23,8 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
@@ -122,16 +124,17 @@ public class PlayTestsRunner extends Runner implements Filterable {
     }
   }
 
+  @SuppressWarnings("CallToNativeMethodWhileLocked")
   protected boolean startPlayIfNeeded() {
     synchronized (Play.class) {
       if (isPlayStartNeeded() && !Play.started) {
         TimeZone.setDefault(TimeZone.getTimeZone(System.getProperty("selenide.play.timeZone", "Asia/Krasnoyarsk")));
 
         long start = currentTimeMillis();
-        
+        makeUniqueCachePath();
+
         Play.usePrecompiled = "true".equalsIgnoreCase(System.getProperty("precompiled", "false"));
         Play.init(new File("."), getPlayId());
-        makeUniqueCachePath();
         Play.javaPath.add(Play.getVirtualFile("test-ui"));
         if (!Play.started) {
           Play.start();
@@ -167,11 +170,13 @@ public class PlayTestsRunner extends Runner implements Filterable {
   }
 
   void makeUniqueCachePath() {
-    File tmp = new File(new File("tmp", Play.configuration.getProperty("application.name")), Play.id);
-    tmp = new File(tmp, ManagementFactory.getRuntimeMXBean().getName());
-
-    if (!tmp.exists()) tmp.mkdirs();
-    System.setProperty("java.io.tmpdir", tmp.getAbsolutePath());
+    try {
+      Path tmp = Files.createTempDirectory("cache");
+      System.setProperty("java.io.tmpdir", tmp.toString());
+    }
+    catch (IOException e) {
+      throw new RuntimeException("Failed to create unique directory for cache", e);
+    }
   }
 
   private void duplicateLogsOfEveryTestProcessToSeparateFile() {
