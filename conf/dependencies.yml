@@ -9,9 +9,9 @@ require:
     - org.mockito -> mockito-core 1.10.19
     - org.subethamail -> subethasmtp 3.1.7:
         transitive: false
-    - org.jacoco -> org.jacoco.core 0.7.3.201502191951:
+    - org.jacoco -> org.jacoco.core 0.7.4.201502262128:
         transitive: false
-    - org.jacoco -> org.jacoco.report 0.7.3.201502191951:
+    - org.jacoco -> org.jacoco.report 0.7.4.201502262128:
         transitive: false
 
 #repositories:
