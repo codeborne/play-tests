@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play
-        - play-tests -> tests 4.11
+        - play-tests -> tests 4.13
     
     repositories:
         - play-tests:
@@ -80,6 +80,10 @@ Additional command line options
 
 
 ## Changelog
+
+### 4.13
+
+Upgrade to selenide 2.17, selenium 2.45.0 - thus fixed incompatibility problems with FireFix 36
 
 ### 4.11
 
