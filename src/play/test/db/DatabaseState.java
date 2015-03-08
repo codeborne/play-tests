@@ -30,7 +30,7 @@ public class DatabaseState {
   public void save() {
 //    DB.execute("CHECKPOINT SYNC");
     DB.execute("script drop to '" + dumpFile.getPath() + "'");
-    showTables();
+//    showTables();
     logger.info("Stored initial database state to " + dumpFile.getPath());
   }
 
