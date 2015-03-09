@@ -18,6 +18,7 @@ import play.Play;
 import play.i18n.Lang;
 import play.server.Server;
 import play.test.coverage.ActionCoveragePlugin;
+import play.vfs.VirtualFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -135,7 +136,8 @@ public class PlayTestsRunner extends Runner implements Filterable {
 
         Play.usePrecompiled = "true".equalsIgnoreCase(System.getProperty("precompiled", "false"));
         Play.init(new File("."), getPlayId());
-        Play.javaPath.add(Play.getVirtualFile("test-ui"));
+        VirtualFile uiTests = Play.getVirtualFile("test-ui");
+        if (uiTests != null) Play.javaPath.add(uiTests);
         if (!Play.started) {
           Play.start();
         }

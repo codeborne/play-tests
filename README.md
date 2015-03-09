@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play
-        - play-tests -> tests 4.13
+        - play-tests -> tests 4.14
     
     repositories:
         - play-tests:
@@ -80,6 +80,10 @@ Additional command line options
 
 
 ## Changelog
+
+### 4.14
+
+Folder "test-ui" is now optional
 
 ### 4.13
 
