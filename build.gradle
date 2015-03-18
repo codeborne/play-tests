@@ -97,7 +97,7 @@ task copyTestClassesToPlayPrecompiled(type: Copy, dependsOn: 'testClasses') {
 }
 
 jacoco {
-  toolVersion = "0.7.2.201409121644"
+  toolVersion = "0.7.4.201502262128"
 }
 
 repositories {
@@ -106,7 +106,7 @@ repositories {
 
 buildscript {
   repositories { jcenter() }
-  dependencies { classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.1.2' }
+  dependencies { classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.1.4' }
 }
 
 apply plugin: 'info.solidsoft.pitest'
