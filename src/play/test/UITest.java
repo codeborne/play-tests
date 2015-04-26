@@ -26,6 +26,7 @@ import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.executeJavaScript;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static com.codeborne.selenide.junit.ScreenShooter.failedTests;
+import static play.test.PlayTestsRunner.scheduleKillPlay;
 
 @RunWith(PlayTestsRunner.class)
 public abstract class UITest extends Assert {
@@ -119,11 +120,13 @@ public abstract class UITest extends Assert {
 
   private static class PlayKiller extends TestWatcher {
     @Override protected void starting(Description description) {
-      PlayTestsRunner.scheduleKillPlay(description.getDisplayName(), MAXIMUM_TEST_EXECUTION_TIME);
+      if (Play.mode.isProd())
+        scheduleKillPlay(description.getDisplayName(), MAXIMUM_TEST_EXECUTION_TIME);
     }
 
     @Override protected void finished(Description description) {
-      PlayTestsRunner.scheduleKillPlay(description.getDisplayName(), MAXIMUM_TEST_PREPARATION_TIME);
+      if (Play.mode.isProd())
+        scheduleKillPlay(description.getDisplayName(), MAXIMUM_TEST_PREPARATION_TIME);
     }
   }
 }
