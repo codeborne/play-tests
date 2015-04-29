@@ -40,10 +40,12 @@ public abstract class TwitterBootstrapUITest extends UITest {
 
   @SuppressWarnings("StatementWithEmptyBody")
   private static SelenideElement assertFieldHasErrorText(String name, String message, Object... args) {
-    SelenideElement element = $(By.name(name));
-    while (!(element = element.parent()).getAttribute("class").contains("control-group"));
-    if (!element.getAttribute("class").contains("error") && !element.findElement(By.className("error")).isDisplayed())
-      fail("No error class on " + element.getText());
-    return $(element).should(haveLabel(message, args));
+    SelenideElement element = $(By.name(name)).closest(".control-group");
+    element.should(haveLabel(message, args));
+    
+    if (!element.has(cssClass("error")) && !element.find(".error").isDisplayed())
+      fail("No error class on " + element);
+    
+    return element;
   }
 }
