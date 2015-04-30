@@ -7,15 +7,15 @@ Add it to your dependencies.yml
 -------------------------------
 
     require:
-        - play
-        - play-tests -> tests 4.15
-    
+        - play 1.3+
+        - play-codeborne -> tests 4.15    
+
     repositories:
-        - play-tests:
-          type: http
-          artifact: https://repo.codeborne.com/[organization]/[module]-[revision].zip
-          contains:
-            - play-tests -> *
+        - codeborne:
+            type: http
+            artifact: https://repo.codeborne.com/play-[module]/[module]-[revision].zip
+            contains:
+                - play-codeborne -> *
 
 Your first test
 ---------------
