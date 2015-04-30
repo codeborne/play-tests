@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play
-        - play-tests -> tests 4.14
+        - play-tests -> tests 4.15
     
     repositories:
         - play-tests:
@@ -80,6 +80,12 @@ Additional command line options
 
 
 ## Changelog
+
+### 4.15
+
+* Upgrade to selenide 2.18 (major improvement of "waiting" algorithm)
+* Upgrade to Gradle 2.3
+* Kill Play only in prod mode (in development test can run very long - e.g. paused on breakpoint)
 
 ### 4.14
 
