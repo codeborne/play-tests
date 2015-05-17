@@ -144,11 +144,13 @@ public class ActionCoveragePlugin extends PlayPlugin {
 
           System.out.println("   - " + file.getName());
 
-          for (Map.Entry<String, Long> entry : actionExecutions.entrySet()) {
-            Long counter = totalActionExecutions.get(entry.getKey());
-            if (counter == null) counter = 0L;
-            counter += ((Number) entry.getValue()).longValue();
-            totalActionExecutions.put(entry.getKey(), counter);
+          if (actionExecutions != null) {
+            for (Map.Entry<String, Long> entry : actionExecutions.entrySet()) {
+              Long counter = totalActionExecutions.get(entry.getKey());
+              if (counter == null) counter = 0L;
+              counter += ((Number) entry.getValue()).longValue();
+              totalActionExecutions.put(entry.getKey(), counter);
+            }
           }
         }
       }
