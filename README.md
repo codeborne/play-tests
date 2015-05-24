@@ -81,7 +81,11 @@ Additional command line options
 
 ## Changelog
 
-### 4.15.1
+### 4.17
+
+* upgrade to Selenide 2.18.2  (bugfix for issue https://github.com/codeborne/selenide/issues/182)
+
+### 4.16
 
 * upgrade to Selenide 2.18.1  (bugfix for issue https://github.com/codeborne/selenide/issues/180)
 
