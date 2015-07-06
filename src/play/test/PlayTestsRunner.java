@@ -33,6 +33,8 @@ import java.util.TimeZone;
 import static com.google.common.io.Resources.toByteArray;
 import static java.lang.System.currentTimeMillis;
 import static org.openqa.selenium.net.PortProber.findFreePort;
+import static play.test.troubleshooting.PlayKiller.*;
+import static play.test.troubleshooting.ThreadDumper.scheduleThreadDump;
 
 public class PlayTestsRunner extends Runner implements Filterable {
   private Class testClass;
@@ -79,8 +81,8 @@ public class PlayTestsRunner extends Runner implements Filterable {
 
     jUnit4.run(notifier);
   }
-  
-  private static void log(String message) {
+
+  public static void log(String message) {
     System.out.println("-------------------------------\n" +
         new SimpleDateFormat("dd.MM.yyyy HH:mm:ss").format(new Date()) + " " + message + "\n" +
         "-------------------------------\n");
@@ -134,6 +136,9 @@ public class PlayTestsRunner extends Runner implements Filterable {
         long start = currentTimeMillis();
         makeUniqueCachePath();
 
+        scheduleThreadDump("PlayTestRunner.startPlayIfNeeded", EXPECTED_FIRST_TEST_EXECUTION_TIME);
+        scheduleKillPlay("PlayTestRunner.startPlayIfNeeded", MAXIMUM_TEST_EXECUTION_TIME);
+
         Play.usePrecompiled = "true".equalsIgnoreCase(System.getProperty("precompiled", "false"));
         Play.init(new File("."), getPlayId());
         VirtualFile uiTests = Play.getVirtualFile("test-ui");
@@ -141,8 +146,6 @@ public class PlayTestsRunner extends Runner implements Filterable {
         if (!Play.started) {
           Play.start();
         }
-
-        runPlayKillerThread();
 
         int port = findFreePort();
         new Server(new String[]{"--http.port=" + port});
@@ -163,12 +166,6 @@ public class PlayTestsRunner extends Runner implements Filterable {
 
   private boolean isPlayStartNeeded() {
     return !"false".equalsIgnoreCase(System.getProperty("selenide.play.start", "true"));
-  }
-
-  private void runPlayKillerThread() {
-    Thread thread = new Thread(new PlayKillerThread(), "Play killer thread");
-    thread.setDaemon(true);
-    thread.start();
   }
 
   void makeUniqueCachePath() {
@@ -197,41 +194,5 @@ public class PlayTestsRunner extends Runner implements Filterable {
   public void filter(Filter filter) throws NoTestsRemainException {
     this.filter = filter;
     jUnit4.filter(filter);
-  }
-
-  private static Long timeToKillPlay;
-  private static String requesterInfo;
-
-  public static void scheduleKillPlay(String requester, long killAfterNMilliseconds) {
-    timeToKillPlay = currentTimeMillis() + killAfterNMilliseconds;
-    requesterInfo = "Scheduled Play! kill by " + requester  + "  to " + new Date(timeToKillPlay);
-  }
-
-  private static class PlayKillerThread implements Runnable {
-    @Override public void run() {
-      while (!Thread.interrupted()) {
-        if (timeToKillPlay != null && timeToKillPlay < currentTimeMillis()) {
-          if (Play.started) {
-            log("Stopping play! application \nRequested by: " + requesterInfo);
-            Play.stop();
-            log("Stopped play! application.");
-            log("Stop tests.");
-            System.exit(102);
-          }
-          else {
-            log("Play! application is not started. Nothing to stop.");
-          }
-          break;
-        }
-        else {
-          try {
-            Thread.sleep(3000);
-          }
-          catch (InterruptedException e) {
-            break;
-          }
-        }
-      }
-    }
   }
 }

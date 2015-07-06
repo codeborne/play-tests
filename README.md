@@ -81,6 +81,12 @@ Additional command line options
 
 ## Changelog
 
+### 4.18
+
+* make thread dump periodically if Play cannot start in time
+* upgrade to Selenide 2.19
+* upgrade to Selenium 2.46.0
+
 ### 4.17
 
 * upgrade to Selenide 2.18.2  (bugfix for issue https://github.com/codeborne/selenide/issues/182)
