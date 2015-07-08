@@ -25,6 +25,7 @@ import java.util.Map;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.executeJavaScript;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
+import static com.codeborne.selenide.WebDriverRunner.hasWebDriverStarted;
 import static com.codeborne.selenide.junit.ScreenShooter.failedTests;
 
 @RunWith(PlayTestsRunner.class)
@@ -109,8 +110,10 @@ public abstract class UITest extends Assert {
    * Clears Play flash before opening some page
    */
   public void clearFlash() {
-    String flashCookiePrefix = Play.configuration.getProperty("application.session.cookie", "PLAY");
-    String flashCookie = flashCookiePrefix + "_FLASH";
-    getWebDriver().manage().deleteCookieNamed(flashCookie);
+    if (hasWebDriverStarted()) {
+      String flashCookiePrefix = Play.configuration.getProperty("application.session.cookie", "PLAY");
+      String flashCookie = flashCookiePrefix + "_FLASH";
+      getWebDriver().manage().deleteCookieNamed(flashCookie);
+    }
   }
 }
