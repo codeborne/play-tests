@@ -81,6 +81,10 @@ Additional command line options
 
 ## Changelog
 
+### 4.19
+
+* remove old cglib 2.x dependency (coming with Selenium). Play uses cglib 3.x
+
 ### 4.18
 
 * make thread dump periodically if Play cannot start in time
