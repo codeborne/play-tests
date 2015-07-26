@@ -6,7 +6,7 @@
     <fail message="Please specify Play framework path using -Dplay.path=/path/to/framework/home"/>
   </target>
 
-  <target name="clean">
+  <target name="init">
     <delete dir="tmp"/>
   </target>
 
@@ -23,7 +23,7 @@
     </fileset>
   </path>
 
-  <target name="build" depends="clean, compile, test">
+  <target name="build" depends="init, compile, test">
     <mkdir dir="lib"/>
     <jar destfile="lib/tests.jar" basedir="tmp/classes">
       <manifest>
@@ -32,7 +32,6 @@
         </section>
       </manifest>
     </jar>
-    <delete dir="tmp"/>
   </target>
 
   <target name="compile" depends="check">
