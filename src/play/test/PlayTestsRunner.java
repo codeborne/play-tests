@@ -13,6 +13,7 @@ import org.junit.runner.manipulation.NoTestsRemainException;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.JUnit4;
 import org.junit.runners.model.InitializationError;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 import play.Logger;
 import play.Play;
 import play.i18n.Lang;
@@ -39,6 +40,11 @@ import static play.test.troubleshooting.PlayKiller.*;
 import static play.test.troubleshooting.ThreadDumper.scheduleThreadDump;
 
 public class PlayTestsRunner extends Runner implements Filterable {
+  static {
+    SLF4JBridgeHandler.removeHandlersForRootLogger();
+    SLF4JBridgeHandler.install();
+  }
+
   private Class testClass;
   private JUnit4 jUnit4;
   private Filter filter;
