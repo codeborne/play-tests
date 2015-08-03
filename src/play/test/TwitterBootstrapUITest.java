@@ -15,22 +15,22 @@ public abstract class TwitterBootstrapUITest extends UITest {
   }
 
   public static SelenideElement assertSuccessMessage(String message) {
-    $(".alert-success").shouldBe(visible);
+    $(".alert-success").shouldBe(visible); // Remove me when https://github.com/codeborne/selenide/issues/205 is resolved
     return $$(".alert-success").findBy(text(message)).shouldBe(visible);
   }
 
   public static SelenideElement assertWarningMessage(String message) {
-    $(".alert-warning").shouldBe(visible);
+    $(".alert-warning").shouldBe(visible); // Remove me when https://github.com/codeborne/selenide/issues/205 is resolved
     return $$(".alert-warning").findBy(text(message)).shouldBe(visible);
   }
 
   public static SelenideElement assertInfoMessage(String message) {
-    $(".alert-info").shouldBe(visible);
+    $(".alert-info").shouldBe(visible); // Remove me when https://github.com/codeborne/selenide/issues/205 is resolved
     return $$(".alert-info").findBy(text(message)).shouldBe(visible);
   }
 
   public static SelenideElement assertErrorMessage(String message) {
-    $(".alert-error").shouldBe(visible);
+    $(".alert-error").shouldBe(visible); // Remove me when https://github.com/codeborne/selenide/issues/205 is resolved
     return $$(".alert-error").findBy(text(message)).shouldBe(visible);
   }
 
