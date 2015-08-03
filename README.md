@@ -84,6 +84,7 @@ Additional command line options
 ### 4.21
 
 * upgrade to selenide 2.21
+* fixed NPE in assertSuccessMessage() in case of empty collection
 
 ### 4.20
 

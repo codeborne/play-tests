@@ -15,18 +15,22 @@ public abstract class TwitterBootstrapUITest extends UITest {
   }
 
   public static SelenideElement assertSuccessMessage(String message) {
+    $(".alert-success").shouldBe(visible);
     return $$(".alert-success").findBy(text(message)).shouldBe(visible);
   }
 
   public static SelenideElement assertWarningMessage(String message) {
+    $(".alert-warning").shouldBe(visible);
     return $$(".alert-warning").findBy(text(message)).shouldBe(visible);
   }
 
   public static SelenideElement assertInfoMessage(String message) {
+    $(".alert-info").shouldBe(visible);
     return $$(".alert-info").findBy(text(message)).shouldBe(visible);
   }
 
   public static SelenideElement assertErrorMessage(String message) {
+    $(".alert-error").shouldBe(visible);
     return $$(".alert-error").findBy(text(message)).shouldBe(visible);
   }
 
@@ -38,13 +42,13 @@ public abstract class TwitterBootstrapUITest extends UITest {
     return assertFieldHasErrorText(name, message, args);
   }
 
-  @SuppressWarnings("StatementWithEmptyBody")
   private static SelenideElement assertFieldHasErrorText(String name, String message, Object... args) {
     SelenideElement element = $(By.name(name)).closest(".control-group");
     element.should(haveLabel(message, args));
     
-    if (!element.has(cssClass("error")) && !element.find(".error").isDisplayed())
+    if (!element.has(cssClass("error")) && !element.find(".error").isDisplayed()) {
       fail("No error class on " + element);
+    }
     
     return element;
   }
