@@ -1,9 +1,9 @@
-self: play-tests -> tests 4.20
+self: play-tests -> tests 4.21
 
 require:
     - play [1.2,1.3)
 
-    - com.codeborne -> selenide 2.20:
+    - com.codeborne -> selenide 2.21:
         exclude:
            - cglib
     - org.slf4j -> jul-to-slf4j 1.7.12

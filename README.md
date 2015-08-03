@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play 1.3+
-        - play-codeborne -> tests 4.15.1
+        - play-codeborne -> tests 4.21
 
     repositories:
         - codeborne:
@@ -80,6 +80,14 @@ Additional command line options
 
 
 ## Changelog
+
+### 4.21
+
+* upgrade to selenide 2.21
+
+### 4.20
+
+* upgrade to selenide 2.20
 
 ### 4.19
 
