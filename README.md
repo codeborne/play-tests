@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play 1.3+
-        - play-codeborne -> tests 4.21
+        - play-codeborne -> tests 4.22
 
     repositories:
         - codeborne:
@@ -80,6 +80,12 @@ Additional command line options
 
 
 ## Changelog
+
+### 4.22
+
+* improved assertSuccessMessage() and other checks in TwitterBootstrapUITest
+* upgrade to selenide 2.22
+* upgrade to Gradle 2.6
 
 ### 4.21
 
