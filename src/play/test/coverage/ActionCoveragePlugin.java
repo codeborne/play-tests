@@ -120,6 +120,8 @@ public class ActionCoveragePlugin extends PlayPlugin {
   }
 
   private static String calculateCoverage(Map<String, Long> actionExecutions) {
+    if (actionExecutions.isEmpty()) return "";
+
     int coveredActions = 0;
     for (Map.Entry<String, Long> entry : actionExecutions.entrySet()) {
       if (entry.getValue() > 0) coveredActions++;
