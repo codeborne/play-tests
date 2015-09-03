@@ -81,6 +81,10 @@ Additional command line options
 
 ## Changelog
 
+### 4.23
+
+* run tests in "dist" subfolder (to use all precompiled less, js and other resources)
+
 ### 4.22
 
 * improved assertSuccessMessage() and other checks in TwitterBootstrapUITest

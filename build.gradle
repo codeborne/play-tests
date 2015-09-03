@@ -90,7 +90,7 @@ showRuntimeClasspath()
 
 task copyTestClassesToPlayPrecompiled(type: Copy, dependsOn: 'testClasses') {
   from project.sourceSets.test.output.classesDir
-  into "$PLAY_APP/precompiled/java"
+  into "$PLAY_APP/dist/precompiled/java"
   include 'itest/**'
   include 'ui/**'
   outputs.upToDateWhen { false }
@@ -211,6 +211,6 @@ tasks.withType(Test).all { testTask ->
   testTask.jvmArgs += ['-ea', '-noverify', '-XX:MaxPermSize=256m']
   testTask.systemProperties['file.encoding'] = 'UTF-8'
   testTask.testLogging.showStandardStreams = true
-  testTask.workingDir = PLAY_APP
+  testTask.workingDir = "$PLAY_APP/dist"
   testTask.outputs.upToDateWhen { false }
 }
