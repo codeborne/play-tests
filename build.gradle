@@ -204,7 +204,7 @@ task(combineUiTestResults, type: JavaExec) {
   main = 'play.test.coverage.ActionCoveragePlugin'
   classpath = sourceSets.test.runtimeClasspath
   systemProperty 'file.encoding', 'UTF-8'
-  workingDir "$PLAY_APP"
+  workingDir "$PLAY_APP/dist"
 }
 
 tasks.withType(Test).all { testTask ->
