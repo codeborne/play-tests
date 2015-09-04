@@ -90,7 +90,7 @@ showRuntimeClasspath()
 
 task copyTestClassesToPlayPrecompiled(type: Copy, dependsOn: 'testClasses') {
   from project.sourceSets.test.output.classesDir
-  into "$PLAY_APP/dist/precompiled/java"
+  into System.getProperty("application.path", ".") + "/precompiled/java"
   include 'itest/**'
   include 'ui/**'
   outputs.upToDateWhen { false }
@@ -204,13 +204,14 @@ task(combineUiTestResults, type: JavaExec) {
   main = 'play.test.coverage.ActionCoveragePlugin'
   classpath = sourceSets.test.runtimeClasspath
   systemProperty 'file.encoding', 'UTF-8'
-  workingDir "$PLAY_APP/dist"
+  workingDir "$PLAY_APP"
 }
 
 tasks.withType(Test).all { testTask ->
   testTask.jvmArgs += ['-ea', '-noverify', '-XX:MaxPermSize=256m']
   testTask.systemProperties['file.encoding'] = 'UTF-8'
+  testTask.systemProperties['application.path'] = System.getProperty("application.path", ".")
   testTask.testLogging.showStandardStreams = true
-  testTask.workingDir = "$PLAY_APP/dist"
+  testTask.workingDir = "$PLAY_APP"
   testTask.outputs.upToDateWhen { false }
 }

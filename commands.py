@@ -56,7 +56,7 @@ def execute(**kargs):
     daemon = False
     threads_count = None
     optlist, args = getopt.getopt(args, '', ['uitest=', 'coverage=', 'threads=', 'daemon=', 'remote_debug=',
-                                             'uitest.debug=', 'test.debug=', 'gradle_opts='])
+                                             'uitest.debug=', 'test.debug=', 'gradle_opts=', 'application.path='])
     for o, a in optlist:
         if o == '--uitest':
             uitest_class_pattern = a
@@ -72,6 +72,10 @@ def execute(**kargs):
             print "~ "
         if o == '--gradle_opts':
             gradle_opts = a.split()
+            print "~ GRADLE OPTS: %s" % gradle_opts
+            print "~ "
+        if o == '--application.path':
+            gradle_opts += ['-Dapplication.path=%s' % a]
             print "~ GRADLE OPTS: %s" % gradle_opts
             print "~ "
         if o == '--remote_debug' or o == '--uitest.debug':
