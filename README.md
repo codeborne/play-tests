@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play 1.3+
-        - play-codeborne -> tests 4.23.2
+        - play-codeborne -> tests 4.23.3
 
     repositories:
         - codeborne:
@@ -80,6 +80,13 @@ Additional command line options
 
 
 ## Changelog
+
+### 4.23.3
+
+* add parameter `application.path` when running UI tests
+ 
+ * example: `play tests --application.path=dist`
+ * in this case Play application is run in "dist" subfolder (to use all precompiled less, js and other resources)
 
 ### 4.23
 

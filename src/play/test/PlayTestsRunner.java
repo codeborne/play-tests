@@ -151,8 +151,8 @@ public class PlayTestsRunner extends Runner implements Filterable {
         scheduleKillPlay("PlayTestRunner.startPlayIfNeeded", MAXIMUM_TEST_EXECUTION_TIME);
 
         Play.init(new File(System.getProperty("application.path", ".")), getPlayId());
-        VirtualFile uiTests = Play.getVirtualFile("test-ui");
-        if (uiTests != null) Play.javaPath.add(uiTests);
+        File uiTests = new File("test-ui");
+        if (uiTests.exists()) Play.javaPath.add(VirtualFile.open(uiTests));
         if (!Play.started) {
           Play.start();
         }
