@@ -81,7 +81,7 @@ Additional command line options
 
 ## Changelog
 
-### 4.23.3
+### 4.23.4
 
 * add parameter `application.path` when running UI tests
  
