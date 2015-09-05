@@ -90,7 +90,7 @@ showRuntimeClasspath()
 
 task copyTestClassesToPlayPrecompiled(type: Copy, dependsOn: 'testClasses') {
   from project.sourceSets.test.output.classesDir
-  into "$PLAY_APP/precompiled/java"
+  into System.getProperty("application.path", "$PLAY_APP") + "/precompiled/java"
   include 'itest/**'
   include 'ui/**'
   outputs.upToDateWhen { false }

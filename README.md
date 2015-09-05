@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play 1.3+
-        - play-codeborne -> tests 4.23.3
+        - play-codeborne -> tests 4.23.5
 
     repositories:
         - codeborne:
@@ -81,7 +81,7 @@ Additional command line options
 
 ## Changelog
 
-### 4.23.4
+### 4.23.5
 
 * add parameter `application.path` when running UI tests
  
