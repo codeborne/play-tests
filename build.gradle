@@ -209,9 +209,9 @@ task(combineUiTestResults, type: JavaExec) {
 
 tasks.withType(Test).all { testTask ->
   testTask.jvmArgs += ['-ea', '-noverify']
-  testTask.systemProperties = System.getProperties()
-  if (!testTask.systemProperties['file.encoding']) testTask.systemProperties['file.encoding'] = 'UTF-8'
-  if (!testTask.systemProperties['java.net.preferIPv4Stack']) testTask.systemProperties['java.net.preferIPv4Stack'] = 'true'
+  testTask.systemProperties['file.encoding'] = 'UTF-8'
+  testTask.systemProperties['java.net.preferIPv4Stack'] = 'true'
+  testTask.systemProperties['application.path'] = System.getProperty("application.path", ".")
   testTask.testLogging.showStandardStreams = true
   testTask.workingDir = "$PLAY_APP"
   testTask.outputs.upToDateWhen { false }
