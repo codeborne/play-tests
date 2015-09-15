@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play 1.3+
-        - play-codeborne -> tests 4.23.5
+        - play-codeborne -> tests 4.24
 
     repositories:
         - codeborne:
@@ -80,6 +80,12 @@ Additional command line options
 
 
 ## Changelog
+
+### 4.24
+
+* Upgrade to Selenide 2.23
+* Simplified methods assertSuccessMessage() etc.
+* upgrade to Gradle 2.7
 
 ### 4.23.5
 

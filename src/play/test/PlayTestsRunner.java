@@ -2,6 +2,7 @@ package play.test;
 
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.WebDriverRunner;
+import com.codeborne.selenide.impl.WebDriverThreadLocalContainerWithTimeouts;
 import org.apache.log4j.Appender;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.PatternLayout;
@@ -162,6 +163,8 @@ public class PlayTestsRunner extends Runner implements Filterable {
 
         Configuration.baseUrl = "http://localhost:" + port;
         Play.configuration.setProperty("application.baseUrl", Configuration.baseUrl);
+
+        WebDriverRunner.webdriverContainer = new WebDriverThreadLocalContainerWithTimeouts();
 
         duplicateLogsOfEveryTestProcessToSeparateFile();
 
