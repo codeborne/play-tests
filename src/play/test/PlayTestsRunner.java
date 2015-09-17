@@ -57,7 +57,7 @@ public class PlayTestsRunner extends Runner implements Filterable {
 
   private static String getPlayId() {
     String playId = System.getProperty("play.id", "test");
-    if(! (playId.startsWith("test-") && playId.length() >= 6)) {
+    if (!(playId.startsWith("test-") && playId.length() >= 6)) {
       playId = "test";
     }
     return playId;
