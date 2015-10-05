@@ -8,8 +8,8 @@ import static java.lang.System.currentTimeMillis;
 import static play.test.PlayTestsRunner.log;
 
 public class PlayKiller implements Runnable {
-  public static final int EXPECTED_FIRST_TEST_EXECUTION_TIME = 40 * 1000;
-  public static final int MAXIMUM_TEST_EXECUTION_TIME = 100 * 1000;
+  public static final int EXPECTED_FIRST_TEST_EXECUTION_TIME = 60 * 1000;
+  public static final int MAXIMUM_TEST_EXECUTION_TIME = 120 * 1000;
 
   private static Long timeToKillPlay;
   private static String requesterInfo;

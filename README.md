@@ -81,6 +81,10 @@ Additional command line options
 
 ## Changelog
 
+### 4.25.1
+
+* Enlarge text execution timeout to 2 minutes and test preparation time to 20 seconds
+
 ### 4.25
 
 * Return the old good browser opening/closing mechanism without timeout checks
