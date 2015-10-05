@@ -81,6 +81,10 @@ Additional command line options
 
 ## Changelog
 
+### 4.25
+
+* Return the old good browser opening/closing mechanism without timeout checks
+
 ### 4.24
 
 * Upgrade to Selenide 2.23

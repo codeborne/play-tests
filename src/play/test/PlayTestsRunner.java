@@ -164,8 +164,6 @@ public class PlayTestsRunner extends Runner implements Filterable {
         Configuration.baseUrl = "http://localhost:" + port;
         Play.configuration.setProperty("application.baseUrl", Configuration.baseUrl);
 
-        WebDriverRunner.webdriverContainer = new WebDriverThreadLocalContainerWithTimeouts();
-
         duplicateLogsOfEveryTestProcessToSeparateFile();
 
         long end = currentTimeMillis();
