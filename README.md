@@ -81,6 +81,10 @@ Additional command line options
 
 ## Changelog
 
+### 4.27
+
+* upgraded to selenide 2.25
+
 ### 4.25.1
 
 * Enlarge text execution timeout to 2 minutes and test preparation time to 20 seconds
