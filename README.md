@@ -85,6 +85,16 @@ Additional command line options
 
 * upgraded to selenide 2.25
 
+### 4.26.1
+
+* upgrade to selenide 2.24 and selenium 2.48.2
+* upgrade to gradle 2.9
+
+### 4.26
+
+* upgrade to selenide 2.24
+* upgrade to gradle 2.8
+
 ### 4.25.1
 
 * Enlarge text execution timeout to 2 minutes and test preparation time to 20 seconds
