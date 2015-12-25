@@ -3,7 +3,7 @@ package play.test;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.impl.Html;
 import com.codeborne.selenide.junit.ScreenShooter;
-import com.codeborne.selenide.logevents.PrettyReportCreator;
+import com.codeborne.selenide.junit.TextReport;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -33,7 +33,7 @@ public abstract class UITest extends Assert {
   @Rule public ScreenShooter makeScreenshotOnFailure = failedTests();
   @Rule public TestWatcher executionTimesWatcher = new ExecutionTimesWatcher();
   @Rule public PlayWatcher playWatcher = new PlayWatcher();
-  @Rule public TestRule prettyReportCreator = new PrettyReportCreator();
+  @Rule public TestRule prettyReportCreator = new TextReport();
 
   @Before
   public void usePlayClassloader() {
