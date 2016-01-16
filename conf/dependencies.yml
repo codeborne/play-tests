@@ -6,6 +6,11 @@ require:
     - com.codeborne -> selenide 3.1:
         exclude:
            - cglib
+           - org.webbitserver
+           - io.netty
+           - com.codeborne -> phantomjsdriver
+           - org.seleniumhq.selenium -> selenium-ie-driver
+    - com.codeborne -> phantomjsdriver 1.2.1
     - org.slf4j -> jul-to-slf4j 1.7.13
     - com.google.guava -> guava 19.0
     - junit -> junit 4.12
