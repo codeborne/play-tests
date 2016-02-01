@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play 1.3+
-        - play-codeborne -> tests 5.1
+        - play-codeborne -> tests 5.2
 
     repositories:
         - codeborne:
@@ -80,6 +80,11 @@ Additional command line options
 
 
 ## Changelog
+
+### 5.2
+
+* upgraded to selenide 3.2
+* upgraded to selenium-java 2.50.0
 
 ### 5.1
 
