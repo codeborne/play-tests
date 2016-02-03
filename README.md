@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play 1.3+
-        - play-codeborne -> tests 5.2
+        - play-codeborne -> tests 5.3
 
     repositories:
         - codeborne:
@@ -80,6 +80,10 @@ Additional command line options
 
 
 ## Changelog
+
+### 5.3
+
+* upgraded to JaCoCo 0.7.5.201505241946
 
 ### 5.2
 
