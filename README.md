@@ -24,7 +24,7 @@ Make sure you have a test directory in your Play app.
 
 Create a JUnit class there, eg:
 
-  import static com.codeborne.Selenide.*;
+  import static com.codeborne.selenide.Selenide.*;
 
 	public class RegistrationSpec extends play.test.UITest {  
 		@Before 
