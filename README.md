@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play 1.3+
-        - play-codeborne -> tests 5.4
+        - play-codeborne -> tests 5.5
 
     repositories:
         - codeborne:
@@ -80,6 +80,10 @@ Additional command line options
 
 
 ## Changelog
+
+### 5.5
+
+ * replace error code 102/102 to more obvious 666
 
 ### 5.4
 
