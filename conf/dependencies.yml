@@ -1,7 +1,7 @@
 self: play-tests -> tests 5.5
 
 require:
-    - play [1.3+, 1.4+]
+    - play [1.3, 1.4]
 
     - com.codeborne -> selenide 3.3:
         exclude:
