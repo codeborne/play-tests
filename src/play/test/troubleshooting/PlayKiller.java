@@ -35,7 +35,7 @@ public class PlayKiller implements Runnable {
           Play.stop();
           log("Stopped play! application.");
           log("Stop tests.");
-          System.exit(666);
+          System.exit(102);
         }
         else {
           log("Play! application is not started. Nothing to stop.");

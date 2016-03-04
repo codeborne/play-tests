@@ -84,7 +84,7 @@ public class PlayTestsRunner extends Runner implements Filterable {
       failedToStartPlay.printStackTrace();
       log("Stop tests.");
       notifier.pleaseStop();
-      System.exit(666);
+      System.exit(101);
     }
 
     jUnit4.run(notifier);
