@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play 1.3+
-        - play-codeborne -> tests 5.5
+        - play-codeborne -> tests 5.6
 
     repositories:
         - codeborne:
@@ -80,6 +80,11 @@ Additional command line options
 
 
 ## Changelog
+
+### 5.6
+
+ * upgrade to Selenide 3.4 and Selenium 2.52.0
+ * get back exit codes 101 and 102  (code 666 doesn't work because exit code can be 0..127)
 
 ### 5.5
 
