@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play 1.3+
-        - play-codeborne -> tests 5.7
+        - play-codeborne -> tests 5.7.1
 
     repositories:
         - codeborne:
@@ -80,6 +80,10 @@ Additional command line options
 
 
 ## Changelog
+
+### 5.7.1
+
+ * remove old gson dependency (play includes a newer one) 
 
 ### 5.7
 
