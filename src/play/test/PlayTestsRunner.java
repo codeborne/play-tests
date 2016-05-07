@@ -19,7 +19,6 @@ import play.Play;
 import play.i18n.Lang;
 import play.server.Server;
 import play.test.coverage.ActionCoveragePlugin;
-import play.vfs.VirtualFile;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,12 +44,9 @@ public class PlayTestsRunner extends Runner implements Filterable {
     SLF4JBridgeHandler.install();
   }
 
-  private Class testClass;
   private JUnit4 jUnit4;
-  private Filter filter;
 
   public PlayTestsRunner(Class testClass) throws InitializationError {
-    this.testClass = testClass;
     jUnit4 = new JUnit4(testClass);
   }
 
@@ -71,7 +67,6 @@ public class PlayTestsRunner extends Runner implements Filterable {
   public void run(final RunNotifier notifier) {
     try {
       boolean firstRun = startPlayIfNeeded();
-      loadTestClassWithPlayClassloader();
       Lang.clear();
 
       if (firstRun) {
@@ -110,34 +105,9 @@ public class PlayTestsRunner extends Runner implements Filterable {
     }
   }
 
-  private void loadTestClassWithPlayClassloader() {
-    if (!isPlayStartNeeded())
-      return;
-    
-    Class precompiledTestClass = Play.classloader.loadApplicationClass(testClass.getName());
-    if (precompiledTestClass == null) {
-      System.err.println("Warning: test classes are not precompiled. May cause problems if using JPA in tests.");
-      return;
-    }
-
-    try {
-      testClass = precompiledTestClass;
-      jUnit4 = new JUnit4(testClass);
-      if (filter != null) {
-        jUnit4.filter(filter);
-      }
-    }
-    catch (InitializationError initializationError) {
-      throw new RuntimeException(initializationError);
-    }
-    catch (NoTestsRemainException itCannotHappen) {
-      throw new RuntimeException(itCannotHappen);
-    }
-  }
-
   @SuppressWarnings("CallToNativeMethodWhileLocked")
-  protected boolean startPlayIfNeeded() {
-    synchronized (Play.class) {
+  protected boolean startPlayIfNeeded() throws InterruptedException {
+    synchronized (PlayTestsRunner.class) {
       if (isPlayStartNeeded() && !Play.started) {
         TimeZone.setDefault(TimeZone.getTimeZone(System.getProperty("selenide.play.timeZone", "Asia/Krasnoyarsk")));
 
@@ -150,18 +120,22 @@ public class PlayTestsRunner extends Runner implements Filterable {
         scheduleThreadDump("PlayTestRunner.startPlayIfNeeded", EXPECTED_FIRST_TEST_EXECUTION_TIME);
         scheduleKillPlay("PlayTestRunner.startPlayIfNeeded", MAXIMUM_TEST_EXECUTION_TIME);
 
-        Play.init(new File(System.getProperty("application.path", ".")), getPlayId());
-        File uiTests = new File("test-ui");
-        if (uiTests.exists()) Play.javaPath.add(VirtualFile.open(uiTests));
-        if (!Play.started) {
-          Play.start();
-        }
+        Thread playStarter = new Thread(new Runnable() {
+          @Override public void run() {
+            Play.init(new File(System.getProperty("application.path", ".")), getPlayId());
+            if (!Play.started) {
+              Play.start();
+            }
 
-        int port = findFreePort();
-        new Server(new String[]{"--http.port=" + port});
+            int port = findFreePort();
+            new Server(new String[]{"--http.port=" + port});
 
-        Configuration.baseUrl = "http://localhost:" + port;
-        Play.configuration.setProperty("application.baseUrl", Configuration.baseUrl);
+            Configuration.baseUrl = "http://localhost:" + port;
+            Play.configuration.setProperty("application.baseUrl", Configuration.baseUrl);
+          }
+        }, "Play! starter thread");
+        playStarter.start();
+        playStarter.join();
 
         duplicateLogsOfEveryTestProcessToSeparateFile();
 
@@ -202,7 +176,6 @@ public class PlayTestsRunner extends Runner implements Filterable {
 
   @Override
   public void filter(Filter filter) throws NoTestsRemainException {
-    this.filter = filter;
     jUnit4.filter(filter);
   }
 }

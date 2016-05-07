@@ -88,14 +88,6 @@ addModules()
 addPlayToClasspath()
 showRuntimeClasspath()
 
-task copyTestClassesToPlayPrecompiled(type: Copy, dependsOn: 'testClasses') {
-  from project.sourceSets.test.output.classesDir
-  into new File(System.getProperty("application.path", ".") + "/precompiled/java").getAbsolutePath()
-  include 'itest/**'
-  include 'ui/**'
-  outputs.upToDateWhen { false }
-}
-
 jacoco {
   toolVersion = "0.7.5.201505241946"
 }
@@ -137,14 +129,14 @@ test {
   jvmArgs "-XX:+HeapDumpOnOutOfMemoryError", "-XX:HeapDumpPath=tmp"
 }
 
-task itest(type: Test, dependsOn: 'copyTestClassesToPlayPrecompiled') {
+task itest(type: Test) {
   include 'itest/**'
   jacoco {
     enabled = false
   }
 }
 
-task uitest(type: Test, dependsOn: 'copyTestClassesToPlayPrecompiled') {
+task uitest(type: Test) {
   if (project.hasProperty('UITEST_CLASS')) {
     include UITEST_CLASS
   }
