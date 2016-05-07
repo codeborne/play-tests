@@ -34,22 +34,7 @@ public abstract class UITest extends Assert {
   @Rule public TestWatcher executionTimesWatcher = new ExecutionTimesWatcher();
   @Rule public PlayWatcher playWatcher = new PlayWatcher();
   @Rule public TestRule prettyReportCreator = new TextReport();
-
-  @Before
-  public void usePlayClassloader() {
-    Thread.currentThread().setContextClassLoader(Play.classloader);
-  }
-
-  @Before
-  public void startTransaction() {
-    JPAPlugin.startTx(false);
-  }
-
-  @After
-  public void closeTransaction() {
-    JPAPlugin.closeTx(true);
-  }
-
+  
   public static String getLabel(String key) {
     return Messages.get(key);
   }
