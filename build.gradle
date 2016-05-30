@@ -41,7 +41,6 @@ def _addModules(appDirectory) {
     module = _resolveModule(module)
 
     sourceSets['main']['java']['srcDirs'] += new File(module, "app");
-    sourceSets['main']['resources']['srcDirs'] += new File(module, "conf");
     sourceSets['main']['resources']['srcDirs'] += new File(module, "app");
     sourceSets['main']['resources']['srcDirs'] += new File(module, "public/javascripts");
 

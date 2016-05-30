@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play 1.3+
-        - play-codeborne -> tests 6.0
+        - play-codeborne -> tests 6.1
 
     repositories:
         - codeborne:
@@ -81,10 +81,15 @@ Additional command line options
 
 ## Changelog
 
+### 6.1
+
+Folder "conf" from modules is not included in classpath anymore.
+Only application's own "conf" folder is added to classpath.
+ 
 ### 6.0
 
-This is a major update that makes tests independent from running Play! application. 
- 
+This is a major update that makes tests independent from running Play! application.
+
 When running tests,
  * thread context classloader is not Play classloader anymore
  * test is not executed in JPA transaction anymore
