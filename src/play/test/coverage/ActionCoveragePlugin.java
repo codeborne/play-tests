@@ -145,12 +145,12 @@ public class ActionCoveragePlugin extends PlayPlugin {
       for (File file : testResults.listFiles()) {
         if (file.getName().startsWith(prefix + "-")) {
           String temp = FileUtils.readFileToString(file, "UTF-8");
-          Map<String, Long> actionExecutions = gson.fromJson(temp, totalActionExecutions.getClass());
+          Map<String, Number> actionExecutions = gson.fromJson(temp, totalActionExecutions.getClass());
 
           System.out.println("   - " + file.getName());
 
           if (actionExecutions != null) {
-            for (Map.Entry<String, Long> entry : actionExecutions.entrySet()) {
+            for (Map.Entry<String, Number> entry : actionExecutions.entrySet()) {
               Long counter = totalActionExecutions.get(entry.getKey());
               if (counter == null) counter = 0L;
               counter += entry.getValue().longValue();
