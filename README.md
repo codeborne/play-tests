@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play 1.3+
-        - play-codeborne -> tests 6.1
+        - play-codeborne -> tests 6.2
 
     repositories:
         - codeborne:
@@ -81,6 +81,11 @@ Additional command line options
 
 ## Changelog
 
+### 6.2
+
+* upgrade to selenide 3.6
+* upgrade to slf4j 1.7.21
+ 
 ### 6.1
 
 Folder "conf" from modules is not included in classpath anymore.
