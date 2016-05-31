@@ -7,7 +7,6 @@ import org.subethamail.smtp.server.SMTPServer;
 import play.Logger;
 import play.Play;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,12 +17,12 @@ import static org.openqa.selenium.net.PortProber.findFreePort;
 public class MailMock extends ExternalResource {
   private static SMTPServer smtpServer;
 
-  private static final List<Message> inbox = new ArrayList<Message>(1);
+  private static final List<Message> inbox = new ArrayList<>(1);
 
   @Override
   protected void before() throws Throwable {
     String smtp = Play.configuration.getProperty("mail.smtp", "");
-    if (!smtp.equals("mock")) {
+    if (!"mock".equals(smtp)) {
       Logger.info("mail.smtp=" + smtp + ", smtp mock is not needed.");
       return;
     }
@@ -47,7 +46,7 @@ public class MailMock extends ExternalResource {
         }
 
         @Override
-        public void deliver(String from, String recipient, InputStream data) throws IOException {
+        public void deliver(String from, String recipient, InputStream data) {
           inbox.add(new Message(from, recipient, data));
         }
       }));

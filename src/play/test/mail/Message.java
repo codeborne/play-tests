@@ -20,7 +20,7 @@ public class Message {
   public final MimeMessage mimeMessage;
   private final StringBuilder text = new StringBuilder();
   public final String raw;
-  public List<String> attachments = new ArrayList<String>(1);
+  public List<String> attachments = new ArrayList<>(1);
 
   public Message(String from, String recipient, InputStream data) {
     this.from = from;
@@ -32,9 +32,7 @@ public class Message {
       Session session = Session.getDefaultInstance(new Properties());
       this.mimeMessage = new MimeMessage(session, new ByteArrayInputStream(raw.getBytes("UTF-8")));
       parseContent();
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    } catch (MessagingException e) {
+    } catch (IOException | MessagingException e) {
       throw new RuntimeException(e);
     }
   }

@@ -40,7 +40,7 @@ public class ActionCoveragePlugin extends PlayPlugin {
     }
   }
 
-  private final Map<String, Long> actionExecutions = new ConcurrentHashMap<String, Long>();
+  private final Map<String, Long> actionExecutions = new ConcurrentHashMap<>();
   
   @Override public void onActionInvocationResult(Result result) {
     incrementActionCounter();
@@ -83,7 +83,7 @@ public class ActionCoveragePlugin extends PlayPlugin {
   }
 
   private static List<Map.Entry<String, Long>> sortCounters(Map<String, Long> counters, final int asc) {
-    List<Map.Entry<String, Long>> sorted = new ArrayList<Map.Entry<String, Long>>(counters.entrySet());
+    List<Map.Entry<String, Long>> sorted = new ArrayList<>(counters.entrySet());
     Collections.sort(sorted, new Comparator<Map.Entry<String, Long>>() {
       @Override public int compare(Map.Entry<String, Long> o1, Map.Entry<String, Long> o2) {
         return asc * o1.getValue().compareTo(o2.getValue());
@@ -133,7 +133,7 @@ public class ActionCoveragePlugin extends PlayPlugin {
   }
 
   private static Map<String, Long> combineActionsCoveragesFromFiles(final String prefix) throws IOException {
-    Map<String, Long> totalActionExecutions = new HashMap<String, Long>();
+    Map<String, Long> totalActionExecutions = new HashMap<>();
 
     System.out.println("Combine statistics from");
     Gson gson = new Gson();
@@ -153,7 +153,7 @@ public class ActionCoveragePlugin extends PlayPlugin {
             for (Map.Entry<String, Long> entry : actionExecutions.entrySet()) {
               Long counter = totalActionExecutions.get(entry.getKey());
               if (counter == null) counter = 0L;
-              counter += ((Number) entry.getValue()).longValue();
+              counter += entry.getValue().longValue();
               totalActionExecutions.put(entry.getKey(), counter);
             }
           }

@@ -9,8 +9,8 @@ public class ExecutionTimes {
   private static final int PRINT_TOP_RECORDS = 15;
 
   private final String name;
-  private final Map<String, Long> methodDurations = new ConcurrentHashMap<String, Long>();
-  private final Map<String, Long> classDurations = new ConcurrentHashMap<String, Long>();
+  private final Map<String, Long> methodDurations = new ConcurrentHashMap<>();
+  private final Map<String, Long> classDurations = new ConcurrentHashMap<>();
 
   public ExecutionTimes() {
     this(ManagementFactory.getRuntimeMXBean().getName());
@@ -59,7 +59,7 @@ public class ExecutionTimes {
   }
 
   private List<Map.Entry<String, Long>> sortDurations(Map<String, Long> durations) {
-    List<Map.Entry<String, Long>> sorted = new ArrayList<Map.Entry<String, Long>>(durations.entrySet());
+    List<Map.Entry<String, Long>> sorted = new ArrayList<>(durations.entrySet());
     Collections.sort(sorted, new Comparator<Map.Entry<String, Long>>() {
       @Override public int compare(Map.Entry<String, Long> o1, Map.Entry<String, Long> o2) {
         return o2.getValue().compareTo(o1.getValue());
