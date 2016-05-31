@@ -63,8 +63,11 @@ public class ActionCoveragePlugin extends PlayPlugin {
       storeCoverageToFile("actions-coverage", actionExecutions);
       storeCoverageToFile("tests-statistics-classes", ExecutionTimesWatcher.times.getClassDurations());
       storeCoverageToFile("tests-statistics-methods", ExecutionTimesWatcher.times.getMethodDurations());
-      storeCoverageToFile("webdriver-statistics-operations", timeLogger.times.getClassDurations());
-      storeCoverageToFile("webdriver-statistics-calls", timeLogger.times.getMethodDurations());    }
+      if (timeLogger != null) {
+        storeCoverageToFile("webdriver-statistics-operations", timeLogger.times.getClassDurations());
+        storeCoverageToFile("webdriver-statistics-calls", timeLogger.times.getMethodDurations());
+      }
+    }
   }
 
   private void storeCoverageToFile(final String prefix, Map<String, Long> actionsStatistics) {

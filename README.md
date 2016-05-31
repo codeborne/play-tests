@@ -85,6 +85,9 @@ Additional command line options
 
 * upgrade to selenide 3.6
 * upgrade to slf4j 1.7.21
+* Now calculation of webdriver statistics is disabled by default
+  * ... because I am afraid that it can take lot of time
+  * It still can be enabled by system property "selenide.play.calculate-webdriver-statistics"
  
 ### 6.1
 

@@ -71,7 +71,7 @@ public class PlayTestsRunner extends Runner implements Filterable {
 
       if (firstRun) {
         warmupApplication();
-        if (Play.mode.isProd()) addTimesLogger();
+        addTimesLogger();
       }
     }
     catch (Throwable failedToStartPlay) {
@@ -92,8 +92,10 @@ public class PlayTestsRunner extends Runner implements Filterable {
   }
 
   private void addTimesLogger() {
-    ActionCoveragePlugin.timeLogger = new UITimeLogger();
-    WebDriverRunner.addListener(ActionCoveragePlugin.timeLogger);
+    if (Play.mode.isProd() && "true".equals(System.getProperty("selenide.play.calculate-webdriver-statistics", "false"))) {
+      ActionCoveragePlugin.timeLogger = new UITimeLogger();
+      WebDriverRunner.addListener(ActionCoveragePlugin.timeLogger);
+    }
   }
 
   private void warmupApplication() {
