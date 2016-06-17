@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play 1.3+
-        - play-codeborne -> tests 6.2
+        - play-codeborne -> tests 6.3
 
     repositories:
         - codeborne:
@@ -80,6 +80,10 @@ Additional command line options
 
 
 ## Changelog
+
+### 6.3
+
+* Add video recorder. Just add `@Video` annotation to tests that you want video for (in case of failure)
 
 ### 6.2
 

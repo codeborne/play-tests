@@ -1,5 +1,6 @@
 package play.test;
 
+import com.automation.remarks.video.junit.VideoRule;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.impl.Html;
 import com.codeborne.selenide.junit.ScreenShooter;
@@ -31,7 +32,8 @@ public abstract class UITest extends Assert {
   @Rule public TestWatcher executionTimesWatcher = new ExecutionTimesWatcher();
   @Rule public PlayWatcher playWatcher = new PlayWatcher();
   @Rule public TestRule prettyReportCreator = new TextReport();
-  
+  @Rule public VideoRule videoRule = new VideoRule();
+
   public static String getLabel(String key) {
     return Messages.get(key);
   }
