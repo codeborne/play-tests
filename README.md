@@ -84,6 +84,7 @@ Additional command line options
 ### 6.3
 
 * Add video recorder. Just add `@Video` annotation to tests that you want video for (in case of failure)
+* upgrade to Gradle 2.14
 
 ### 6.2
 
