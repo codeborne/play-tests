@@ -1,6 +1,6 @@
 package play.test;
 
-import com.automation.remarks.video.junit.VideoRule;
+import com.automation.remarks.junit.VideoRule;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.impl.Html;
 import com.codeborne.selenide.junit.ScreenShooter;

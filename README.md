@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play 1.3+
-        - play-codeborne -> tests 6.3
+        - play-codeborne -> tests 6.4
 
     repositories:
         - codeborne:
@@ -80,6 +80,11 @@ Additional command line options
 
 
 ## Changelog
+
+### 6.4
+
+* upgrade to video-recorder 1.0.3
+* upgrade to jacoco 0.7.7.201606060606
 
 ### 6.3
 

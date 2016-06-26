@@ -1,4 +1,4 @@
-self: play-tests -> tests 6.3
+self: play-tests -> tests 6.4
 
 require:
     - play ]1.3,)
@@ -17,14 +17,15 @@ require:
     - org.hamcrest -> hamcrest-core 1.3
     - org.mockito -> mockito-core 1.10.19
 
-    - com.automation-remarks -> video-recorder 1.0.1
+    - com.automation-remarks -> video-recorder-core 1.0.3
+    - com.automation-remarks -> video-recorder-junit 1.0.3
 
     - org.subethamail -> subethasmtp 3.1.7:
         transitive: false
 
-    - org.jacoco -> org.jacoco.core 0.7.6.201602180812:
+    - org.jacoco -> org.jacoco.core 0.7.7.201606060606:
         transitive: false
-    - org.jacoco -> org.jacoco.report 0.7.6.201602180812:
+    - org.jacoco -> org.jacoco.report 0.7.7.201606060606:
         transitive: false
 
 #repositories:
