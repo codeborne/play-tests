@@ -81,6 +81,10 @@ Additional command line options
 
 ## Changelog
 
+### 6.6.1
+
+* downgrade to video-recorder 1.0.6
+
 ### 6.6
 
 * upgrade to video-recorder 1.0.7
