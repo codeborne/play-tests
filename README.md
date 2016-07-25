@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play 1.3+
-        - play-codeborne -> tests 6.5
+        - play-codeborne -> tests 6.6
 
     repositories:
         - codeborne:
@@ -80,6 +80,11 @@ Additional command line options
 
 
 ## Changelog
+
+### 6.6
+
+* upgrade to video-recorder 1.0.7
+* use hamcrest-all 1.3 instead of hamcrest-core 1.3
 
 ### 6.5
 
