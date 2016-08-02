@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play 1.3+
-        - play-codeborne -> tests 6.6.2
+        - play-codeborne -> tests 6.6.3
 
     repositories:
         - codeborne:
@@ -80,6 +80,10 @@ Additional command line options
 
 
 ## Changelog
+
+### 6.6.3
+
+* When compiling java sources and tests, compiler is executed in "fork" mode with more memory (up to 4 GB)
 
 ### 6.6.2
 
