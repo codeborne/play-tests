@@ -1,4 +1,4 @@
-self: play-tests -> tests 6.6.2
+self: play-tests -> tests 6.6.3
 
 require:
     - play ]1.3,)
