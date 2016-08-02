@@ -1,7 +1,11 @@
 apply plugin: 'java'
 apply plugin: 'jacoco'
 
-compileJava.options.debugOptions.debugLevel = "source,lines,vars"
+compileJava {
+  options.debugOptions.debugLevel = "source,lines,vars"
+  options.fork = true
+  options.forkOptions.setMemoryMaximumSize("4g")
+}
 
 buildDir = "$PLAY_APP/build"
 
