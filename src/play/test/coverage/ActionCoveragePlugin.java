@@ -73,7 +73,7 @@ public class ActionCoveragePlugin extends PlayPlugin {
   private void storeCoverageToFile(final String prefix, Map<String, Long> actionsStatistics) {
     File file = new File("test-result/" + prefix + "-" + ManagementFactory.getRuntimeMXBean().getName() + ".json");
     try {
-      writeStringToFile(file, new Gson().toJson(actionsStatistics));
+      writeStringToFile(file, new Gson().toJson(actionsStatistics), "UTF-8");
       System.out.println("Store statistics to " + file.getAbsolutePath());
     }
     catch (IOException e) {

@@ -72,7 +72,7 @@ public class ThreadDumper implements Runnable {
   private File storeDumpToFile(String threadDump) {
     File file = new File("test-result/thread-dump-" + getRuntimeMXBean().getName() + '-' + System.currentTimeMillis() + ".dump");
     try {
-      writeStringToFile(file, threadDump);
+      writeStringToFile(file, threadDump, "UTF-8");
       return file;
     }
     catch (IOException e) {
