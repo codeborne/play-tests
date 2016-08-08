@@ -81,6 +81,10 @@ Additional command line options
 
 ## Changelog
 
+### 6.7
+
+* upgrade to selenide 3.8
+
 ### 6.6.3
 
 * When compiling java sources and tests, compiler is executed in "fork" mode with more memory (up to 4 GB)
