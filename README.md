@@ -83,6 +83,7 @@ Additional command line options
 
 ### 6.8
 
+* upgrade to selenide 3.9
 * upgrade to Gradle 3.0
 
 ### 6.7
