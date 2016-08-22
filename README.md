@@ -85,6 +85,7 @@ Additional command line options
 
 * upgrade to selenide 3.9
 * upgrade to Gradle 3.0
+* upgrade to video-recorder 1.0.8
 
 ### 6.7
 
