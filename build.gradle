@@ -101,7 +101,7 @@ repositories {
 
 buildscript {
   repositories { jcenter() }
-  dependencies { classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.1.6' }
+  dependencies { classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.1.10' }
 }
 
 apply plugin: 'info.solidsoft.pitest'
