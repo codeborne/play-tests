@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play 1.3+
-        - play-codeborne -> tests 6.6.3
+        - play-codeborne -> tests 6.8
 
     repositories:
         - codeborne:
@@ -80,6 +80,10 @@ Additional command line options
 
 
 ## Changelog
+
+### 6.8
+
+* upgrade to Gradle 3.0
 
 ### 6.7
 
