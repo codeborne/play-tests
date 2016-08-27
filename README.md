@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play 1.3+
-        - play-codeborne -> tests 6.8.1
+        - play-codeborne -> tests 6.8.4
 
     repositories:
         - codeborne:
@@ -81,9 +81,13 @@ Additional command line options
 
 ## Changelog
 
+### 6.8.4
+
+* upgrade to selenide 3.9.1 (fixed problems with downloading files)
+
 ### 6.8.1
 
-* upgrade to selenide 3.9
+* upgrade to selenide 3.9 (seems to have problems with downloading files)
 * upgrade to Gradle 3.0
 * upgrade to video-recorder 1.0.8
 
