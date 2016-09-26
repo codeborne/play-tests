@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play 1.3+
-        - play-codeborne -> tests 6.8.4
+        - play-codeborne -> tests 6.9
 
     repositories:
         - codeborne:
@@ -80,6 +80,10 @@ Additional command line options
 
 
 ## Changelog
+
+### 6.9
+
+* upgrade to selenide 3.10 (disabled selenide built-proxy server by default)
 
 ### 6.8.4
 

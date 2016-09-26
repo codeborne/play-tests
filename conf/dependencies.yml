@@ -1,9 +1,9 @@
-self: play-tests -> tests 6.8.4
+self: play-tests -> tests 6.9
 
 require:
     - play ]1.3,)
 
-    - com.codeborne -> selenide 3.9.1:
+    - com.codeborne -> selenide 3.10:
         exclude:
            - cglib
            - org.webbitserver
