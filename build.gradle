@@ -207,7 +207,6 @@ tasks.withType(Test).all { testTask ->
   testTask.systemProperties['file.encoding'] = 'UTF-8'
   testTask.systemProperties['java.net.preferIPv4Stack'] = 'true'
   testTask.systemProperties['application.path'] = System.getProperty("application.path", ".")
-  testTask.testLogging.showStandardStreams = true
   testTask.workingDir = "$PLAY_APP"
   testTask.outputs.upToDateWhen { false }
 }
