@@ -84,6 +84,7 @@ Additional command line options
 ### 6.9
 
 * upgrade to selenide 3.10 (disabled selenide built-proxy server by default)
+* create text report only for failed tests (do not spam logs with report of succeeded tests) 
 * upgrade to Gradle 3.1
 
 ### 6.8.4

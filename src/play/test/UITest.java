@@ -31,7 +31,11 @@ public abstract class UITest extends Assert {
   @Rule public ScreenShooter makeScreenshotOnFailure = failedTests();
   @Rule public TestWatcher executionTimesWatcher = new ExecutionTimesWatcher();
   @Rule public PlayWatcher playWatcher = new PlayWatcher();
-  @Rule public TestRule prettyReportCreator = new TextReport();
+  
+  @Rule public TextReport textReportCreator = new TextReport()
+      .onFailedTest(true)
+      .onSucceededTest(false);
+  
   @Rule public VideoRule videoRule = new VideoRule();
 
   public static String getLabel(String key) {
