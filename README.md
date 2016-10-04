@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play 1.3+
-        - play-codeborne -> tests 6.9
+        - play-codeborne -> tests 6.10
 
     repositories:
         - codeborne:
@@ -80,6 +80,10 @@ Additional command line options
 
 
 ## Changelog
+
+### 6.10
+
+* upgrade to mockito 2.1.0
 
 ### 6.9
 
