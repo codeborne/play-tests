@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play 1.3+
-        - play-codeborne -> tests 6.10
+        - play-codeborne -> tests 6.11
 
     repositories:
         - codeborne:
@@ -80,6 +80,11 @@ Additional command line options
 
 
 ## Changelog
+
+### 6.11
+
+* methods assertAction() made deprecated
+* upgrade to video-recorder 1.1
 
 ### 6.10
 
