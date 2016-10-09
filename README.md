@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play 1.3+
-        - play-codeborne -> tests 6.11
+        - play-codeborne -> tests 7.0
 
     repositories:
         - codeborne:
@@ -81,14 +81,15 @@ Additional command line options
 
 ## Changelog
 
-### 6.11
-
-* methods assertAction() made deprecated
-* upgrade to video-recorder 1.1
-
-### 6.10
+### 7.0
 
 * upgrade to mockito 2.1.0
+* upgrade to video-recorder 1.1
+* deprecate methods assertAction()
+
+### 6.10, 6.11: not used yet
+
+reserved for backport versions in branch 6.x
 
 ### 6.9
 
