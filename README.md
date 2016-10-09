@@ -84,7 +84,6 @@ Additional command line options
 ### 7.0
 
 * upgrade to mockito 2.1.0
-* upgrade to video-recorder 1.1
 * deprecate methods assertAction()
 
 ### 6.10, 6.11: not used yet
