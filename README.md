@@ -81,6 +81,10 @@ Additional command line options
 
 ## Changelog
 
+### 7.1
+
+* remove cglib-nodep dependency
+
 ### 7.0
 
 * upgrade to mockito 2.1.0
