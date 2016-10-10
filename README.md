@@ -83,7 +83,8 @@ Additional command line options
 
 ### 7.1
 
-* remove cglib-nodep dependency
+* remove cglib-nodep dependency: Play already includes cglib 3.2.2
+* remove org.bouncycastle dependency: it's included in Play by default
 
 ### 7.0
 
