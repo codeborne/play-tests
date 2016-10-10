@@ -7,10 +7,10 @@ import com.codeborne.selenide.junit.ScreenShooter;
 import com.codeborne.selenide.junit.TextReport;
 import org.junit.Assert;
 import org.junit.Rule;
-import org.junit.rules.TestRule;
 import org.junit.rules.TestWatcher;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import play.Play;
 import play.i18n.Messages;
 import play.mvc.Router;
@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.Wait;
 import static com.codeborne.selenide.Selenide.executeJavaScript;
 import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static com.codeborne.selenide.WebDriverRunner.hasWebDriverStarted;
@@ -58,6 +59,16 @@ public abstract class UITest extends Assert {
     };
   }
 
+  /**
+   * e.g. assertUrl("/corporate/acquiring/terminals?merchantId=1");
+   * 
+   * @param expectedUrl relative URL
+   */
+  public static void assertUrl(String expectedUrl) {
+    String fullUrl = Router.getBaseUrl() + expectedUrl;
+    Wait().until(ExpectedConditions.urlToBe(fullUrl));
+  }
+
   private static Condition action(final String action, final Map<String, String> args) {
     return new Condition("action " + action + " " + args) {
       @Override public boolean apply(WebElement element) {
@@ -77,7 +88,7 @@ public abstract class UITest extends Assert {
       }
     };
   }
-
+  
   /**
    * @deprecated Avoid checking "action". Check URL instead.
    * Checking action is a bad practice because it doesn't allow easy refactoring of controllers.

@@ -85,6 +85,7 @@ Additional command line options
 
 * remove cglib-nodep dependency: Play already includes cglib 3.2.2
 * remove org.bouncycastle dependency: it's included in Play by default
+* add method assertUrl(String expectedUrl)
 
 ### 7.0
 
