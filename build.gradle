@@ -5,6 +5,7 @@ compileJava {
   options.debugOptions.debugLevel = "source,lines,vars"
   options.fork = true
   options.forkOptions.setMemoryMaximumSize("4g")
+  options.deprecation = false
 }
 
 buildDir = "$PLAY_APP/build"
@@ -33,8 +34,8 @@ def _resolveModule(module) {
 }
 
 def addModules() {
-  println "Play app: $PLAY_APP"
-  println "Play home: $PLAY_HOME"
+  // println "Play app: $PLAY_APP"
+  // println "Play home: $PLAY_HOME"
   _addModules(PLAY_APP)
 }
 
@@ -88,7 +89,8 @@ def showRuntimeClasspath() {
 
 addModules()
 addPlayToClasspath()
-showRuntimeClasspath()
+// showCompileClasspath()
+// showRuntimeClasspath()
 
 jacoco {
   toolVersion = "0.7.7.201606060606"

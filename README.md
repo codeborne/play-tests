@@ -85,6 +85,7 @@ Additional command line options
 
 * upgrade to video-recorder 1.1.2
 * remove "/public/javascripts" from classpath (we don't run js tests from JUnit anymore)
+* remove useless messages from tests output
 
 ### 7.1
 
