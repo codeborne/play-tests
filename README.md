@@ -83,6 +83,7 @@ Additional command line options
 
 ### 7.2
 
+* upgrade to mockito 2.2.0
 * upgrade to video-recorder 1.1.2
 * remove "/public/javascripts" from classpath (we don't run js tests from JUnit anymore)
 * remove useless messages from tests output
