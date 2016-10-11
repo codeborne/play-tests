@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play 1.3+
-        - play-codeborne -> tests 7.1
+        - play-codeborne -> tests 7.2
 
     repositories:
         - codeborne:
@@ -80,6 +80,10 @@ Additional command line options
 
 
 ## Changelog
+
+### 7.2
+
+* upgrade to video-recorder 1.1.2
 
 ### 7.1
 
