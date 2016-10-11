@@ -14,7 +14,7 @@ defaultTasks 'clean', 'test'
 sourceSets {
   main {
     java {srcDir "$PLAY_APP/app"}
-    resources {srcDirs "$PLAY_APP/conf", "$PLAY_APP/app", "$PLAY_APP/public/javascripts"}
+    resources {srcDirs "$PLAY_APP/conf", "$PLAY_APP/app"}
   }
   test {
     java {srcDir "$PLAY_APP/test"}
@@ -46,7 +46,6 @@ def _addModules(appDirectory) {
 
     sourceSets['main']['java']['srcDirs'] += new File(module, "app");
     sourceSets['main']['resources']['srcDirs'] += new File(module, "app");
-    sourceSets['main']['resources']['srcDirs'] += new File(module, "public/javascripts");
 
     File test = new File(module, "test")
     File uiTest = new File(module, "test-ui")
