@@ -83,6 +83,11 @@ Additional command line options
 
 ### 7.2
 
+* added task "play code-analysis"
+  * It checks java sources quality
+  * Currently only FindBugs check is implemented
+  * To customize FindBugs settings, put file in your project: `conf/findbugs/excludeFilter.xml`
+  * Default FindBugs settings can be found in file: `modules/tests/conf/findbugs/excludeFilter.xml`
 * upgrade to mockito 2.2.0
 * upgrade to video-recorder 1.1.2
 * remove "/public/javascripts" from classpath (we don't run js tests from JUnit anymore)

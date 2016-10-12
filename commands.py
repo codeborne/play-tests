@@ -7,7 +7,7 @@ from exceptions import ValueError
 
 MODULE = "play-tests"
 
-COMMANDS = ["tests", "clean-tests", "unit-tests", "pitest", "itests", "ui-tests", "ui-tests-with-coverage", "compile-check"]
+COMMANDS = ["tests", "clean-tests", "unit-tests", "pitest", "itests", "ui-tests", "ui-tests-with-coverage", "compile-check", "code-analysis"]
 
 HELP = {
     "tests": "Compile and run all tests",
@@ -17,7 +17,8 @@ HELP = {
     "itests": "Run integration tests (unit-tests that required play start - they cannot be run with usual unit-tests)",
     "ui-tests": "Run UI tests (in parallel)",
     "ui-tests-with-coverage": "Run UI tests with code coverage (slower, single thread, non-precompiled)",
-    "compile-check": "Check that java sources are compilable"
+    "compile-check": "Check that java sources are compilable",
+    "code-analysis": "Check that java sources are good enough (currently only FindBugs check is implemented)"
 }
 
 
@@ -99,8 +100,8 @@ def execute(**kargs):
         gradle_opts.append('--daemon')
 
     if command == 'tests':
-        execute_gradle(app, args, threads_count, gradle_opts, 'clean', 'test', 'itest', 'uitest', 'combineUiTestResults',
-                       '-PUITEST_CLASS=%s' % uitest_class_pattern, '-PTEST_COVERAGE_ENABLED=%s' % test_coverage_enabled)
+        execute_gradle(app, args, threads_count, gradle_opts, 'clean', 'check', 'test', 'itest', 'uitest', 'combineUiTestResults',
+                      '-PUITEST_CLASS=%s' % uitest_class_pattern, '-PTEST_COVERAGE_ENABLED=%s' % test_coverage_enabled)
     elif command == 'clean-tests':
         execute_gradle(app, args, threads_count, gradle_opts, 'clean')
     elif command == 'unit-tests':
@@ -120,5 +121,7 @@ def execute(**kargs):
         execute_gradle(app, args, threads_count, gradle_opts, 'itest')
     elif command == 'compile-check':
         execute_gradle(app, args, threads_count, gradle_opts, 'testClasses')
+    elif command == 'code-analysis':
+        execute_gradle(app, args, threads_count, gradle_opts, 'check')
     else:
         raise ValueError("Unknown command: %s" % command)

@@ -1,5 +1,6 @@
 apply plugin: 'java'
 apply plugin: 'jacoco'
+apply plugin: 'findbugs'
 
 compileJava {
   options.debugOptions.debugLevel = "source,lines,vars"
@@ -120,6 +121,30 @@ pitest {
   threads = 4
   outputFormats = ['XML', 'HTML']
   enableDefaultIncrementalAnalysis = true
+}
+
+def findBugsExcludes() {
+  def projectSpecificConfiguration = file("$PLAY_APP/conf/findbugs/excludeFilter.xml")
+  def defaultConfiguration = file("$rootProject.projectDir/conf/findbugs/excludeFilter.xml")
+  def findbugsConfiguration = projectSpecificConfiguration.exists() ? projectSpecificConfiguration : defaultConfiguration
+  println "Using FindBugs filter: $findbugsConfiguration"
+  return findbugsConfiguration
+}
+
+findbugs {
+  sourceSets = [sourceSets.main]
+  effort = 'max'
+  reportsDir = file("$project.buildDir/reports/findbugs")
+  excludeFilter = findBugsExcludes()
+  reportLevel = 'high'
+  ignoreFailures = true
+}
+
+tasks.withType(FindBugs) {
+  reports {
+    xml.enabled = true
+    html.enabled = false
+  }
 }
 
 test {
