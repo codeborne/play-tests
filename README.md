@@ -7,8 +7,8 @@ Add it to your dependencies.yml
 -------------------------------
 
     require:
-        - play 1.3+
-        - play-codeborne -> tests 7.2
+        - play 1.4+
+        - play-codeborne -> tests 8.0
 
     repositories:
         - codeborne:
@@ -80,6 +80,11 @@ Additional command line options
 
 
 ## Changelog
+
+### 8.0
+* upgrade to selenide 4.0
+* upgrade to selenium webdriver 3.0.0
+* upgrade to mockito 2.2.1
 
 ### 7.2
 

@@ -4,6 +4,8 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.support.events.AbstractWebDriverEventListener;
 import play.test.stats.ExecutionTimes;
 
+import java.util.Arrays;
+
 import static org.apache.commons.lang.StringUtils.substring;
 
 public class UITimeLogger extends AbstractWebDriverEventListener {
@@ -30,12 +32,12 @@ public class UITimeLogger extends AbstractWebDriverEventListener {
     after("click", toString("click", element));
   }
 
-  @Override public void beforeChangeValueOf(WebElement element, WebDriver driver) {
-    before("changeValue", toString("changeValue", element));
+  @Override public void beforeChangeValueOf(WebElement element, WebDriver driver, CharSequence[] keysToSend) {
+    before("changeValue", toString("changeValue", element) + " (" + Arrays.toString(keysToSend) + ")");
   }
 
-  @Override public void afterChangeValueOf(WebElement element, WebDriver driver) {
-    after("changeValue", toString("changeValue", element));
+  @Override public void afterChangeValueOf(WebElement element, WebDriver driver, CharSequence[] keysToSend) {
+    after("changeValue",toString("changeValue", element) + " (" + Arrays.toString(keysToSend) + ")");
   }
 
   @Override public void beforeScript(String script, WebDriver driver) {
