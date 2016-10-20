@@ -47,7 +47,9 @@ public class ActionCoveragePlugin extends PlayPlugin {
   }
 
   @Override public void onInvocationException(Throwable e) {
-    incrementActionCounter();
+    if (Http.Request.current() != null) { // request is null when job execution failed
+      incrementActionCounter();
+    }
   }
 
   private void incrementActionCounter() {

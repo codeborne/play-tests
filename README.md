@@ -81,6 +81,9 @@ Additional command line options
 
 ## Changelog
 
+### 8.1
+* fixed NPE in ActionCoveragePlugin.java:56 when job execution failed
+
 ### 8.0
 * upgrade to selenide 4.0
 * upgrade to selenium webdriver 3.0.0
