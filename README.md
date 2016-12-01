@@ -87,6 +87,7 @@ Additional command line options
 * upgrade to selenium webdriver 3.0.1
 * upgrade to mockito 2.2.27
 * upgrade to guava 20.0
+* upgrade to gradle 3.2.1
 
 ### 8.0
 * upgrade to selenide 4.0
