@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play 1.4+
-        - play-codeborne -> tests 8.0
+        - play-codeborne -> tests 8.1
 
     repositories:
         - codeborne:
@@ -83,6 +83,10 @@ Additional command line options
 
 ### 8.1
 * fixed NPE in ActionCoveragePlugin.java:56 when job execution failed
+* upgrade to selenide 4.1
+* upgrade to selenium webdriver 3.0.1
+* upgrade to mockito 2.2.27
+* upgrade to guava 20.0
 
 ### 8.0
 * upgrade to selenide 4.0
