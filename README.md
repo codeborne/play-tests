@@ -81,6 +81,11 @@ Additional command line options
 
 ## Changelog
 
+### 8.2
+* upgrade to selenide 4.2
+* upgrade to selenium webdriver 3.0.1
+* upgrade to mockito 2.3.4
+
 ### 8.1
 * fixed NPE in ActionCoveragePlugin.java:56 when job execution failed
 * upgrade to selenide 4.1
