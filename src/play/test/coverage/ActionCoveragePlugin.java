@@ -55,9 +55,11 @@ public class ActionCoveragePlugin extends PlayPlugin {
   private void incrementActionCounter() {
     Http.Request request = Http.Request.current();
 
-    Long actionCounter = actionExecutions.get(request.action);
-    actionCounter = actionCounter == null ? 1 : 1 + actionCounter;
-    actionExecutions.put(request.action, actionCounter);
+    if (request != null && request.action != null) {
+      Long actionCounter = actionExecutions.get(request.action);
+      actionCounter = actionCounter == null ? 1 : 1 + actionCounter;
+      actionExecutions.put(request.action, actionCounter);
+    }
   }
 
   @Override public void onApplicationStop() {
