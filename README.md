@@ -83,6 +83,7 @@ Additional command line options
 
 ### 8.3
 * remove xalan dependency
+* remove "@deprecated" annotation from method `assertAction` - it causes too many warnings
 
 ### 8.2
 * upgrade to selenide 4.2

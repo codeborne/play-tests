@@ -90,21 +90,19 @@ public abstract class UITest extends Assert {
   }
   
   /**
-   * @deprecated Avoid checking "action". Check URL instead.
+   * We recommend to avoid checking "action". Check URL instead.
    * Checking action is a bad practice because it doesn't allow easy refactoring of controllers.
    * Use URLs - Universal Resource Locators.
    */
-  @Deprecated
   public static void assertAction(String action) {
     $("body").shouldHave(action(action, new HashMap<String, String>(0)));
   }
 
   /**
-   * @deprecated Avoid checking "action". Check URL instead.
+   * We recommend to avoid checking "action". Check URL instead.
    * Checking action is a bad practice because it doesn't allow easy refactoring of controllers.
    * Use URLs - Universal Resource Locators.
    */
-  @Deprecated
   public static void assertAction(String action, Map<String, String> args) {
     $("body").shouldHave(action(action, args));
   }
