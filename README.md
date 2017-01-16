@@ -81,6 +81,9 @@ Additional command line options
 
 ## Changelog
 
+### 8.4
+* update project language level to Java 8
+
 ### 8.3
 * remove xalan dependency
 * remove "@deprecated" annotation from method `assertAction` - it causes too many warnings

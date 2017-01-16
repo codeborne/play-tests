@@ -36,7 +36,7 @@
 
   <target name="compile" depends="check">
     <mkdir dir="tmp/classes"/>
-    <javac srcdir="src" destdir="tmp/classes" target="1.7" source="1.7" debug="true">
+    <javac srcdir="src" destdir="tmp/classes" target="1.8" source="1.8" debug="true">
       <classpath refid="project.classpath"/>
     </javac>
     <copy todir="tmp/classes">
@@ -51,7 +51,7 @@
   
   <target name="compile-tests" depends="compile">
     <mkdir dir="tmp/test-classes"/>
-    <javac destdir="tmp/test-classes" target="1.7" source="1.7" debug="true">
+    <javac destdir="tmp/test-classes" target="1.8" source="1.8" debug="true">
       <src path="test"/>
       <classpath>
         <path path="tmp/classes"/>
