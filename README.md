@@ -86,6 +86,7 @@ Additional command line options
 * upgrade to selenium webdriver 3.0.1
 * upgrade to mockito 2.3.4
 * fix NPE in ActionCoveragePlugin.incrementActionCounter()
+* upgrade to gradle 3.3
 
 ### 8.1
 * fixed NPE in ActionCoveragePlugin.java:56 when job execution failed
