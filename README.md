@@ -85,6 +85,7 @@ Additional command line options
 * update project language level to Java 8
 * upgrade to Play 1.5.+
 * upgrade to selenide 4.3
+* upgrade to jacoco 0.7.9
 
 ### 8.3
 * remove xalan dependency

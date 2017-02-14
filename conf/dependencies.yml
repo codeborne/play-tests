@@ -28,9 +28,9 @@ require:
     - org.subethamail -> subethasmtp 3.1.7:
         transitive: false
 
-    - org.jacoco -> org.jacoco.core 0.7.7.201606060606:
+    - org.jacoco -> org.jacoco.core 0.7.9:
         transitive: false
-    - org.jacoco -> org.jacoco.report 0.7.7.201606060606:
+    - org.jacoco -> org.jacoco.report 0.7.9:
         transitive: false
 
 #repositories:
