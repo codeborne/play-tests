@@ -7,8 +7,8 @@ Add it to your dependencies.yml
 -------------------------------
 
     require:
-        - play 1.4+
-        - play-codeborne -> tests 8.3
+        - play 1.5.+
+        - play-codeborne -> tests 8.4
 
     repositories:
         - codeborne:
@@ -83,6 +83,8 @@ Additional command line options
 
 ### 8.4
 * update project language level to Java 8
+* upgrade to Play 1.5.+
+* upgrade to selenide 4.3
 
 ### 8.3
 * remove xalan dependency
