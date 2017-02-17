@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play 1.5.+
-        - play-codeborne -> tests 8.4
+        - play-codeborne -> tests 8.5
 
     repositories:
         - codeborne:
@@ -80,6 +80,9 @@ Additional command line options
 
 
 ## Changelog
+
+### 8.5
+* refactor API of play.test.mail.Message
 
 ### 8.4
 * update project language level to Java 8

@@ -47,7 +47,7 @@ public class MailMock extends ExternalResource {
 
         @Override
         public void deliver(String from, String recipient, InputStream data) {
-          inbox.add(new Message(from, recipient, data));
+          inbox.add(new Message(data));
         }
       }));
 
