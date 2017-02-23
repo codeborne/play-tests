@@ -82,7 +82,7 @@ Additional command line options
 ## Changelog
 
 ### 8.6
-* allow customizing maximum heap size, e.g. `UI_TEST_HEAP_SIZE=1024m play ui-tests` 
+* allow customizing maximum heap size, e.g. `MAX_TEST_HEAP_SIZE=1024m play ui-tests` 
 * upgrade to mockito-core 2.7.11
 
 ### 8.5

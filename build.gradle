@@ -226,7 +226,7 @@ task(combineUiTestResults, type: JavaExec) {
 }
 
 tasks.withType(Test).all { testTask ->
-  maxHeapSize = System.getenv()['UI_TEST_HEAP_SIZE'] ?: '512m'
+  maxHeapSize = System.getenv()['MAX_TEST_HEAP_SIZE'] ?: '512m'
   testTask.jvmArgs += ['-ea', '-noverify', '-Xmx' + maxHeapSize]
   testTask.systemProperties['file.encoding'] = 'UTF-8'
   testTask.systemProperties['java.net.preferIPv4Stack'] = 'true'
