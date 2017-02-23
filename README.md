@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play 1.5.+
-        - play-codeborne -> tests 8.5
+        - play-codeborne -> tests 8.6
 
     repositories:
         - codeborne:
@@ -80,6 +80,9 @@ Additional command line options
 
 
 ## Changelog
+
+### 8.6
+* allow customizing maximum heap size, e.g. `UI_TEST_HEAP_SIZE=1024m play ui-tests` 
 
 ### 8.5
 * refactor API of play.test.mail.Message
