@@ -1,4 +1,4 @@
-self: play-tests -> tests 8.6
+self: play-tests -> tests 8.7
 
 require:
     - play 1.5.+
