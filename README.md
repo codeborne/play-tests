@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play 1.5.+
-        - play-codeborne -> tests 8.7
+        - play-codeborne -> tests 8.8
 
     repositories:
         - codeborne:
@@ -80,6 +80,10 @@ Additional command line options
 
 
 ## Changelog
+
+### 8.8
+* upgrade to selenide 4.4.2
+* upgrade to selenium 3.3.1
 
 ### 8.7
 * rename UI_TEST_HEAP_SIZE to MAX_TEST_HEAP_SIZE, as it affects all tests 

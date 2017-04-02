@@ -1,9 +1,9 @@
-self: play-tests -> tests 8.7
+self: play-tests -> tests 8.8
 
 require:
     - play 1.5.+
 
-    - com.codeborne -> selenide 4.3:
+    - com.codeborne -> selenide 4.4.2:
         exclude:
            - cglib
            - org.webbitserver
@@ -12,6 +12,7 @@ require:
            - com.google.code.gson -> gson
            - org.bouncycastle
            - xalan
+    - org.seleniumhq.selenium -> selenium-support 3.3.1
 
     - org.slf4j -> jul-to-slf4j 1.7.22
     - com.google.guava -> guava 21.0
@@ -22,6 +23,7 @@ require:
     - com.automation-remarks -> video-recorder-core 1.4:
         exclude:
            - cglib
+           - commons-io
 
     - com.automation-remarks -> video-recorder-junit 1.4
 
