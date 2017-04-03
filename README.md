@@ -81,6 +81,9 @@ Additional command line options
 
 ## Changelog
 
+### 8.9
+* upgrade to gradle 3.4.1
+
 ### 8.8
 * upgrade to selenide 4.4.2
 * upgrade to selenium 3.3.1
