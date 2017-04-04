@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play 1.5.+
-        - play-codeborne -> tests 8.8
+        - play-codeborne -> tests 8.9
 
     repositories:
         - codeborne:
@@ -83,6 +83,7 @@ Additional command line options
 
 ### 8.9
 * upgrade to gradle 3.4.1
+* fix calculation of actions coverage (play 1.5 now has play.mvc.PlayController base class instead of play.mvc.Controller)
 
 ### 8.8
 * upgrade to selenide 4.4.2

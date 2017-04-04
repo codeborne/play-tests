@@ -5,8 +5,8 @@ import org.apache.commons.io.FileUtils;
 import play.Play;
 import play.PlayPlugin;
 import play.classloading.ApplicationClasses;
-import play.mvc.Controller;
 import play.mvc.Http;
+import play.mvc.PlayController;
 import play.mvc.results.Result;
 import play.test.UITimeLogger;
 import play.test.stats.ExecutionTimesWatcher;
@@ -25,23 +25,25 @@ import static org.apache.commons.io.FileUtils.writeStringToFile;
 public class ActionCoveragePlugin extends PlayPlugin {
   private boolean enabled = Play.runingInTestMode() && Play.mode.isProd();
   public static UITimeLogger timeLogger;
-  
-  @Override public void onApplicationStart() {
-    if (!enabled)
-      Play.pluginCollection.disablePlugin(this);
 
-    for (ApplicationClasses.ApplicationClass controller : Play.classes.getAssignableClasses(Controller.class)) {
-      for (Method method : controller.javaClass.getDeclaredMethods()) {
-        if (isPublic(method.getModifiers()) && isStatic(method.getModifiers()) && method.getReturnType().equals(Void.TYPE)) {
-          String action = controller.javaClass.getName().replaceFirst("controllers\\.", "") + '.' + method.getName();
-          actionExecutions.put(action, 0L);
+  @Override public void onApplicationStart() {
+    if (!enabled) {
+      Play.pluginCollection.disablePlugin(this);
+    }
+    else {
+      for (ApplicationClasses.ApplicationClass controller : Play.classes.getAssignableClasses(PlayController.class)) {
+        for (Method method : controller.javaClass.getDeclaredMethods()) {
+          if (isPublic(method.getModifiers()) && isStatic(method.getModifiers()) && method.getReturnType().equals(Void.TYPE)) {
+            String action = controller.javaClass.getName().replaceFirst("controllers\\.", "") + '.' + method.getName();
+            actionExecutions.put(action, 0L);
+          }
         }
       }
     }
   }
 
   private final Map<String, Long> actionExecutions = new ConcurrentHashMap<>();
-  
+
   @Override public void onActionInvocationResult(Result result) {
     incrementActionCounter();
   }
@@ -95,18 +97,18 @@ public class ActionCoveragePlugin extends PlayPlugin {
     });
     return sorted;
   }
-  
+
   public static void main(String[] args) throws IOException {
     Map<String, Long> actionsExecutions = combineActionsCoveragesFromFiles("actions-coverage");
     System.out.println(
-      "-------------------------------\n" +
-      formatExecutionStatistics("Actions coverage", actionsExecutions, 1, Integer.MAX_VALUE, "times") +
-      calculateCoverage(actionsExecutions) +
-      formatExecutionStatistics("Longest test classes", combineActionsCoveragesFromFiles("tests-statistics-classes"), -1, 20, "s") +
-      formatExecutionStatistics("Longest test methods", combineActionsCoveragesFromFiles("tests-statistics-methods"), -1, 20, "s") +
-      formatExecutionStatistics("Longest webdriver operations", combineActionsCoveragesFromFiles("webdriver-statistics-operations"), -1, 20, "s") +
-      formatExecutionStatistics("Longest webdriver calls", combineActionsCoveragesFromFiles("webdriver-statistics-calls"), -1, 20, "s") +
-      "-------------------------------\n"
+        "-------------------------------\n" +
+            formatExecutionStatistics("Actions coverage", actionsExecutions, 1, Integer.MAX_VALUE, "times") +
+            calculateCoverage(actionsExecutions) +
+            formatExecutionStatistics("Longest test classes", combineActionsCoveragesFromFiles("tests-statistics-classes"), -1, 20, "s") +
+            formatExecutionStatistics("Longest test methods", combineActionsCoveragesFromFiles("tests-statistics-methods"), -1, 20, "s") +
+            formatExecutionStatistics("Longest webdriver operations", combineActionsCoveragesFromFiles("webdriver-statistics-operations"), -1, 20, "s") +
+            formatExecutionStatistics("Longest webdriver calls", combineActionsCoveragesFromFiles("webdriver-statistics-calls"), -1, 20, "s") +
+            "-------------------------------\n"
     );
   }
 
