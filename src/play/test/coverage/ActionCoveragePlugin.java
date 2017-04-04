@@ -15,7 +15,10 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static java.lang.reflect.Modifier.isPublic;
@@ -90,11 +93,7 @@ public class ActionCoveragePlugin extends PlayPlugin {
 
   private static List<Map.Entry<String, Long>> sortCounters(Map<String, Long> counters, final int asc) {
     List<Map.Entry<String, Long>> sorted = new ArrayList<>(counters.entrySet());
-    Collections.sort(sorted, new Comparator<Map.Entry<String, Long>>() {
-      @Override public int compare(Map.Entry<String, Long> o1, Map.Entry<String, Long> o2) {
-        return asc * o1.getValue().compareTo(o2.getValue());
-      }
-    });
+    sorted.sort((o1, o2) -> asc * o1.getValue().compareTo(o2.getValue()));
     return sorted;
   }
 
