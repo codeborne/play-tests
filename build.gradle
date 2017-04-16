@@ -19,6 +19,7 @@ sourceSets {
   main {
     java {srcDir "$PLAY_APP/app"}
     resources {srcDirs "$PLAY_APP/conf", "$PLAY_APP/app"}
+    output.classesDir = System.getenv()['CLASSES_DIR'] ? "$PLAY_APP/${System.getenv()['CLASSES_DIR']}" : "$buildDir/build/classes/main"
   }
   test {
     java {srcDir "$PLAY_APP/test"}
