@@ -83,6 +83,7 @@ Additional command line options
 
 ### 8.10
 * compile Java code with option "-parameters"
+* use MAX_TEST_HEAP_SIZE for memory size for compilation (default is 1 GB)
 
 ### 8.9
 * upgrade to gradle 3.4.1

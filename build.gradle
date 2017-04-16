@@ -5,7 +5,7 @@ apply plugin: 'findbugs'
 compileJava {
   options.debugOptions.debugLevel = "source,lines,vars"
   options.fork = true
-  options.forkOptions.setMemoryMaximumSize("4g")
+  options.forkOptions.setMemoryMaximumSize(System.getenv()['MAX_TEST_HEAP_SIZE'] ?: '1g')
   options.deprecation = false
   options.compilerArgs << '-parameters'
   options.encoding = 'UTF-8'
