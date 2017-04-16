@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play 1.5.+
-        - play-codeborne -> tests 8.9
+        - play-codeborne -> tests 8.10
 
     repositories:
         - codeborne:
@@ -80,6 +80,9 @@ Additional command line options
 
 
 ## Changelog
+
+### 8.10
+* compile Java code with option "-parameters"
 
 ### 8.9
 * upgrade to gradle 3.4.1

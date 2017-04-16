@@ -7,6 +7,8 @@ compileJava {
   options.fork = true
   options.forkOptions.setMemoryMaximumSize("4g")
   options.deprecation = false
+  options.compilerArgs << '-parameters'
+  options.encoding = 'UTF-8'
 }
 
 buildDir = "$PLAY_APP/build"
