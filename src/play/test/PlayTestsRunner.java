@@ -35,7 +35,7 @@ import static java.lang.System.currentTimeMillis;
 import static org.openqa.selenium.net.PortProber.findFreePort;
 import static play.Play.Mode.DEV;
 import static play.Play.Mode.PROD;
-import static play.test.troubleshooting.PlayKiller.*;
+import static play.test.troubleshooting.PlayKiller.EXPECTED_FIRST_TEST_EXECUTION_TIME;
 import static play.test.troubleshooting.ThreadDumper.scheduleThreadDump;
 
 public class PlayTestsRunner extends Runner implements Filterable {
@@ -120,7 +120,6 @@ public class PlayTestsRunner extends Runner implements Filterable {
         Play.mode = Play.usePrecompiled ? PROD : DEV;
 
         scheduleThreadDump("PlayTestRunner.startPlayIfNeeded", EXPECTED_FIRST_TEST_EXECUTION_TIME);
-        scheduleKillPlay("PlayTestRunner.startPlayIfNeeded", MAXIMUM_TEST_EXECUTION_TIME);
 
         Thread playStarter = new Thread(new Runnable() {
           @Override public void run() {

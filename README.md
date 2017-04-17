@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play 1.5.+
-        - play-codeborne -> tests 8.10
+        - play-codeborne -> tests 8.11
 
     repositories:
         - codeborne:
