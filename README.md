@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play 1.5.+
-        - play-codeborne -> tests 8.11
+        - play-codeborne -> tests 8.12
 
     repositories:
         - codeborne:
@@ -80,6 +80,12 @@ Additional command line options
 
 
 ## Changelog
+
+### 8.12
+Restored play killer
+
+### 8.11
+Removed play killer
 
 ### 8.10
 * compile Java code with option "-parameters"
