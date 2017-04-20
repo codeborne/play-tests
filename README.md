@@ -82,10 +82,11 @@ Additional command line options
 ## Changelog
 
 ### 8.12
-Restored play killer
+* Restored play killer
+* Removed TextReport and VideoRule rules from UITest
 
 ### 8.11
-Removed play killer
+* Removed play killer
 
 ### 8.10
 * compile Java code with option "-parameters"
