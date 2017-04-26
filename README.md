@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play 1.5.+
-        - play-codeborne -> tests 8.12
+        - play-codeborne -> tests 8.13
 
     repositories:
         - codeborne:
@@ -80,6 +80,10 @@ Additional command line options
 
 
 ## Changelog
+
+### 8.13
+* upgrade to selenide 4.4.3
+* upgrade to selenium 3.4.0
 
 ### 8.12
 * Restored play killer
