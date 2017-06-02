@@ -5,8 +5,7 @@ import org.apache.commons.io.FileUtils;
 import play.Play;
 import play.PlayPlugin;
 import play.classloading.ApplicationClasses;
-import play.mvc.Http;
-import play.mvc.PlayController;
+import play.mvc.*;
 import play.mvc.results.Result;
 import play.test.UITimeLogger;
 import play.test.stats.ExecutionTimesWatcher;
@@ -26,26 +25,42 @@ import static java.lang.reflect.Modifier.isStatic;
 import static org.apache.commons.io.FileUtils.writeStringToFile;
 
 public class ActionCoveragePlugin extends PlayPlugin {
-  private boolean enabled = Play.runingInTestMode() && Play.mode.isProd();
+  private boolean enabled = true || Play.runingInTestMode() && Play.mode.isProd();
   public static UITimeLogger timeLogger;
+
+  private final Map<String, Long> actionExecutions = new ConcurrentHashMap<>();
 
   @Override public void onApplicationStart() {
     if (!enabled) {
       Play.pluginCollection.disablePlugin(this);
     }
     else {
-      for (ApplicationClasses.ApplicationClass controller : Play.classes.getAssignableClasses(PlayController.class)) {
-        for (Method method : controller.javaClass.getDeclaredMethods()) {
-          if (isPublic(method.getModifiers()) && isStatic(method.getModifiers()) && method.getReturnType().equals(Void.TYPE)) {
-            String action = controller.javaClass.getName().replaceFirst("controllers\\.", "") + '.' + method.getName();
-            actionExecutions.put(action, 0L);
-          }
-        }
-      }
+      findAllControllerActions().forEach(action -> actionExecutions.put(action, 0L));
     }
   }
 
-  private final Map<String, Long> actionExecutions = new ConcurrentHashMap<>();
+  List<String> findAllControllerActions() {
+    List<String> actions = new ArrayList<>();
+    
+    for (ApplicationClasses.ApplicationClass controller : Play.classes.getAssignableClasses(PlayController.class)) {
+      for (Method method : controller.javaClass.getDeclaredMethods()) {
+        if (isActionMethod(method)) {
+          actions.add(controller.javaClass.getName().replaceFirst("controllers\\.", "") + '.' + method.getName());
+        }
+      }
+    }
+    
+    return actions;
+  }
+
+  boolean isActionMethod(Method method) {
+    return isPublic(method.getModifiers()) && 
+        !method.isAnnotationPresent(Util.class) &&
+        !method.isAnnotationPresent(Before.class) &&
+        !method.isAnnotationPresent(After.class) &&
+        !method.isAnnotationPresent(Catch.class) &&
+        !method.isAnnotationPresent(Finally.class);
+  }
 
   @Override public void onActionInvocationResult(Result result) {
     incrementActionCounter();

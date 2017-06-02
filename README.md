@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play 1.5.+
-        - play-codeborne -> tests 8.13
+        - play-codeborne -> tests 8.14
 
     repositories:
         - codeborne:
@@ -80,6 +80,9 @@ Additional command line options
 
 
 ## Changelog
+
+### 8.14
+* add support for non-static action methods in ActionCoveragePlugin
 
 ### 8.13
 * upgrade to selenide 4.4.3
