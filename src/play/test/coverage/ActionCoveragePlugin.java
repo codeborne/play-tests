@@ -21,11 +21,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static java.lang.reflect.Modifier.isPublic;
-import static java.lang.reflect.Modifier.isStatic;
 import static org.apache.commons.io.FileUtils.writeStringToFile;
 
 public class ActionCoveragePlugin extends PlayPlugin {
-  private boolean enabled = true || Play.runingInTestMode() && Play.mode.isProd();
+  private boolean enabled = Play.runingInTestMode() && Play.mode.isProd();
   public static UITimeLogger timeLogger;
 
   private final Map<String, Long> actionExecutions = new ConcurrentHashMap<>();

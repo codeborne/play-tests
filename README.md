@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play 1.5.+
-        - play-codeborne -> tests 8.14
+        - play-codeborne -> tests 8.14.1
 
     repositories:
         - codeborne:
@@ -81,7 +81,7 @@ Additional command line options
 
 ## Changelog
 
-### 8.14
+### 8.14.1
 * add support for non-static action methods in ActionCoveragePlugin
 
 ### 8.13
