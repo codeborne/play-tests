@@ -83,6 +83,7 @@ Additional command line options
 
 ### 8.16
 * upgrade to selenide 4.6
+* upgrade to mockito-core 2.9.0
 
 ### 8.15.1
 * upgrade to selenide 4.5.1
