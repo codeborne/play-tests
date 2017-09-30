@@ -85,7 +85,7 @@ Additional command line options
 * upgrade to selenide 4.7
 * upgrade to mockito-core 2.10.0
 * upgrade to video-recorder 1.7
-* exclude jetty, netty and some other dependencies (that are included in play or not needed for running tests)
+* exclude jetty and some other dependencies (that are included in play or not needed for running tests)
 
 ### 8.16
 * upgrade to selenide 4.6
