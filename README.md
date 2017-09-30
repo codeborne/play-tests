@@ -8,7 +8,7 @@ Add it to your dependencies.yml
 
     require:
         - play 1.5.+
-        - play-codeborne -> tests 8.16
+        - play-codeborne -> tests 8.17
 
     repositories:
         - codeborne:
@@ -80,6 +80,11 @@ Additional command line options
 
 
 ## Changelog
+
+### 8.17
+* upgrade to selenide 4.7
+* upgrade to mockito-core 2.10.0
+* upgrade to video-recorder 1.7
 
 ### 8.16
 * upgrade to selenide 4.6
