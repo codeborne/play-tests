@@ -12,6 +12,11 @@ require:
            - com.google.code.gson -> gson
            - org.bouncycastle
            - xalan
+           - org.eclipse.jetty
+           - org.eclipse.jetty.websocket
+           - io.netty
+           - com.fasterxml.jackson.core
+           - javax.servlet
 
     - org.slf4j -> jul-to-slf4j 1.7.25
     - com.google.guava -> guava 22.0
