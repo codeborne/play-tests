@@ -97,7 +97,7 @@ addPlayToClasspath()
 // showRuntimeClasspath()
 
 jacoco {
-  toolVersion = "0.7.7.201606060606"
+  toolVersion = "0.7.9"
 }
 
 repositories {
@@ -106,7 +106,7 @@ repositories {
 
 buildscript {
   repositories { jcenter() }
-  dependencies { classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.1.10' }
+  dependencies { classpath 'info.solidsoft.gradle.pitest:gradle-pitest-plugin:1.2.2' }
 }
 
 apply plugin: 'info.solidsoft.pitest'
