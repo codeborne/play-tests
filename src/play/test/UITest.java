@@ -1,10 +1,9 @@
 package play.test;
 
-import com.automation.remarks.junit.VideoRule;
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.Driver;
 import com.codeborne.selenide.impl.Html;
 import com.codeborne.selenide.junit.ScreenShooter;
-import com.codeborne.selenide.junit.TextReport;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.rules.TestWatcher;
@@ -43,7 +42,7 @@ public abstract class UITest extends Assert {
 
   public static Condition haveLabel(final String key, final Object... args) {
     return new Condition("label") {
-      @Override public boolean apply(WebElement element) {
+      @Override public boolean apply(Driver driver, WebElement element) {
         return Html.text.contains(element.getText(), Messages.get(key, args));
       }
 
@@ -65,20 +64,20 @@ public abstract class UITest extends Assert {
 
   private static Condition action(final String action, final Map<String, String> args) {
     return new Condition("action " + action + " " + args) {
-      @Override public boolean apply(WebElement element) {
-        return expectedUrl().equals(actualUrl());
+      @Override public boolean apply(Driver driver, WebElement element) {
+        return expectedUrl().equals(actualUrl(driver));
       }
 
       private String expectedUrl() {
         return Router.getFullUrl(action, new HashMap<String, Object>(args));
       }
 
-      private String actualUrl() {
-        return getWebDriver().getCurrentUrl().replaceFirst("\\?.*$", "");
+      private String actualUrl(Driver driver) {
+        return driver.getWebDriver().getCurrentUrl().replaceFirst("\\?.*$", "");
       }
 
-      @Override public String actualValue(WebElement element) {
-        return "url: " + actualUrl() + ", expected url: " + expectedUrl() + ", expected action: " + action;
+      @Override public String actualValue(Driver driver, WebElement element) {
+        return "url: " + actualUrl(driver) + ", expected url: " + expectedUrl() + ", expected action: " + action;
       }
     };
   }
@@ -89,7 +88,7 @@ public abstract class UITest extends Assert {
    * Use URLs - Universal Resource Locators.
    */
   public static void assertAction(String action) {
-    $("body").shouldHave(action(action, new HashMap<String, String>(0)));
+    $("body").shouldHave(action(action, new HashMap<>(0)));
   }
 
   /**

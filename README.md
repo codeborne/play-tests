@@ -81,6 +81,14 @@ Additional command line options
 
 ## Changelog
 
+### 9.0
+* upgrade to selenide:5.1.0
+* upgrade to guava:27.0.1-jre
+* upgrade to mockito 2.23.4
+* upgrade to video-recorder-core 1.8
+* upgrade to jacoco:0.8.2
+* upgrade to Gradle 4.10.3
+
 ### 8.19
 * upgrade to Play 1.5: method `Play.runingInTestMode()` was renamed to `Play.runningInTestMode()`
 
