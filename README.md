@@ -81,6 +81,9 @@ Additional command line options
 
 ## Changelog
 
+### 8.19
+* upgrade to Play 1.5: method `Play.runingInTestMode()` was renamed to `Play.runningInTestMode()`
+
 ### 8.18
 * upgrade to selenide 4.8
 

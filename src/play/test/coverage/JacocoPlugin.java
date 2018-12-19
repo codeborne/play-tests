@@ -31,7 +31,7 @@ public class JacocoPlugin extends PlayPlugin {
 //  public static final String DEFAULT_IGNORE = "DocViewerPlugin,controllers.TestRunner,controllers.Cobertura,controllers.PlayDocumentation,controllers.Secure,controllers.Secure$Security,controllers.Check";
 //  public static final String DEFAULT_REGEX_IGNORE = "*Test**,helpers.CheatSheetHelper*,controllers.CRUD*";
 
-  private final boolean enabled = Play.runingInTestMode() && Boolean.getBoolean("jacoco.enabled");
+  private final boolean enabled = Play.runningInTestMode() && Boolean.getBoolean("jacoco.enabled");
   private final String executionDataFile = System.getProperty("jacoco.executionData", "build/jacoco/uitest.exec");
   private final String reportFolder = System.getProperty("jacoco.report", "build/reports/jacoco");
 
